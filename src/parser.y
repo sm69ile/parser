@@ -110,7 +110,8 @@ int main(int argc, char *argv[])
 	    yyparse();
 	  } while(!feof(yyin));
       } while (i < argc);
-     } 
+    } 
+
      return 0;
 }
 
