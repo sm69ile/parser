@@ -12,4 +12,4 @@ lex.yy.c: parser.l y.tab.h
 	$(LEX) parser.l
 
 clean-local:
-	rm -f parser .a.out lex.yy.c y.tab.c y.tab.h
+	rm -f parser *.o  a.out lex.yy.c y.tab.c y.tab.h
