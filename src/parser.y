@@ -82,7 +82,7 @@ void yyerror(const char* s) {
 
 FILE* fp_open(char* fn){
   
-    FILE* fp = fopen(fn, "r"); // read mode
+  FILE* fp = fopen(fn, "r");     // read mode
  
     if (fp == NULL)
 	{
