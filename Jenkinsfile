@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
-		sh autoreconf --install && ./configure && make
+                echo 'Building...'
+		sh 'autoreconf --install && ./configure && make'
             }
         }
     }
