@@ -18,24 +18,36 @@
 
 %union{
     double real;
-    char* command;
+    char* identifier;
+    char* command; /* line, lineto, rectangle, circle, ellipse, moveto, floodfill, bar, fillellipse, MAX, REM, STATE, COLOR */
+    int integer;
  }
 
-%token <real> NUMBER
-%type  <real> expr
+
+%token <identifier> IDENTIFIER
+%token <command> COMMAND
+%token <integer> NUMBER
+%type  <integer> expr
 %left '+' '-'
 %left '*' '/'
+
 
 %%
 
 list: /* 	nothing */
 | 	list expr
+|       list identifier
+|       list command
 ;
 
-/* block:  expr  {printf(" =%.10g", $1);} */
-; 	     
 		
-expr:		expr '+' NUMBER {$$ = $1 + $3;}
+identifier: IDENTIFIER { printf("Identifier: %s\n",$1); }
+;
+
+command: COMMAND  { printf("Command: %s\n",$1); }
+;
+
+expr:   expr '+' NUMBER {$$ = $1 + $3;}
 | 	expr '-' NUMBER {$$ = $1 - $3;}
 | 	expr '*' NUMBER {$$ = $1 * $3;}
 | 	expr '/' NUMBER {$$ = $1 / $3;}
