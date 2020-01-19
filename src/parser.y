@@ -62,7 +62,8 @@ int main(int argc, char *argv[])
     else
 	{
 	    do{
-		yyin = fopen(argv[i++], "r");
+	      syslog (LOG_NOTICE, "Open input file %s\n", argv[i]);
+	      yyin = fopen(argv[i++], "r");
 		do { 
 		    yyparse();
 		} while(!feof(yyin));

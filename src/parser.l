@@ -13,6 +13,7 @@ int nbuf = 0;
 %%
 
 [ \t \n]+                       { show(yytext); syslog(LOG_NOTICE, "Ignoring whitespace\n"); }  /* ignore whitespace */
+[A-Za-z]+                       { show(yytext); }
 [0-9]+\.?|[0-9]*\.[0-9]+        { show(yytext); sscanf(yytext,"%lf",&yylval.real); syslog(LOG_NOTICE, "Returning NUMBER, buffer[%i]\n", nbuf++); return NUMBER; }
 ["+" "-" "*" "/"]               { show(yytext); syslog(LOG_NOTICE, "Returning OPERATOR, buffer[%i]\n", nbuf++); return yytext[0]; }
 ;                               { show(yytext); syslog(LOG_NOTICE, "Returning SEMICOLON, buffer[%i]\n", nbuf++); }
@@ -22,7 +23,9 @@ int nbuf = 0;
 
 void show(char* str)
 {
+    syslog(LOG_NOTICE,"[lex] new buffer");
     int j = strlen(str);
+
     for(int i=0; i<j; i++)
 	{
 	    if (str[i] != '\n')
@@ -30,4 +33,5 @@ void show(char* str)
 	    else
 		syslog(LOG_NOTICE,"[lex] Found LF\n");
 	}
+    syslog(LOG_NOTICE,"[lex] end buffer");
 }
