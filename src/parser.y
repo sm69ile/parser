@@ -10,6 +10,7 @@
     extern int yyparse();
     extern FILE* yyin;
 
+    
     void yyerror(const char *s);
 
     FILE* fp_open(char* fn); 
@@ -27,32 +28,37 @@
 %token <identifier> IDENTIFIER
 %token <command> COMMAND
 %token <integer> NUMBER
-%type  <integer> expr
+
+%type <real> expr
+
 %left '+' '-'
 %left '*' '/'
-
 
 %%
 
 list: /* 	nothing */
-| 	list expr
+| 	list line
 |       list identifier
 |       list command
 ;
 
-		
+line:   '\n'
+|       expr '=' { printf("\t%.2g\n",$1);}
+;
+
+expr:   NUMBER  {$$ = $1;}
+|       expr '+' expr {$$ = $1 + $3;}
+| 	expr '-' expr {$$ = $1 - $3;}
+| 	expr '*' expr {$$ = $1 * $3;}
+| 	expr '/' expr {$$ = $1 / $3;}
+;
+
 identifier: IDENTIFIER { printf("Identifier: %s\n",$1); }
 ;
 
 command: COMMAND  { printf("Command: %s\n",$1); }
 ;
 
-expr:   expr '+' NUMBER {$$ = $1 + $3;}
-| 	expr '-' NUMBER {$$ = $1 - $3;}
-| 	expr '*' NUMBER {$$ = $1 * $3;}
-| 	expr '/' NUMBER {$$ = $1 / $3;}
-|	NUMBER {$$ = $1;}
-;
 %%
 
 int main(int argc, char *argv[])
