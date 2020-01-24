@@ -22,12 +22,16 @@
     char* identifier;
     char* command; /* line, lineto, rectangle, circle, ellipse, moveto, floodfill, bar, fillellipse, MAX, REM, STATE, COLOR */
     int integer;
+    char character;
  }
 
 
 %token <identifier> IDENTIFIER
 %token <command> COMMAND
 %token <integer> NUMBER
+%token <character> COMMA
+%token <character> LPAREN
+%token <character> RPAREN
 
 %type <real> expr
 
@@ -40,6 +44,9 @@ list: /* 	nothing */
 | 	list line
 |       list identifier
 |       list command
+|       list comma
+|       list lparen
+|       list rparen
 ;
 
 line:   '\n'
@@ -58,6 +65,16 @@ identifier: IDENTIFIER { printf("Identifier: %s\n",$1); }
 
 command: COMMAND  { printf("Command: %s\n",$1); }
 ;
+
+comma: COMMA { printf("Comma: %c\n",$1); }
+;
+
+lparen: LPAREN { printf("LParen: %c\n",$1); }
+;
+
+rparen: RPAREN { printf("RParen: %c\n",$1); }
+;
+
 
 %%
 
@@ -96,7 +113,7 @@ int main(int argc, char *argv[])
 
   
 void yyerror(const char* s) {
-    fprintf(stderr, "Parse error: %s\n", s);
+  fprintf(stderr, "[%s] Error: %s\n", PACKAGE_STRING,s);
 }
 
 
