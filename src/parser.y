@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include "../config.h"
   
   extern int yylex (void);
@@ -21,6 +22,8 @@
   void cnext();
   void clist();
   void cfree();
+  void prompt();
+  void interactiv();
   
   typedef struct Command
   {
@@ -33,6 +36,8 @@
   }sCommand;
 
   sCommand *psComIni, *psCom;
+
+  bool INTERACTIV = false;
 
 %}
 
@@ -63,10 +68,10 @@
 %%
 
 list:   /* nothing */
-| 	list line
-|       list object
-|       list command 
-|       list plist
+| 	list line { if (INTERACTIV) prompt(); }
+|       list object { }
+|       list command { }
+|       list plist { }
 ;
 
 line:   '\n'
@@ -83,11 +88,12 @@ expr:   expr '+' expr {$$ = $1 + $3;}
 object: IDENTIFIER LBRACE command RBRACE { char* p=split($1,'{'); printf("object:\t\t%s\n",p); free(p); }
 ;
 
-command: CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=split($1,'('); cnext(); }
-|        command CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=split($2,'('); cnext(); }
+command: CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=split($1,'('); cnext(); if (INTERACTIV) prompt(); }
+|        command CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=split($2,'('); cnext(); if (INTERACTIV) prompt(); }
 ;
 
-plist: NUMBER COMMA NUMBER { plist(2,$1,$3); }
+plist: NUMBER { plist(1,$1); }
+|      NUMBER COMMA NUMBER { plist(2,$1,$3); }
 |      NUMBER COMMA NUMBER COMMA NUMBER { plist(3,$1,$3,$5); }
 |      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(4,$1,$3,$5,$7); }
 |      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(5,$1,$3,$5,$7,$9); }
@@ -103,15 +109,11 @@ int main(int argc, char *argv[])
 
     openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog (LOG_NOTICE, "Program started by User %d", getuid ());
-
     cinit();
 
     if (argc == 1)
 	{
-	    yyin = stdin;
-	    do { 
-		yyparse();
-	    } while(!feof(yyin));
+	  interactiv();
 	}
     else
 	{
@@ -126,10 +128,8 @@ int main(int argc, char *argv[])
                 syslog (LOG_NOTICE, "Successfully scanned %d lines\n",s_line);
                 fclose(yyin);
 	    } while (i < argc);
-
 	} 
-
-    clist();
+    //    clist();
     cfree();
     closelog();
 
@@ -139,13 +139,31 @@ int main(int argc, char *argv[])
   
 void yyerror(const char* s) {
   fprintf(stderr, "[%s] Error: %s in line %d\n", PACKAGE_STRING, s, s_line);
-  cfree();
+  //  cfree(); Was macht exit() ?
+}
+
+void interactiv()
+{
+  syslog (LOG_NOTICE, "Entering interactiv mode\n");
+  INTERACTIV = true;
+
+  yyin = stdin;
+  do { 
+    prompt();
+    yyparse();
+  } while(!feof(yyin));
+}
+
+
+void prompt()
+{
+  printf("%s > ",PACKAGE_STRING);
 }
 
 
 FILE* fp_open(char* fn){
   
-  FILE* fp = fopen(fn, "r");     // read mode
+  FILE* fp = fopen(fn, "r");
  
     if (fp == NULL)
 	{
