@@ -34,7 +34,16 @@
   }sCommand;
 
   sCommand *psComIni, *psCom;
-%}
+
+  typedef struct Object
+  {
+    char *name;
+    sCommand *sCommand;
+    struct Object *next;
+  }sObject;
+
+  sObject *psObjIni, *psObj;
+  %}
 
 %union{
     double real;
@@ -44,7 +53,6 @@
     int integer;
     char character;
 }
-
 
 %token <identifier> IDENTIFIER
 %token <cname> CNAME
@@ -84,11 +92,12 @@ expr:   expr '+' expr {$$ = $1 + $3;}
 |       REAL {$$ = $1;}
 ;
 
-object: IDENTIFIER LBRACE command RBRACE { char* p=split($1,'{'); printf("object:\t%s\n",p); free(p); }
+object: IDENTIFIER LBRACE command RBRACE { printf("%s\n",$1); }
+|       object IDENTIFIER LBRACE command RBRACE { printf("%s\n",$2); }
 ;
 
-command: CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=split($1,'('); cnext(); }
-|        command CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=split($2,'('); cnext(); }
+command: CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=$1; psCom->s_line=s_line; cnext(); }
+|        command CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=$2; psCom->s_line=s_line; cnext(); }
 ;
 
 plist: NUMBER { plist(1,$1); }
@@ -108,15 +117,14 @@ ctrl: CTRL { fprintf(stderr, "Received control: %s\n",$1);
 
 int main(int argc, char *argv[])
 {
-    printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);
-    printf("[%i] > ",s_line++);
     openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog (LOG_NOTICE, "Program started by User %d", getuid ());
     cinit();
-      
+    printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);      
     if (argc > 1) { load_file(argc, argv); }
     else
       {
+	printf("[%i] > ",s_line++);
 	yyin = stdin;
 	do { 
 	  yyparse();
@@ -147,7 +155,6 @@ void load_file(int argc, char *argv[])
   
   do{
     syslog (LOG_NOTICE, "Opening input file %s\n", argv[i]);
-    s_line=0;
     yyin = fopen(argv[i], "r");
     if ( ! yyin ){ syslog(LOG_NOTICE,"Cannot open input file %s\n", argv[i]); }
     else
@@ -160,7 +167,6 @@ void load_file(int argc, char *argv[])
 	fclose(yyin);
       }
   } while (++i < argc);   
-  clist();
 }
 
 
@@ -178,7 +184,7 @@ void cinit()
   psComIni->para=NULL;
   psComIni->count_para=0;
   psComIni->key=0;
-  psComIni->s_line=0;
+  psComIni->s_line=-1;
   psComIni->next=psComIni;
  
   cnext();
@@ -199,7 +205,7 @@ void cnext()
   psCom->name=NULL;
   psCom->para=NULL;
   psCom->count_para=0;
-  psCom->s_line=s_line;
+  psCom->s_line=0;
   psCom->key=psComIni->key;
   
   psCom->next=psComIni->next;
@@ -215,7 +221,7 @@ void clist()
   do
     {
       sCommand* next = act->next;
-      printf("mem: [%d] [%d] %s (args=%d) ", act->s_line, act->key, act->name, act->count_para);
+      printf("mem: [source line: %d] [source key %d] %s (args=%d) ", act->s_line, act->key, act->name, act->count_para);
       for(int i=0; i<act->count_para;i++)
 	printf("%d ", act->para[i]);
       printf("\n");
@@ -263,38 +269,4 @@ void plist(int i, ...)
       act->para[j] = (int)va_arg(args, int);
     }
   va_end(args);
-}
-
-
-char* split(char* s, char c)
-{
-  char *p,*l;
-  int i = strlen(s);
-
-  syslog(LOG_DEBUG, "Buflen: %d\n", i);
-
-  l=NULL;
-  
-  if (!(p = (char*) malloc(i*sizeof(char))))
-    {
-      syslog(LOG_NOTICE, "malloc() failed: char*\n");
-      exit(EXIT_FAILURE);
-    }
-
-  bzero(p,i);
-  for(i=0;s[i]!=c;i++)
-    p[i]=s[i];
-  
-  i=strlen(p);
-  syslog(LOG_DEBUG, "Buflen: %d\n", i);
-  
-  if ((l = (char*) malloc(i*sizeof(char))))
-    {
-      bzero(l,i);
-      for(i=0;p[i]!='\0';i++)
-	l[i]=p[i];
-    }
-  free(p);
-
-  return l;
 }
