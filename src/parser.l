@@ -8,7 +8,7 @@
 
 void show(char*);
 int nbuf = 0;
-int s_line = 1;
+int s_line = 0;
 FILE *fp;
 bool INTERACTIV = true;
 
@@ -20,6 +20,7 @@ bool INTERACTIV = true;
 \.    BEGIN(load);
 <load>[ \t]*      /* eat the whitespace */
 <load>[^ \t\n]+   {
+                     syslog (LOG_NOTICE, "Opening input file %s\n", yytext);
                      fp = fopen(yytext, "r" );
 		     if (! fp){ syslog(LOG_NOTICE,"Cannot open input file %s\n", yytext); }
 		     else
@@ -32,12 +33,14 @@ bool INTERACTIV = true;
 		     BEGIN(INITIAL);
                   }
 <<EOF>>           {
-                         if (! INTERACTIV)
-			 { yypop_buffer_state(); }
-			 else
-			   { yyterminate(); }
+                     if (! INTERACTIV)
+		        { yypop_buffer_state(); }
+		     else
+		        { yyterminate(); }
 
-			 INTERACTIV=true;
+		     INTERACTIV=true;
+	             syslog(LOG_NOTICE, "Closing input file\n");  
+                     fclose(fp);
                   }
 
 [ \t ]+                         { show(yytext); syslog(LOG_NOTICE, "Ignoring whitespace\n"); } /* ignore whitespace */
@@ -45,7 +48,7 @@ bool INTERACTIV = true;
 "line"|"circle"|"arc"           { show(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++); return CNAME; }
 "exit"|"quit"|"list"|"init"|"clear"                   { show(yytext); yylval.ctrl = strdup(yytext); syslog(LOG_NOTICE, "Control command received\n"); return CTRL; } 
 
-[A-Za-z]+                       { show(yytext); yylval.identifier = strdup(yytext); syslog(LOG_NOTICE, "Returning IDENTIFIER, buffer[%i]\n", nbuf++); return IDENTIFIER; }
+[A-Za-z]+                       { show(yytext); yylval.oname = strdup(yytext); syslog(LOG_NOTICE, "Returning ONAME, buffer[%i]\n", nbuf++); return ONAME; }
 [0-9]+                          { show(yytext); yylval.integer=atoi(yytext); syslog(LOG_NOTICE, "Returning NUMBER, buffer[%i]\n", nbuf++); return NUMBER; }
 [0-9]+\.?|[0-9]*\.[0-9]+        { show(yytext); sscanf(yytext,"%lf",&yylval.real); syslog(LOG_NOTICE, "Returning REAL, buffer[%i]\n", nbuf++); return REAL; }
 ['+''\-''*''/''=']              { show(yytext); syslog(LOG_NOTICE, "Returning OPERATOR, buffer[%i]\n", nbuf++); return yytext[0]; }
@@ -56,7 +59,7 @@ bool INTERACTIV = true;
 \}                              { show(yytext); yylval.character=yytext[0]; syslog(LOG_NOTICE, "Returning RBRACE, buffer[%i]\n", nbuf++); return RBRACE; }
 ;                               { show(yytext); yylval.character=yytext[0]; syslog(LOG_NOTICE, "Returning SEMICOLON, buffer[%i]\n", nbuf++); return SEMICOLON; }
 .                               { show(yytext); syslog(LOG_NOTICE, "Ignoring character: %s\n", yytext); }  /* ignore any other character */
-\n                              { if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }
+\n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); s_line++;} }
 %%
 
 void show(char* str)

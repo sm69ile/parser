@@ -1,4 +1,3 @@
-
 %{
 #include <stdio.h>
 #include <stdlib.h> 
@@ -12,49 +11,60 @@
   extern int yyparse();
   extern FILE* yyin;
   extern int s_line;
-
-  void yyerror(const char *s);
-  char* split(char*, char);
-  void plist(int, ... );
-  void cinit(); 
-  void cnext();
-  void clist();
-  void cfree();
-  void load_file(int, char **);
-  void quit();
   
   typedef struct Command
   {
-    char *name;
-    int *para;
-    int count_para;
     int key;
+    char *name;
     int s_line;
+    int count_para;
+    int *para;
+
     struct Command *next;
   }sCommand;
 
-  sCommand *psComIni, *psCom;
-
   typedef struct Object
   {
+    int key;
     char *name;
-    sCommand *sCommand;
+
+    sCommand *psComIni, *psCom;
+
     struct Object *next;
   }sObject;
 
   sObject *psObjIni, *psObj;
+
+  const char* CURR = "CURR";
+  const char* INI = "INI";
+  
+  void yyerror(const char *s);
+  void plist(int, ... );
+  void cinit(sObject *); 
+  void oinit();
+  void cnext(sObject *);
+  void onext(); 
+  void clist(sObject *);
+  void olist();
+  void cfree(sObject *);
+  void ofree();
+  void load_file(int, char **);
+  void quit();
+  int yy_scan_string(char*);
+  int yylex_destroy();
+
   %}
 
 %union{
     double real;
-    char* identifier;
+    char* oname;
     char* cname; /* line, lineto, rectangle, circle, ellipse, moveto, floodfill, bar, fillellipse, MAX, REM, STATE, COLOR */
     char* ctrl; /* exit, quit, list */
     int integer;
     char character;
 }
 
-%token <identifier> IDENTIFIER
+%token <oname> ONAME
 %token <cname> CNAME
 %token <ctrl> CTRL
 %token <integer> NUMBER
@@ -92,12 +102,12 @@ expr:   expr '+' expr {$$ = $1 + $3;}
 |       REAL {$$ = $1;}
 ;
 
-object: IDENTIFIER LBRACE command RBRACE { printf("%s\n",$1); }
-|       object IDENTIFIER LBRACE command RBRACE { printf("%s\n",$2); }
+object: ONAME LBRACE command RBRACE { psObj->name=$1; onext(); }
+|       object ONAME LBRACE command RBRACE { psObj->name=$2; onext(); }
 ;
 
-command: CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=$1; psCom->s_line=s_line; cnext(); }
-|        command CNAME LPAREN plist RPAREN SEMICOLON { psCom->name=$2; psCom->s_line=s_line; cnext(); }
+command: CNAME LPAREN plist RPAREN SEMICOLON { psObj->psCom->name=$1; psObj->psCom->s_line=s_line-1; cnext(psObj); }
+|        command CNAME LPAREN plist RPAREN SEMICOLON { psObj->psCom->name=$2; psObj->psCom->s_line=s_line-1; cnext(psObj); }
 ;
 
 plist: NUMBER { plist(1,$1); }
@@ -108,8 +118,8 @@ plist: NUMBER { plist(1,$1); }
 ;
 
 ctrl: CTRL { fprintf(stderr, "Received control: %s\n",$1);
-   if (! strncmp($1,"list",strlen("list"))) { clist(); }
-   else if (! strncmp($1,"init",strlen("init"))) { cfree(); cinit(); }
+   if (! strncmp($1,"list",strlen("list"))) { olist(); }
+   else if (! strncmp($1,"init",strlen("init"))) { ofree(); oinit(); onext(); }
    else if (! strncmp($1,"clear",strlen("clear"))) { yyclearin; }
    else if (( !strncmp($1,"quit",strlen("quit"))) || ( !strncmp($1,"exit",strlen("exit")))) { quit(); } }
 
@@ -119,18 +129,18 @@ int main(int argc, char *argv[])
 {
     openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog (LOG_NOTICE, "Program started by User %d", getuid ());
-    cinit();
+    oinit();
+    onext();
+
     printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);      
     if (argc > 1) { load_file(argc, argv); }
-    else
-      {
-	printf("[%i] > ",s_line++);
-	yyin = stdin;
-	do { 
-	  yyparse();
-	} while(!feof(yyin));
-      }
-    
+
+    printf("[%i] > ",s_line++);
+    yyin = stdin;
+    do { 
+      yyparse();
+    } while(!feof(yyin));
+        
     closelog();
     quit();
     
@@ -139,7 +149,7 @@ int main(int argc, char *argv[])
 
  void quit()
  {
-       cfree();
+       ofree();
        exit(EXIT_SUCCESS);
  }
 
@@ -151,90 +161,181 @@ void yyerror(const char* s) {
 
 void load_file(int argc, char *argv[])
 {
-  int i = 1;
+  int j,i = 1;
+  char * l_argv;
+  const char* LOAD = ". ";
   
   do{
-    syslog (LOG_NOTICE, "Opening input file %s\n", argv[i]);
-    yyin = fopen(argv[i], "r");
-    if ( ! yyin ){ syslog(LOG_NOTICE,"Cannot open input file %s\n", argv[i]); }
-    else
+    
+    j=strlen(LOAD)+strlen(argv[i])+1;
+    syslog (LOG_NOTICE, "File: %s - Command length: %i\n",argv[i],j);
+    
+    if (!(l_argv=(char*) malloc(j*sizeof(char))))
       {
-	do { yyparse(); } while(!feof(yyin));
-
-	syslog (LOG_NOTICE, "Successfully scanned %d lines\n",s_line);
-	syslog (LOG_NOTICE, "Closing input file\n");  
-
-	fclose(yyin);
+	syslog(LOG_NOTICE, "malloc() failed: char\n");
+	exit(EXIT_FAILURE);
       }
+    
+    bzero(l_argv,j);
+    strcat(l_argv,LOAD);
+    strcat(l_argv,argv[i]);
+    syslog (LOG_NOTICE, "Command line: %s\n",l_argv);
+    yy_scan_string(l_argv);
+    yyparse();
+    yylex_destroy();
+    free(l_argv);
+
   } while (++i < argc);   
 }
 
-
-void cinit()
+void oinit()
 {
-  syslog(LOG_NOTICE, "Initialising memory, starting node\n");
+  syslog(LOG_NOTICE, "Initialising memory for object, starting node\n");
 
-  if (!(psComIni=(sCommand*) malloc(sizeof(sCommand))))
+  if (!(psObjIni=(sObject*) malloc(sizeof(sObject))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sCommand*\n");
+      syslog(LOG_NOTICE, "malloc failed: sObject*\n");
       exit(EXIT_FAILURE);
     }
 
-  psComIni->name=NULL;
-  psComIni->para=NULL;
-  psComIni->count_para=0;
-  psComIni->key=0;
-  psComIni->s_line=-1;
-  psComIni->next=psComIni;
- 
-  cnext();
+  psObjIni->key=0;
+  psObjIni->name=strdup(INI);
+
+  psObjIni->psComIni=NULL;
+  psObjIni->psCom=NULL;
+
+  psObjIni->next=psObjIni;
 }
 
-
-void cnext()
+void onext()
 {
-  psComIni->key++;
-  syslog(LOG_NOTICE, "Initialising memory, node: %d\n", psComIni->key);
+  psObjIni->key++;
+  syslog(LOG_NOTICE, "Initialising memory, object key: %d\n", psObjIni->key);
   
-  if (!(psCom=(sCommand*) malloc(sizeof(sCommand))))
+  if (!(psObj=(sObject*) malloc(sizeof(sObject))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sCommand*\n");
+      syslog(LOG_NOTICE, "malloc failed: sObject*\n");
       exit(EXIT_FAILURE);
     }
 
-  psCom->name=NULL;
-  psCom->para=NULL;
-  psCom->count_para=0;
-  psCom->s_line=0;
-  psCom->key=psComIni->key;
+  psObj->key=psObjIni->key;
+  psObj->name=strdup(CURR);
+
+  psObj->psComIni=NULL;
+  psObj->psCom=NULL;
+
+  cinit(psObj);
+  cnext(psObj);
   
-  psCom->next=psComIni->next;
-  psComIni->next=psCom;
+  psObj->next=psObjIni->next;
+  psObjIni->next=psObj;
 }
 
-void clist()
+
+void olist()
 {
-  sCommand* last = psComIni->next;
-  sCommand* first = psComIni;
-  sCommand* act = last;
+  sObject* last = psObjIni->next;
+  sObject* first = psObjIni;
+  sObject* act = last;
 
   do
     {
-      sCommand* next = act->next;
-      printf("mem: [source line: %d] [source key %d] %s (args=%d) ", act->s_line, act->key, act->name, act->count_para);
-      for(int i=0; i<act->count_para;i++)
-	printf("%d ", act->para[i]);
-      printf("\n");
+      sObject* next = act->next;
+      printf("obj: [node %d] %s\n", act->key, act->name);
+      clist(act);
       act=next;
     }
   while(act != first);
 }
 
 
-void cfree()
+void ofree()
 {
-  sCommand* last = psComIni->next;
-  sCommand* first = psComIni;
+  sObject* last = psObjIni->next;
+  sObject* first = psObjIni;
+  sObject* act = last;
+
+  do
+    {
+      sObject* next = act->next;
+      free(act->name);
+      cfree(act);
+      free(act);
+      act=next;
+    }
+  while(act != first);
+  free(act->name);
+  free(act);
+}
+
+
+void cinit(sObject *psObj)
+{
+  syslog(LOG_NOTICE, "Initialising memory for command, starting node\n");
+
+  if (!(psObj->psComIni=(sCommand*) malloc(sizeof(sCommand))))
+    {
+      syslog(LOG_NOTICE, "malloc failed: sCommand*\n");
+      exit(EXIT_FAILURE);
+    }
+
+  psObj->psComIni->key=0;
+  psObj->psComIni->name=strdup(INI);
+  psObj->psComIni->s_line=-1;  
+  psObj->psComIni->count_para=0;
+  psObj->psComIni->para=NULL;
+  
+  psObj->psComIni->next=psObj->psComIni;
+}
+
+
+void cnext(sObject *psObj)
+{
+  psObj->psComIni->key++;
+  syslog(LOG_NOTICE, "Initialising memory, command node: %d\n", psObj->psComIni->key);
+  
+  if (!(psObj->psCom=(sCommand*) malloc(sizeof(sCommand))))
+    {
+      syslog(LOG_NOTICE, "malloc failed: sCommand*\n");
+      exit(EXIT_FAILURE);
+    }
+
+  psObj->psCom->key=psObj->psComIni->key;
+  psObj->psCom->name=strdup(CURR);
+  psObj->psCom->s_line=0;
+  psObj->psCom->count_para=0;
+  psObj->psCom->para=NULL;
+  
+  psObj->psCom->next=psObj->psComIni->next;
+  psObj->psComIni->next=psObj->psCom;
+}
+
+
+void clist(sObject *psObj)
+{
+  sCommand* last = psObj->psComIni->next;
+  sCommand* first = psObj->psComIni;
+  sCommand* act = last;
+
+  do
+    {
+      sCommand* next = act->next;
+
+      printf("com: [source line: %d] [node %d] %s (args=%d) ", act->s_line, act->key, act->name, act->count_para);
+      for(int i=0; i<act->count_para;i++)
+	printf("%d ", act->para[i]);
+      printf("\n");
+
+      act=next;
+    }
+  while(act != first);
+}
+
+
+void cfree(sObject *psObj)
+{
+  sCommand* last = psObj->psComIni->next;
+  sCommand* first = psObj->psComIni;
   sCommand* act = last;
 
   do
@@ -251,10 +352,11 @@ void cfree()
   free(act);
 }
 
+
 void plist(int i, ...)
 {
   va_list args;
-  sCommand* act = psCom;;
+  sCommand* act = psObj->psCom;
   act->count_para=i;
   
   if (!(act->para=(int*) malloc(i*sizeof(int))))
