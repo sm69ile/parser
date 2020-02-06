@@ -7,13 +7,24 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include "../config.h"
+
+typedef struct Vset
+{
+  int key;
+  int d_line;
+  char *para;
+  unsigned long value;
+
+  struct Vset *next;
+}sVset;
 
 typedef struct Command
 {
   int key;
-  char *name;
   int s_line;
+  char *name;
   int count_para;
   int *para;
   
@@ -23,32 +34,47 @@ typedef struct Command
 typedef struct Object
 {
   int key;
+  int s_line;
   char *name;
-  
+
+  sVset *psVsetIni, *psVset;  
   sCommand *psComIni, *psCom;
   
   struct Object *next;
 }sObject;
 
+
 sObject *psObjIni, *psObj;
 
 
-void yyerror(const char *s);
-void plist(int, ... );
-void cinit(sObject *); 
-void oinit();
-void cnext(sObject *);
-void onext(); 
-void clist(sObject *);
-void olist();
-void cfree(sObject *);
-void ofree();
-void load_file(int, char **);
-void quit();
 int yy_scan_string(char*);
 int yylex_destroy();
+void yyerror(const char *s);
 
-// void xshow(int, char **, sObject *);
+void vinit(sObject *);
+void vnext(sObject *);
+void vlist(sObject *);
+sVset* get_vset(sObject*, char*);
+bool set_vset(sObject*, char*, unsigned long);
+void vfree();
+
+void oinit();
+void onext();
+void olist();
+void ofree();
+
+void cinit(sObject *); 
+void cnext(sObject *);
+void clist(sObject *);
+void cfree(sObject *);
+void plist(int, ... );
+
 void xshow(int, char **);
+void load_file(int, char **);
+
+unsigned long _RGB(int,int, int);
+
+void quit();
+
 
 #endif

@@ -46,6 +46,8 @@ bool INTERACTIV = true;
 [ \t ]+                         { show(yytext); syslog(LOG_NOTICE, "Ignoring whitespace\n"); } /* ignore whitespace */
 #.*$                            { show(yytext); syslog(LOG_NOTICE, "Comment found\n"); } /* ignore comment */
 "line"|"circle"|"ellipse"|"lineto"|"rectangle"|"moveto"           { show(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++); return CNAME; }
+"set"                           { show(yytext); yylval.set = strdup(yytext); syslog(LOG_NOTICE, "Returning SET, buffer[%i]\n", nbuf++); return SET; }
+"v_background"|"v_foreground"|"v_line_width"            { show(yytext); yylval.vpara = strdup(yytext); syslog(LOG_NOTICE, "Returning VPARA, buffer[%i]\n", nbuf++); return VPARA; }
 "exit"|"quit"|"list"|"init"|"clear"|"show"                  { show(yytext); yylval.ctrl = strdup(yytext); syslog(LOG_NOTICE, "Control command received\n"); return CTRL; } 
 
 [A-Za-z]+                       { show(yytext); yylval.oname = strdup(yytext); syslog(LOG_NOTICE, "Returning ONAME, buffer[%i]\n", nbuf++); return ONAME; }
