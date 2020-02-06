@@ -1,58 +1,17 @@
 %{
-#include <stdio.h>
-#include <stdlib.h> 
-#include <syslog.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdarg.h>
-#include "../config.h"
+
+#include "parser.h"
   
   extern int yylex (void);
   extern int yyparse();
   extern FILE* yyin;
   extern int s_line;
   
-  typedef struct Command
-  {
-    int key;
-    char *name;
-    int s_line;
-    int count_para;
-    int *para;
-
-    struct Command *next;
-  }sCommand;
-
-  typedef struct Object
-  {
-    int key;
-    char *name;
-
-    sCommand *psComIni, *psCom;
-
-    struct Object *next;
-  }sObject;
-
-  sObject *psObjIni, *psObj;
+  //  sObject *psObjIni, *psObj;
 
   const char* CURR = "CURR";
   const char* INI = "INI";
   
-  void yyerror(const char *s);
-  void plist(int, ... );
-  void cinit(sObject *); 
-  void oinit();
-  void cnext(sObject *);
-  void onext(); 
-  void clist(sObject *);
-  void olist();
-  void cfree(sObject *);
-  void ofree();
-  void load_file(int, char **);
-  void quit();
-  int yy_scan_string(char*);
-  int yylex_destroy();
-
   %}
 
 %union{
@@ -114,13 +73,14 @@ plist: NUMBER { plist(1,$1); }
 |      NUMBER COMMA NUMBER { plist(2,$1,$3); }
 |      NUMBER COMMA NUMBER COMMA NUMBER { plist(3,$1,$3,$5); }
 |      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(4,$1,$3,$5,$7); }
-|      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(5,$1,$3,$5,$7,$9); }
+
 ;
 
 ctrl: CTRL { fprintf(stderr, "Received control: %s\n",$1);
    if (! strncmp($1,"list",strlen("list"))) { olist(); }
    else if (! strncmp($1,"init",strlen("init"))) { ofree(); oinit(); onext(); }
    else if (! strncmp($1,"clear",strlen("clear"))) { yyclearin; }
+   else if (! strncmp($1,"show",strlen("show"))) { if (fork() == 0) xshow(0, NULL); }
    else if (( !strncmp($1,"quit",strlen("quit"))) || ( !strncmp($1,"exit",strlen("exit")))) { quit(); } }
 
 %%
@@ -129,6 +89,7 @@ int main(int argc, char *argv[])
 {
     openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog (LOG_NOTICE, "Program started by User %d", getuid ());
+
     oinit();
     onext();
 
