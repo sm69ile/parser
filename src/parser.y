@@ -7,7 +7,7 @@
   extern FILE* yyin;
   extern int s_line;
   
-  const char* CURR = "CURR";
+  const char* CURR = "Empty";
   const char* INI = "INI";
   
   %}
@@ -17,9 +17,9 @@
     char* oname;
     char* cname; /* line, lineto, rectangle, circle, ellipse, moveto, floodfill, bar, fillellipse, MAX, REM, STATE, COLOR */
     char* set; /* set */
-    char* vpara;
-    char* rgb;
+    char* spara;
     char* ctrl; /* exit, quit, list ... */
+    char* cpara; /*colors, ... */
     int integer;
     char character;
 }
@@ -27,8 +27,9 @@
 %token <oname> ONAME
 %token <cname> CNAME
 %token <set> SET
-%token <vpara> VPARA
+%token <spara> SPARA
 %token <ctrl> CTRL
+%token <cpara> CPARA
 %token <integer> NUMBER
 %token <real> REAL
 %token <character> COMMA
@@ -77,35 +78,20 @@ plist: NUMBER { plist(1,$1); }
 |      NUMBER COMMA NUMBER { plist(2,$1,$3); }
 |      NUMBER COMMA NUMBER COMMA NUMBER { plist(3,$1,$3,$5); }
 |      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(4,$1,$3,$5,$7); }
+|      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(5,$1,$3,$5,$7,$9); }
 ;
 
-set:  SET VPARA NUMBER SEMICOLON { fprintf(stderr, "Received %s: %s, %i\n",$1,$2,$3); if (! set_vset(psObj, $2, $3)) { psObj->psVset->para=$2; psObj->psVset->value=$3; vnext(psObj); } }
-|     set SET VPARA NUMBER SEMICOLON { fprintf(stderr, "Received %s: %s, %i\n",$2,$3,$4); if (! set_vset(psObj, $3, $4)) { psObj->psVset->para=$3; psObj->psVset->value=$4; vnext(psObj); } }
-|     SET VPARA LPAREN NUMBER COMMA NUMBER COMMA NUMBER RPAREN SEMICOLON
-{
-  fprintf(stderr, "Received %s: %s, with rgb value (%d,%d,%d)\n",$1,$2,$4,$6,$8);
-  unsigned long value = _RGB($4,$6,$8);
-  if (! set_vset(psObj, $2, value)) { psObj->psVset->para=$2; psObj->psVset->value=value; vnext(psObj); }
-}
-|     set SET VPARA LPAREN NUMBER COMMA NUMBER COMMA NUMBER RPAREN SEMICOLON
-{
-  fprintf(stderr, "Received %s: %s, with rgb value (%d,%d,%d)\n",$2,$3,$5,$7,$9);
-  unsigned long value = _RGB($5,$7,$9);
-  if (! set_vset(psObj, $3, value)) { psObj->psVset->para=$3; psObj->psVset->value=value; vnext(psObj); }
-}
+set:  SET SPARA NUMBER SEMICOLON { fprintf(stderr, "Received %s: %s, %i\n",$1,$2,$3); if (! set_vset(psObj, $2, $3)) { psObj->psVset->para=$2; psObj->psVset->value=$3; vnext(psObj); } }
+|     set SET SPARA NUMBER SEMICOLON { fprintf(stderr, "Received %s: %s, %i\n",$2,$3,$4); if (! set_vset(psObj, $3, $4)) { psObj->psVset->para=$3; psObj->psVset->value=$4; vnext(psObj); } }
 ;
-
-ctrl: CTRL { fprintf(stderr, "Received control: %s\n",$1);
-   if (! strncmp($1,"list",strlen("list"))) { olist(); }
-   else if (! strncmp($1,"init",strlen("init"))) { ofree(); oinit(); onext(); }
-   else if (! strncmp($1,"clear",strlen("clear"))) { yyclearin; }
-   else if (! strncmp($1,"show",strlen("show"))) { if (fork() == 0) xshow(0, NULL); }
-   else if (( !strncmp($1,"quit",strlen("quit"))) || ( !strncmp($1,"exit",strlen("exit")))) { quit(); } }
-
+ctrl: CTRL SEMICOLON { fprintf(stderr, "Received control: %s\n",$1); ctrl($1,NULL); }
+|
+CTRL CPARA SEMICOLON { fprintf (stderr, "Received control: %s %s\n",$1,$2); ctrl($1,$2);}
 
 %%
 
-void yyerror(const char* s) {
+
+ void yyerror(const char* s) {
   fprintf(stderr, "[%s] Error: %s in line %d\n", PACKAGE_STRING, s, s_line-1);
 }
 
@@ -114,6 +100,8 @@ int main(int argc, char *argv[])
 {
     openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog (LOG_NOTICE, "Program started by User %d", getuid ());
+    c_pid = 0;
+    iState = 0;
     
     oinit();
     onext();
@@ -134,6 +122,8 @@ int main(int argc, char *argv[])
 }
 
 
+
+
 void oinit()
 {
   syslog(LOG_NOTICE, "Initialising memory for object, starting node\n");
@@ -150,7 +140,7 @@ void oinit()
 
   psObjIni->psVsetIni=NULL;
   psObjIni->psVset=NULL;
-    psObjIni->psComIni=NULL;
+  psObjIni->psComIni=NULL;
   psObjIni->psCom=NULL;
     
   psObjIni->next=psObjIni;
@@ -199,7 +189,7 @@ void olist()
       sObject* next = act->next;
 
       printf("obj: [source line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
-      vlist(act)
+      vlist(act);
       clist(act);
       act=next;
     }
@@ -438,6 +428,28 @@ void plist(int i, ...)
   va_end(args);
 }
 
+void v_show()
+{
+  if (c_pid==0)
+    {
+      c_pid = fork();
+      if (c_pid < 0 )
+	{ fprintf(stderr,"fork() failed: %i\n", c_pid); c_pid = 0; }
+      else if (c_pid == 0) xshow(0, NULL);
+    }
+  else
+    {
+        fprintf(stderr, "Client already running: c_pid: %i\n",c_pid);
+    }
+}
+
+
+void v_close()
+{
+  kill(c_pid, SIGTERM);
+  c_pid=0;
+}
+
 
 void load_file(int argc, char *argv[])
 {
@@ -469,14 +481,49 @@ void load_file(int argc, char *argv[])
 }
 
 
-unsigned long _RGB(int r,int g, int b)
+void ctrl(char* cmd, char* para)
 {
-    return b + (g<<8) + (r<<16);
+  if(! para)
+    {
+      if (! strncmp(cmd,"list",strlen("list")))
+	{ olist(); }
+      else if (! strncmp(cmd,"init",strlen("init")))
+	{ ofree(); oinit(); onext(); }
+      else if (! strncmp(cmd,"clear",strlen("clear")))
+	{ yyclearin; }
+      else if (! strncmp(cmd,"show",strlen("show")))
+	{ v_show(); }
+      else if (! strncmp(cmd,"close",strlen("close")))
+	{ v_close(); }
+      else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
+	{ quit(); } 
+    }
+  else
+    {
+      if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"next",strlen("next")) )
+	{ if (iState < 10)
+	    iState++;
+	  else
+	    iState = 0; 
+	}
+      if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"prev",strlen("prev")) )
+	{ if (iState > 0)
+	    iState--;
+	  else iState = 10;
+
+	}
+      fprintf(stderr,"Running state: %i\n", iState);
+    }
 }
 
 
 void quit()
  {
+   if(c_pid)
+     v_close();
    ofree();
    exit(EXIT_SUCCESS);
  }
+
+
+

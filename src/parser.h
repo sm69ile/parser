@@ -8,7 +8,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <signal.h>
 #include "../config.h"
+
+#define MAX_STATE 10
 
 typedef struct Vset
 {
@@ -43,8 +46,10 @@ typedef struct Object
   struct Object *next;
 }sObject;
 
-
 sObject *psObjIni, *psObj;
+pid_t c_pid;
+int iState;
+
 
 
 int yy_scan_string(char*);
@@ -69,11 +74,12 @@ void clist(sObject *);
 void cfree(sObject *);
 void plist(int, ... );
 
+void v_show();
+void v_close();
+
 void xshow(int, char **);
 void load_file(int, char **);
-
-unsigned long _RGB(int,int, int);
-
+void ctrl(char*, char*);
 void quit();
 
 
