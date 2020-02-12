@@ -8,16 +8,20 @@ Viewer.box.object_label*background:	grey14
 Viewer.box.object_label*foreground:	white
 Viewer.box.color_label*background:	grey14
 Viewer.box.color_label*foreground:	white
+Viewer.box.prev_object_command*background:	darkgray
+Viewer.box.prev_object_command*foreground:	black
+Viewer.box.next_object_command*background:	darkgray
+Viewer.box.next_object_command*foreground:	black
+Viewer.box.prev_state_command*background:	darkgray
+Viewer.box.prev_state_command*foreground:	black
+Viewer.box.next_state_command*background:	darkgray
+Viewer.box.next_state_command*foreground:	black
+Viewer.box.curr_object_command*background:	darkgray
+Viewer.box.curr_object_command*foreground:	black
 Viewer.box.quit_command*background:	darkgray
 Viewer.box.quit_command*foreground:	black
 !Viewer.box.save_command.background:	darkgray
 !Viewer.box.save_command.foreground:	black
-Viewer.box.state_command*background:	darkgray
-Viewer.box.state_command*foreground:	black
-Viewer.box.next_command*background:	darkgray
-Viewer.box.next_command*foreground:	black
-Viewer.box.prev_command*background:	darkgray
-Viewer.box.prev_command*foreground:	black
-!Viewer*text_area.y:	400
+
 
 

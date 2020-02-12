@@ -521,8 +521,7 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
   XtDestroyWidget(psV_c->toplevel);
   free(psV_c->psDraw_c);
   free(psV_c);
-
-  return;
+   
 };
 
 
