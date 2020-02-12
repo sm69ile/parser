@@ -3,7 +3,7 @@ BUILT_SOURCES = y.tab.h lex.yy.c
 
 bin_PROGRAMS = parser
 parser_SOURCES = y.tab.c lex.yy.c viewer.c
-parser_CFLAGS = -Wall -g -O2 -lX11 -lXt -lXaw
+parser_CFLAGS = -Wall -g -O2 -lX11 -lXt -lXaw -lpthread
 
 y.tab.h:	parser.y
 	$(YACC) $(AM_YFLAGS) parser.y

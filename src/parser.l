@@ -45,13 +45,13 @@ bool INTERACTIV = true;
 
 [ \t ]+                         { show_buffer(yytext); syslog(LOG_NOTICE, "Ignoring whitespace\n"); } /* ignore whitespace */
 #.*$                            { show_buffer(yytext); syslog(LOG_NOTICE, "Comment found\n"); } /* ignore comment */
-"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"moveto"|"floodfill"|"MAX" { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++); return CNAME; }
+"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"moveto"|"floodfill"|"MAX"|"REM" { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++); return CNAME; }
 
 "set"                           { show_buffer(yytext); yylval.set = strdup(yytext); syslog(LOG_NOTICE, "Returning SET, buffer[%i]\n", nbuf++); return SET; }
 "v_background"|"v_foreground"|"v_line_width"            { show_buffer(yytext); yylval.spara = strdup(yytext); syslog(LOG_NOTICE, "Returning SPARA, buffer[%i]\n", nbuf++); return SPARA; }
 
-"exit"|"quit"|"list"|"init"|"clear"|"show"|"close"|"state"                  { show_buffer(yytext); yylval.ctrl = strdup(yytext); syslog(LOG_NOTICE, "Control command received\n"); return CTRL; } 
-"colors"|"next"|"prev"                        { show_buffer(yytext); yylval.cpara = strdup(yytext); syslog(LOG_NOTICE, "Returning CPARA, buffer[%i]\n", nbuf++); return CPARA; }
+"exit"|"quit"|"list"|"init"|"clear"|"show"|"close"|"next"|"prev"|"nobj"|"pobj"|"nstate"|"pstate"|"sleep"                  { show_buffer(yytext); yylval.ctrl = strdup(yytext); syslog(LOG_NOTICE, "Control command received: %s\n",yytext); return CTRL; } 
+"object"|"state"|"act"|"all"                        { show_buffer(yytext); yylval.cpara = strdup(yytext); syslog(LOG_NOTICE, "Returning CPARA, buffer[%i]\n", nbuf++); return CPARA; }
 [A-Za-z]+                       { show_buffer(yytext); yylval.oname = strdup(yytext); syslog(LOG_NOTICE, "Returning ONAME, buffer[%i]\n", nbuf++); return ONAME; }
 [0-9]+                          { show_buffer(yytext); yylval.integer=atoi(yytext); syslog(LOG_NOTICE, "Returning NUMBER, buffer[%i]\n", nbuf++); return NUMBER; }
 [0-9]+\.?|[0-9]*\.[0-9]+        { show_buffer(yytext); sscanf(yytext,"%lf",&yylval.real); syslog(LOG_NOTICE, "Returning REAL, buffer[%i]\n", nbuf++); return REAL; }

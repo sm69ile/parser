@@ -8,136 +8,159 @@ void xshow(int argc, char **argv)
   sViewer_container *psV_c;
   Arg wargs[10];
   int n;
-  XtAppContext app_context;
-  
-  void sig_handler(int signo)
-  {
-    if (signo == SIGTERM)
-      {
-	v_quit(NULL, NULL,(XtPointer) psV_c);
-      }
-  }
-  
-  signal(SIGTERM, sig_handler);
+    
+  fprintf(stderr,"\t-> Thread with id: %ld, internal id (iThr): %i started\n", pthread_self(), iThr);
 
-  
   if (!(psV_c = (sViewer_container*) malloc(sizeof(sViewer_container))))
-    quit();
-
-  //Global
-  psV_c->psObjIni = psObjIni;  
-  //
-
-  psV_c->toplevel = XtVaAppInitialize(&app_context, "Viewer", NULL, 0, &argc, argv, NULL, NULL);
-
-  psV_c->box = XtVaCreateManagedWidget("box", boxWidgetClass, psV_c->toplevel, NULL);
-  n=0;
-  XtSetArg(wargs[n],XtNheight,D_WIN_Y_SIZE+C_WIN_Y_SIZE+50); n++;
-  XtSetArg(wargs[n],XtNwidth,D_WIN_X_SIZE+C_WIN_X_SIZE+50); n++;
-  XtSetValues(psV_c->box, wargs, n);
-  
-  psV_c->draw_shell = XtVaCreateManagedWidget("draw_shell", coreWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n],XtNheight,D_WIN_Y_SIZE); n++;
-  XtSetArg(wargs[n],XtNwidth,D_WIN_X_SIZE); n++;
-  XtSetValues(psV_c->draw_shell, wargs, n);
-
-  psV_c->color_shell = XtVaCreateManagedWidget("color_shell", coreWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n],XtNheight,C_WIN_Y_SIZE); n++;
-  XtSetArg(wargs[n],XtNwidth,C_WIN_X_SIZE); n++;
-  XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
-  XtSetValues(psV_c->color_shell, wargs, n);
-
-  psV_c->object_label = XtVaCreateManagedWidget("object_label",labelWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
-  XtSetArg(wargs[n], XtNborderWidth, 0); n++;
-  XtSetArg(wargs[n], XtNlabel, O_LABEL_DEFAULT); n++; 
-  XtSetValues(psV_c->object_label, wargs, n);
-
-  psV_c->color_label = XtVaCreateManagedWidget("color_label",labelWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  //XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
-  XtSetArg(wargs[n], XtNborderWidth, 0); n++;
-  XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
-  XtSetArg(wargs[n], XtNlabel, C_LABEL_DEFAULT); n++; 
-  XtSetValues(psV_c->color_label, wargs, n);
-
-  psV_c->prev_command = XtVaCreateManagedWidget("prev_command", commandWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
-  XtSetArg(wargs[n], XtNlabel, LABEL_PREV_COMMAND); n++;
-  XtSetValues(psV_c->prev_command, wargs, n);
-  
-  psV_c->next_command = XtVaCreateManagedWidget("next_command", commandWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
-  XtSetArg(wargs[n], XtNlabel, LABEL_NEXT_COMMAND); n++;
-  XtSetValues(psV_c->next_command, wargs, n);
-
-  psV_c->state_command = XtVaCreateManagedWidget("state_command", commandWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
-  XtSetArg(wargs[n], XtNlabel, LABEL_STATE_COMMAND); n++;
-  XtSetValues(psV_c->state_command, wargs, n);
-  n=0;
-
-  psV_c->quit_command = XtVaCreateManagedWidget("quit_command", commandWidgetClass, psV_c->box, NULL);
-  n=0;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
-  XtSetArg(wargs[n], XtNlabel, LABEL_QUIT_COMMAND); n++;
-  XtSetValues(psV_c->quit_command, wargs, n);
-
-
-  if (!(psV_c->psDraw_c = (sDraw_container*) malloc(sizeof(sDraw_container))))
-     {  exit(EXIT_FAILURE); }
+    {
+      fprintf(stderr, "malloc() failed: sViewer_container*\n");
+      return; //pthread closed
+    }
   else
     {
-      v_get_draw_c(psV_c->psDraw_c,
-		   psV_c->draw_shell,
-		   (Display *) XtDisplay(psV_c->draw_shell),
-		   XtWindow(psV_c->draw_shell)
-		   );
+      psV_c-> v_Pthread = pthread_self();
+      psV_c->v_iThr= iThr;
+      fprintf(stderr,"Stored Thread id: %ld, internal id (iThr): %i in memory\n", psV_c->v_Pthread, psV_c->v_iThr);
+
+      //Global
+      psV_c->psObjIni = psObjIni;  
+      //
+
+      psV_c->toplevel = XtVaAppInitialize(&psV_c->app_context, "Viewer", NULL, 0, &argc, argv, NULL, NULL);
+
+      psV_c->box = XtVaCreateManagedWidget("box", boxWidgetClass, psV_c->toplevel, NULL);
+      n=0;
+      XtSetArg(wargs[n],XtNheight,D_WIN_Y_SIZE+C_WIN_Y_SIZE+50); n++;
+      XtSetArg(wargs[n],XtNwidth,D_WIN_X_SIZE+C_WIN_X_SIZE+50); n++;
+      XtSetValues(psV_c->box, wargs, n);
+      
+      psV_c->draw_shell = XtVaCreateManagedWidget("draw_shell", coreWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n],XtNheight,D_WIN_Y_SIZE); n++;
+      XtSetArg(wargs[n],XtNwidth,D_WIN_X_SIZE); n++;
+      XtSetValues(psV_c->draw_shell, wargs, n);
+      
+      psV_c->color_shell = XtVaCreateManagedWidget("color_shell", coreWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n],XtNheight,C_WIN_Y_SIZE); n++;
+      XtSetArg(wargs[n],XtNwidth,C_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
+      XtSetValues(psV_c->color_shell, wargs, n);
+      
+      psV_c->object_label = XtVaCreateManagedWidget("object_label",labelWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNborderWidth, 0); n++;
+      XtSetArg(wargs[n], XtNlabel, O_LABEL_DEFAULT); n++; 
+      XtSetValues(psV_c->object_label, wargs, n);
+      
+      psV_c->color_label = XtVaCreateManagedWidget("color_label",labelWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNborderWidth, 0); n++;
+      XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNlabel, C_LABEL_DEFAULT); n++; 
+      XtSetValues(psV_c->color_label, wargs, n);
+      
+      psV_c->prev_object_command = XtVaCreateManagedWidget("prev_object_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_PREV_OBJECT_COMMAND); n++;
+      XtSetValues(psV_c->prev_object_command, wargs, n);
+      
+      psV_c->next_object_command = XtVaCreateManagedWidget("next_object_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_NEXT_OBJECT_COMMAND); n++;
+      XtSetValues(psV_c->next_object_command, wargs, n);
+      
+      psV_c->prev_state_command = XtVaCreateManagedWidget("prev_state_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_PREV_STATE_COMMAND); n++;
+      XtSetValues(psV_c->prev_state_command, wargs, n);
+      n=0;
+
+      psV_c->next_state_command = XtVaCreateManagedWidget("next_state_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_NEXT_STATE_COMMAND); n++;
+      XtSetValues(psV_c->next_state_command, wargs, n);
+      n=0;
+
+      psV_c->curr_object_command = XtVaCreateManagedWidget("curr_object_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_CURR_COMMAND); n++;
+      XtSetValues(psV_c->curr_object_command, wargs, n);
+      n=0;
+
+      psV_c->quit_command = XtVaCreateManagedWidget("quit_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_QUIT_COMMAND); n++;
+      XtSetValues(psV_c->quit_command, wargs, n);
+      
+      if (!(psV_c->psDraw_c = (sDraw_container*) malloc(sizeof(sDraw_container))))
+	{
+	  fprintf(stderr, "malloc() failed: sDraw_container*\n");
+	  return; //pthread closed
+	}
+      else
+	{
+	  if(!(v_get_draw_c(psV_c->psDraw_c,
+		       psV_c->draw_shell,
+		       XtDisplay(psV_c->draw_shell),
+		       XtWindow(psV_c->draw_shell)
+			    ))
+	     ) { return; } //pthread closed 
+        }
+      
+      // XtAddEventHandler(psV_c->toplevel, EnterWindowMask, FALSE, (XtEventHandler) v_event_handler, (XtPointer) psV_c);
+
+      XtAddEventHandler(psV_c->draw_shell, ExposureMask, FALSE, (XtEventHandler) v_event_draw, (XtPointer) psV_c);
+
+      XtAddEventHandler(psV_c->color_shell, ExposureMask, FALSE, (XtEventHandler) v_event_color, (XtPointer) psV_c);
+      XtAddCallback(psV_c->next_object_command, XtNcallback, v_next_object, (XtPointer) psV_c);
+      XtAddCallback(psV_c->prev_object_command, XtNcallback, v_prev_object, (XtPointer) psV_c);
+      XtAddCallback(psV_c->next_state_command, XtNcallback, v_next_state, (XtPointer) psV_c);
+      XtAddCallback(psV_c->prev_state_command, XtNcallback, v_prev_state, (XtPointer) psV_c);
+      XtAddCallback(psV_c->curr_object_command, XtNcallback, v_curr_object, (XtPointer) psV_c);
+
+
+      XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
+      
+      // XtAppAddTimeOut(psV_c->app_context,1000, v_timer_draw, (XtPointer) psV_c);
+      
+      v_update_layout(psV_c);
+      
+      XtRealizeWidget(psV_c->toplevel);
+      XtAppMainLoop(psV_c->app_context);
     }
-
-  XtAddEventHandler(psV_c->draw_shell, ExposureMask, FALSE, (XtEventHandler) v_ev_draw, (XtPointer) psV_c);
-    XtAddEventHandler(psV_c->color_shell, ExposureMask, FALSE, (XtEventHandler) v_ev_color, (XtPointer) psV_c);
-  XtAddCallback(psV_c->next_command, XtNcallback, v_next, (XtPointer) psV_c);
-  XtAddCallback(psV_c->prev_command, XtNcallback, v_prev, (XtPointer) psV_c);
-  XtAddCallback(psV_c->state_command, XtNcallback, v_state, (XtPointer) psV_c);
-  XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
-
-  v_update_layout(psV_c);
-  
-  XtRealizeWidget(psV_c->toplevel);
-
-  XtAppMainLoop(app_context);
 }
 
-
-void v_get_draw_c(sDraw_container* act, Widget w, Display *display, Window window)
+int v_get_draw_c(sDraw_container* act, Widget w, Display *display, Window window)
 {
-  act->obj_idx=1;
   act->last_x=0;
   act->last_y=0;
 
   if( DefaultVisual(display,0)->class != TrueColor)
     {
       free(act);
-      exit(EXIT_FAILURE);
+      return 0; 
     }
     
   act->colormap = XCopyColormapAndFree(display,DefaultColormap(display, 0));
   XInstallColormap(display,act->colormap);
 
-  static char *v_colors[] = { "black", "white", "green", "red", "lightblue", "blue", "orange", "yellow","grey","darkgrey"};
+  static char *v_colors[] = { "black", "white", "green", "red", "lightblue", "blue", "orange","magenta", "yellow","grey","darkgrey","grey14","cyan"};
 
   int clength = sizeof(v_colors)/sizeof(v_colors[0]);
     
@@ -147,17 +170,37 @@ void v_get_draw_c(sDraw_container* act, Widget w, Display *display, Window windo
       act->ctable[i].name=v_colors[i];
       act->ctable[i].value=get_color_by_name(display, act->colormap, v_colors[i]);
     }
+
+  return 1;
 }
   
 
-void v_ev_draw(Widget w, XtPointer client_data, XExposeEvent* ev)
+void v_event_handler(Widget w, XtPointer client_data, XEvent* ev, Boolean continue_to_dispatch)
+{
+
+  sViewer_container *psV_c = (sViewer_container*) client_data; 
+  if(ev->type == EnterNotify){ v_draw(psV_c);}
+}
+
+void v_event_draw(Widget w, XtPointer client_data, XExposeEvent* ev)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data; 
+
   if(!ev->count)
     v_draw(psV_c);
 }
 
-void v_ev_color(Widget w, XtPointer client_data, XExposeEvent* ev)
+void v_timer_draw(XtPointer client_data, XtIntervalId *id)
+{
+  sViewer_container *psV_c = (sViewer_container*) client_data; 
+
+  v_update_layout(psV_c);
+  v_draw(psV_c);
+
+  XtAppAddTimeOut(psV_c->app_context, 1000, v_timer_draw, (XtPointer) psV_c);
+}
+
+void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data; 
 
@@ -175,7 +218,7 @@ void v_ev_color(Widget w, XtPointer client_data, XExposeEvent* ev)
       XClearWindow(display, window);
 
       int y=10;
-      for(int i=0; i<15; i++)
+      for(int i=0; i<20; i++)
 	{
 	  values.line_width = 20;
 	  values.foreground = psV_c->psDraw_c->ctable[i].value;
@@ -188,23 +231,49 @@ void v_ev_color(Widget w, XtPointer client_data, XExposeEvent* ev)
 		    C_WIN_X_SIZE-10,
 		    y
 		);
-	  XFreeGC(display, gc);
 
-	  int fno_length = snprintf( NULL, 0, "%i", psV_c->psDraw_c->ctable[i].key);
-	  fno = malloc( fno_length + 1 );
-	  snprintf( fno, fno_length + 1, "%i", psV_c->psDraw_c->ctable[i].key);
-	 
-	  values.foreground = 0;
-	  values.background = 1;
-	  gc = XCreateGC(display, window, GCForeground|GCBackground, &values);
+	  int fno_length = snprintf( NULL, 0, "%02d", psV_c->psDraw_c->ctable[i].key);
 
-	  XDrawString(display, window, gc, 10, y+3, fno, 1);
+	  if(!(fno = (char*)malloc((fno_length+1)*sizeof(char))))
+	    fprintf(stderr, "malloc() failed: char*\n");
+	  else
+	    {
+	      snprintf( fno, fno_length + 1, "%02d", psV_c->psDraw_c->ctable[i].key);
+	      
+	      values.foreground = 0;
+	      values.background = 1;
+	      gc = XCreateGC(display, window, GCForeground|GCBackground, &values);
+	      
+	      XDrawString(display, window, gc, 10, y+3, fno, 2);
 	  
-	  free(fno);
+	      free(fno);
+	    }
 	  XFreeGC(display, gc);
 	}
     }
 }
+
+
+void v_set_window_attributes(Display* display, Drawable window)
+{
+
+  XWindowAttributes g_attributes;
+
+  XGetWindowAttributes(display, window, &g_attributes);
+
+  if(g_attributes.backing_store == 0)
+    {
+      XSetWindowAttributes s_attributes;
+      unsigned long valuemask=CWBackingStore;
+
+      s_attributes.backing_store=Always;
+      XChangeWindowAttributes(display, window, valuemask, &s_attributes);
+
+      XGetWindowAttributes(display, window, &g_attributes);
+      fprintf(stderr,"Backing_store set to: %i\n", g_attributes.backing_store);
+    }
+}
+
 
 void v_draw(XtPointer client_data)
 {
@@ -218,11 +287,13 @@ void v_draw(XtPointer client_data)
   display = XtDisplay(psV_c->draw_shell);
   window = XtWindow(psV_c->draw_shell);
   
-  sObject* oact = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, psV_c->psDraw_c->obj_idx);
-  fprintf(stderr,"Displaying symbols in running state: %i\n", iState);
-  
-  fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", psV_c->psDraw_c->obj_idx, oact->name);
+  v_set_window_attributes(display, window);
+        
+  sObject* oact = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx);
 
+  fprintf(stderr,"Displaying symbols in running state: %i\n", iState_idx);
+  fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
+  
   sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
   if (sact) { values.foreground = psV_c->psDraw_c->ctable[sact->value].value; } else { values.foreground = 0; }  
 
@@ -237,7 +308,6 @@ void v_draw(XtPointer client_data)
 		 GCBackground |
 		 GCLineWidth, &values);
 
-
   XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
   fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
@@ -248,11 +318,11 @@ void v_draw(XtPointer client_data)
       sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
       if(cact != NULL)
 	{
-	  printf("\tCommand [%d] %s: ", cact->key, cact->name);
+	  fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
 
 	  for(int k=0; k<cact->count_para;k++)
-	    printf("%d ", cact->para[k]);
-	  printf("\n");
+	    fprintf(stderr,"%d ", cact->para[k]);
+	  fprintf(stderr,"\n");
 	  
 	  if (!strcmp(cact->name, "line") && cact->count_para == 4) 
 	    {
@@ -315,7 +385,6 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=cact->para[0];
 	      psV_c->psDraw_c->last_y=cact->para[1];
 
-	      
 	    } else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) 
 	    {
 	      XDrawArc(display, window, gc,
@@ -335,6 +404,15 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=cact->para[0];
 	      psV_c->psDraw_c->last_y=cact->para[1];
 
+	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 2) 
+	    {
+
+	      XDrawString(display, window, gc,
+			  cact->para[0],
+			  cact->para[1],
+			  "REM", 3
+			  );
+
 	    } else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
 	    {
 	      fops=0;
@@ -350,39 +428,45 @@ void v_draw(XtPointer client_data)
 	    }
 	}
     }
-  printf("]\n");
+  fprintf(stderr,"]\n");
   XFreeGC(display, gc);
 }
 
 
-void v_next(Widget w, XtPointer client_data, XtPointer call_data)
+void v_prev_object(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
-  
-  if(psV_c->psDraw_c->obj_idx < psV_c->psObjIni->next->key)
-    psV_c->psDraw_c->obj_idx++;
+
+  if(iObj_idx > 1)
+    iObj_idx--;
   else
-    psV_c->psDraw_c->obj_idx = 1;
-  
+    iObj_idx = psV_c->psObjIni->next->key;
 
   v_update_layout(psV_c);
   v_draw(psV_c);
 }
 
-
-void v_prev(Widget w, XtPointer client_data, XtPointer call_data)
+void v_next_object(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
-
-  if(psV_c->psDraw_c->obj_idx > 2)
-    psV_c->psDraw_c->obj_idx--;
-  else
-    psV_c->psDraw_c->obj_idx = psV_c->psObjIni->next->key;
-
   
+  if(iObj_idx < psV_c->psObjIni->next->key)
+    iObj_idx++;
+  else
+    iObj_idx=1;
+
   v_update_layout(psV_c);
   v_draw(psV_c);
 }
+
+void v_curr_object(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  sViewer_container *psV_c = (sViewer_container*) client_data;
+
+  v_update_layout(psV_c);
+  v_draw(psV_c);
+}
+
 
 
 void v_update_layout(XtPointer client_data) 
@@ -390,31 +474,79 @@ void v_update_layout(XtPointer client_data)
   sViewer_container *psV_c = (sViewer_container*) client_data;
   Arg wargs[10];
   int n=0;
-  XtSetArg(wargs[n], XtNlabel, get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, psV_c->psDraw_c->obj_idx)->name); n++;
+  char *label, *buf;
+  size_t label_length, buf_length;
+
+  label_length = strlen(get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx)->name) + 2*strlen("XX")+strlen(" [/]");
+
+  if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
+    fprintf(stderr, "malloc() failed: char*\n");
+  else
+    {	    
+
+      bzero(label, label_length);
+      strcat(label,get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx)->name);
+
+      buf_length = strlen(" [XX/");
+      if ((buf = (char*)malloc((buf_length)*sizeof(char))))
+	  {
+	    snprintf(buf, buf_length," [%i/", iState_idx);
+	    strcat(label, buf);
+	    bzero(buf,buf_length);
+	    snprintf(buf, buf_length,"%i]", MAX_STATE);
+	    strcat(label,buf);
+	    free(buf);
+	  }
+    }
+  XtSetArg(wargs[n], XtNlabel, label); n++;
   XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
   XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
   XtSetValues(psV_c->object_label, wargs, n);
+  free(label);
 }
+
+
 
 void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
 {
-
   sViewer_container *psV_c = (sViewer_container*) client_data;
 
+  pthread_t v_Pthread =psV_c->v_Pthread;
+  int v_iThr = psV_c->v_iThr;
+
+  fprintf(stderr,"Need to close Thread id: %ld, internal id (iThr): %i\n", v_Pthread, v_iThr);  
+
+  XFreeColormap(XtDisplay(psV_c->draw_shell),psV_c->psDraw_c->colormap);
+
+  XtDestroyWidget(psV_c->toplevel);
   free(psV_c->psDraw_c);
   free(psV_c);
-  quit();
+
+  return;
 };
 
 
-void v_state(Widget w, XtPointer client_data, XtPointer call_data)
+void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  if(iState< 10)
-    iState++;
+  if(iState_idx > 0)
+    iState_idx--;
   else
-    iState=0;
+    iState_idx=MAX_STATE;
+
+  v_update_layout(psV_c);
+  v_draw(psV_c);
+}
+
+void v_next_state(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  sViewer_container *psV_c = (sViewer_container*) client_data;
+  
+  if(iState_idx < MAX_STATE)
+    iState_idx++;
+  else
+    iState_idx=0;
 
   v_update_layout(psV_c);
   v_draw(psV_c);
@@ -431,60 +563,12 @@ Pixel get_color_by_name(Display* display, Colormap cm, char* cname)
 }
 
 
-sObject* get_object_by_key(sObject* first, sObject* last, int key)
-{
-  sObject* act = last;
-  do
-    {
-      sObject* next = act->next;
-      if(act->key == key)
-	return act;
-      act=next;
-    }
-  while(act != first);
-
-  return NULL;
-}
-
-
-sCommand* get_command_by_key(sCommand* first, sCommand* last, int key)
-{
-  sCommand* act = last;
-  do
-    {
-      sCommand* next = act->next;
-      if(act->key == key)
-	return act;
-      act=next;
-    }
-  while(act != first);
-
-  return NULL;
-}
-
-
-sVset* get_setting_by_name(sVset* first, sVset* last, const char* para)
-{
-  sVset* act = last;
-  do
-    {
-      sVset* next = act->next;
-      if (!strcmp(act->para, para))
-	  return act;
-      act=next;
-    }
-  while(act != first);
-
-  return NULL;
-}
-
-
 void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display* display, Drawable window , GC gc)
 {
   if (cact->para[1] == 6)
     {
       int y = mact->para[1];
-      for(int k=0; k < iState && k < cact->para[3]; k++)
+      for(int k=0; k < iState_idx && k < cact->para[3]; k++)
 	{
 	  y+=cact->para[2]; 
 	  XDrawLine(display, window, gc,
@@ -509,7 +593,7 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
   if (cact->para[1] == 12)
     {
       int y = mact->para[1];
-      for(int k=0; k < iState && k < cact->para[3]; k++)
+      for(int k=0; k < iState_idx && k < cact->para[3]; k++)
 	{
 	  y-=cact->para[2]; 
 	  XDrawLine(display, window, gc,
@@ -534,7 +618,7 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
   if (cact->para[1] == 3)
     {
       int x = mact->para[0];
-      for(int k=0; k < iState && k < cact->para[3]; k++)
+      for(int k=0; k < iState_idx && k < cact->para[3]; k++)
 	{
 	  x+=cact->para[2]; 
 	  XDrawLine(display, window, gc,
@@ -561,7 +645,7 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
   if (cact->para[1] == 9)
     {
       int x = mact->para[0];
-      for(int k=0; k < iState && k < cact->para[3]; k++)
+      for(int k=0; k < iState_idx && k < cact->para[3]; k++)
 	{
 	  x-=cact->para[2]; 
 	  XDrawLine(display, window, gc,
@@ -623,10 +707,3 @@ XImage* floodfill(XImage* image, int x, int y, Pixel fcp, Pixel bcp, int max_x, 
 
   return image;
 };
-
-
- 
-
-
-
-

@@ -27,10 +27,13 @@
 #define O_LABEL_DEFAULT "default"
 #define C_LABEL_DEFAULT "Colormap"
 
-#define LABEL_NEXT_COMMAND "Next"
-#define LABEL_PREV_COMMAND "Prev"
-#define LABEL_STATE_COMMAND "State +"
+#define LABEL_PREV_OBJECT_COMMAND "< Object"
+#define LABEL_NEXT_OBJECT_COMMAND "Object >"
+#define LABEL_PREV_STATE_COMMAND "< State"
+#define LABEL_NEXT_STATE_COMMAND "State >"
+#define LABEL_CURR_COMMAND "--@--"
 #define LABEL_QUIT_COMMAND "Close"
+
 
 typedef struct Colortable{
   int key;
@@ -39,7 +42,7 @@ typedef struct Colortable{
 }sColortable;
 
 typedef struct Draw_container{
-  int obj_idx;
+  // int obj_idx;
   int last_x;
   int last_y;
   Colormap colormap;
@@ -48,51 +51,50 @@ typedef struct Draw_container{
 }sDraw_container;
   
 typedef struct Viewer_container{
+  XtAppContext app_context;
   Widget toplevel;
   Widget box;
   Widget draw_shell;
   Widget color_shell;
   Widget object_label; 
   Widget color_label;
-  Widget next_command;
-  Widget prev_command;
-  Widget state_command;
+  Widget prev_object_command;
+  Widget next_object_command;
+  Widget prev_state_command;
+  Widget next_state_command;
+  Widget curr_object_command;
   Widget quit_command;
+
+  int v_iThr;
+  pthread_t v_Pthread;
   
   sDraw_container *psDraw_c;
   sObject *psObjIni;
   
-  /*
-  Widget curr_command;
-  Widget state_command;
-  Widget rescan_command;
-  Widget save_command;
-  */
-
 }sViewer_container;
 
-extern void quit();
-extern void olist();
-extern int iState;
-
-void v_ev_draw(Widget, XtPointer, XExposeEvent*);
-void v_ev_color(Widget, XtPointer, XExposeEvent*);
+void v_event_handler(Widget, XtPointer, XEvent*, Boolean);
+void v_event_draw(Widget, XtPointer, XExposeEvent*);
+void v_event_color(Widget, XtPointer, XExposeEvent*);
+void v_timer_draw(XtPointer, XtIntervalId *);
+//void v_ev_draw_t(Widget, XtPointer, XEvent*);
 void v_draw(XtPointer);
-void v_next(Widget, XtPointer, XtPointer);
-void v_prev(Widget, XtPointer, XtPointer);
-void v_update_layout(XtPointer); 
-void v_state(Widget, XtPointer, XtPointer);
+void v_next_object(Widget, XtPointer, XtPointer);
+void v_prev_object(Widget, XtPointer, XtPointer);
+void v_update_layout(XtPointer);
+void v_set_window_attributes(Display*, Drawable);
+
+void v_prev_state(Widget, XtPointer, XtPointer);
+void v_next_state(Widget, XtPointer, XtPointer);
+void v_curr_object(Widget, XtPointer, XtPointer);
 void v_quit(Widget, XtPointer, XtPointer);
 
-void v_get_draw_c(sDraw_container*, Widget, Display*, Window);
+int v_get_draw_c(sDraw_container*, Widget, Display*, Window);
 
 void v_max_impl(sCommand*, sCommand*, int, Pixel, Display*, Drawable, GC);
 void v_floodfill(Display*, Drawable, GC, int, int, unsigned long);
 XImage* floodfill(XImage*, int, int, Pixel, Pixel, int, int);
 
-unsigned long get_color_by_name(Display*, Colormap, char*);
-sObject *get_object_by_key(sObject*, sObject*, int);
-sCommand *get_command_by_key(sCommand*, sCommand*, int);
-sVset *get_setting_by_name(sVset*, sVset*, const char*);
+Pixel get_color_by_name(Display*, Colormap, char*);
 
 #endif

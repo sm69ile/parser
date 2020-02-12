@@ -19,7 +19,7 @@
     char* set; /* set */
     char* spara;
     char* ctrl; /* exit, quit, list ... */
-    char* cpara; /*colors, ... */
+    char* cpara; /*all, next, prev, ... */
     int integer;
     char character;
 }
@@ -81,48 +81,47 @@ plist: NUMBER { plist(1,$1); }
 |      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(5,$1,$3,$5,$7,$9); }
 ;
 
-set:  SET SPARA NUMBER SEMICOLON { fprintf(stderr, "Received %s: %s, %i\n",$1,$2,$3); if (! set_vset(psObj, $2, $3)) { psObj->psVset->para=$2; psObj->psVset->value=$3; vnext(psObj); } }
-|     set SET SPARA NUMBER SEMICOLON { fprintf(stderr, "Received %s: %s, %i\n",$2,$3,$4); if (! set_vset(psObj, $3, $4)) { psObj->psVset->para=$3; psObj->psVset->value=$4; vnext(psObj); } }
+set:  SET SPARA NUMBER SEMICOLON { if (! set_vset(psObj, $2, $3)) { psObj->psVset->para=$2; psObj->psVset->value=$3; vnext(psObj); } }
+|     set SET SPARA NUMBER SEMICOLON { if (! set_vset(psObj, $3, $4)) { psObj->psVset->para=$3; psObj->psVset->value=$4; vnext(psObj); } }
 ;
-ctrl: CTRL SEMICOLON { fprintf(stderr, "Received control: %s\n",$1); ctrl($1,NULL); }
+ctrl: CTRL SEMICOLON { ctrl($1,NULL); }
 |
-CTRL CPARA SEMICOLON { fprintf (stderr, "Received control: %s %s\n",$1,$2); ctrl($1,$2);}
+CTRL CPARA SEMICOLON { ctrl($1,$2);}
 
 %%
-
-
  void yyerror(const char* s) {
-  fprintf(stderr, "[%s] Error: %s in line %d\n", PACKAGE_STRING, s, s_line-1);
+  printf("[%s] Error: %s in line %d\n", PACKAGE_STRING, s, s_line-1);
 }
 
 
 int main(int argc, char *argv[])
 {
-    openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
-    syslog (LOG_NOTICE, "Program started by User %d", getuid ());
-    c_pid = 0;
-    iState = 0;
-    
-    oinit();
-    onext();
-
-    printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);      
-    if (argc > 1) { load_file(argc, argv); }
-
-    printf("[%i] > ",s_line++);
-    yyin = stdin;
-    do { 
-      yyparse();
-    } while(!feof(yyin));
-        
-    closelog();
-    quit();
-    
-    return 0;
+  openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+  syslog (LOG_NOTICE, "Program started by User %d", getuid ());
+  
+  iState_idx = 0;
+  iObj_idx = 1;
+  iThr = 0;
+  
+  oinit();
+  onext();
+  
+  printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);      
+  
+   if (argc > 1)
+     { load_file(argc, argv); }
+   
+   printf("[%i] > ",s_line++);
+   yyin = stdin;
+   do { 
+     yyparse();
+   } while(!feof(yyin));
+   
+   closelog();
+   quit();
+   
+   return 0;
 }
-
-
-
 
 void oinit()
 {
@@ -178,6 +177,16 @@ void onext()
 }
 
 
+void olist_act()
+{
+  sObject* act = get_object_by_key(psObjIni, psObjIni->next, iObj_idx);
+  
+  printf("obj: [source line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
+  vlist(act);
+  clist(act);
+}
+
+
 void olist()
 {
   sObject* last = psObjIni->next;
@@ -214,6 +223,22 @@ void ofree()
   while(act != first);
   free(act->name);
   free(act);
+}
+
+
+sObject* get_object_by_key(sObject* first, sObject* last, int key)
+{
+  sObject* act = last;
+  do
+    {
+      sObject* next = act->next;
+      if(act->key == key)
+	return act;
+      act=next;
+    }
+  while(act != first);
+
+  return NULL;
 }
 
 /* vset block */
@@ -266,7 +291,7 @@ void vlist(sObject* psObj)
   do
     {
       sVset* next = act->next;
-      fprintf(stderr,"dpara: [source line: %d] [node %d] %s %lu\n", act->d_line, act->key, act->para, act->value);
+      printf("dpara: [source line: %d] [node %d] %s %lu\n", act->d_line, act->key, act->para, act->value);
       act=next;
     }
   while(act != first);
@@ -320,6 +345,21 @@ void vfree(sObject* psObj)
   while(act != first);
   free(act->para);
   free(act);
+}
+
+sVset* get_setting_by_name(sVset* first, sVset* last, const char* para)
+{
+  sVset* act = last;
+  do
+    {
+      sVset* next = act->next;
+      if (!strcmp(act->para, para))
+	  return act;
+      act=next;
+    }
+  while(act != first);
+
+  return NULL;
 }
 
 
@@ -376,16 +416,15 @@ void clist(sObject *psObj)
     {
       sCommand* next = act->next;
 
-      fprintf(stderr,"com: [source line: %d] [node %d] %s (args=%d) ", act->s_line, act->key, act->name, act->count_para);
+      printf("com: [source line: %d] [node %d] %s (args=%d) ", act->s_line, act->key, act->name, act->count_para);
       for(int i=0; i<act->count_para;i++)
-	fprintf(stderr,"%d ", act->para[i]);
-      fprintf(stderr,"\n");
+	printf("%d ", act->para[i]);
+      printf("\n");
 
       act=next;
     }
   while(act != first);
 }
-
 
 void cfree(sObject *psObj)
 {
@@ -407,6 +446,20 @@ void cfree(sObject *psObj)
   free(act);
 }
 
+sCommand* get_command_by_key(sCommand* first, sCommand* last, int key)
+{
+  sCommand* act = last;
+  do
+    {
+      sCommand* next = act->next;
+      if(act->key == key)
+	return act;
+      act=next;
+    }
+  while(act != first);
+
+  return NULL;
+}
 
 void plist(int i, ...)
 {
@@ -428,27 +481,24 @@ void plist(int i, ...)
   va_end(args);
 }
 
-void v_show()
+
+void v_create()
 {
-  if (c_pid==0)
-    {
-      c_pid = fork();
-      if (c_pid < 0 )
-	{ fprintf(stderr,"fork() failed: %i\n", c_pid); c_pid = 0; }
-      else if (c_pid == 0) xshow(0, NULL);
-    }
+  if (iThr < MAX_THREADS)
+  {
+    fprintf(stderr, "Starting thread %i of %i\n",iThr,MAX_THREADS);
+
+      if ( pthread_create(&v_thr[iThr], NULL, v_show, (void*) NULL) != 0)
+	{ fprintf (stderr, "Could not start thread, max %i, curr %i\n", MAX_THREADS, iThr); }
+      else
+      	iThr++;
+  }
   else
-    {
-        fprintf(stderr, "Client already running: c_pid: %i\n",c_pid);
+    { fprintf(stderr, "Max threads running: %i of %i, calling quit();\n", iThr,MAX_THREADS); quit();
     }
 }
 
-
-void v_close()
-{
-  kill(c_pid, SIGTERM);
-  c_pid=0;
-}
+void *v_show() { xshow(0, NULL); return NULL; }
 
 
 void load_file(int argc, char *argv[])
@@ -483,47 +533,92 @@ void load_file(int argc, char *argv[])
 
 void ctrl(char* cmd, char* para)
 {
+
   if(! para)
     {
-      if (! strncmp(cmd,"list",strlen("list")))
-	{ olist(); }
-      else if (! strncmp(cmd,"init",strlen("init")))
+      if (! strncmp(cmd,"init",strlen("init")))
 	{ ofree(); oinit(); onext(); }
-      else if (! strncmp(cmd,"clear",strlen("clear")))
+      else if (! strncmp(cmd,"list",strlen("list")))
+	{ olist(); }
+       else if (! strncmp(cmd,"clear",strlen("clear")))
 	{ yyclearin; }
-      else if (! strncmp(cmd,"show",strlen("show")))
-	{ v_show(); }
+       else if (! strncmp(cmd,"nobj",strlen("nobj")))
+	 { ctrl("next","object"); }
+       else if (! strncmp(cmd,"nstate",strlen("nstate")))
+	 { ctrl("next","state"); }
+       else if (! strncmp(cmd,"pstate",strlen("pstate")))
+	 { ctrl("prev","state"); }
+       else if (! strncmp(cmd,"pobj",strlen("pobj")))
+	 { ctrl("prev","object"); }
+       else if (! strncmp(cmd,"show",strlen("show")))
+	{ v_create(); }
       else if (! strncmp(cmd,"close",strlen("close")))
-	{ v_close(); }
+	{ v_destroy(); }
+      else if (! strncmp(cmd,"sleep",strlen("sleep")))
+	{ sleep(3); }
       else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
-	{ quit(); } 
+	{ quit(); }
+      else
+	{ fprintf(stderr, "Command %s not found.\n", cmd ); }
     }
   else
     {
-      if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"next",strlen("next")) )
-	{ if (iState < 10)
-	    iState++;
+      if (!strncmp(cmd,"next",strlen("next")) &&  !strncmp(para,"state",strlen("state")) )
+	{ if (iState_idx < MAX_STATE)
+	    iState_idx++;
 	  else
-	    iState = 0; 
+	    iState_idx = 0; 
 	}
-      if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"prev",strlen("prev")) )
-	{ if (iState > 0)
-	    iState--;
-	  else iState = 10;
-
-	}
-      fprintf(stderr,"Running state: %i\n", iState);
+      else
+	if (!strncmp(cmd,"prev",strlen("prev")) &&  !strncmp(para,"state",strlen("state")) )
+	  { if (iState_idx > 0)
+	      iState_idx--;
+	    else iState_idx = MAX_STATE;
+	  }
+	else
+	  if (!strncmp(cmd,"next",strlen("next")) &&  !strncmp(para,"object",strlen("object")) )
+	    { if (iObj_idx < psObjIni->next->key)
+		iObj_idx++;
+	      else
+		iObj_idx = 1; 
+	    }
+	  else
+	    if (!strncmp(cmd,"prev",strlen("prev")) &&  !strncmp(para,"object",strlen("object")) )
+	      { if (iObj_idx > 1)
+		  iObj_idx--;
+		else iObj_idx = psObjIni->next->key;
+	      }
+	    else
+	      if (!strncmp(cmd,"list", strlen("list")) &&  !strncmp(para,"all",strlen("all")) )
+		{ olist(); }
+	      else
+		if (!strncmp(cmd,"list",strlen("list")) &&  !strncmp(para,"act",strlen("act")) )
+		  { olist_act();}
+		else
+		  { fprintf(stderr, "Command sequence %s %s not found.\n", cmd, para); }
     }
 }
 
+void v_destroy()
+{
+  fprintf(stderr, "close()\n");
+
+  if (iThr > 0)
+    {
+      fprintf(stderr, "Cancel thread %i of %i\n",iThr-1,MAX_THREADS);
+    }
+}
 
 void quit()
  {
-   if(c_pid)
-     v_close();
+   // int i;
+   
+   //   for( i=0; i < iThr; i++)
+   //   pthread_join(v_thr[i], NULL);
+
+   //for( i=0; i < MAX_THREADS; i++)
+   //  printf("<-Thread %ld ist fertig\n", v_thr_ret[i]);
+
    ofree();
    exit(EXIT_SUCCESS);
  }
-
-
-
