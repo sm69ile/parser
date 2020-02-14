@@ -66,8 +66,8 @@ expr:   expr '+' expr {$$ = $1 + $3;}
 |       REAL {$$ = $1;}
 ;
 
-object: ONAME LBRACE command RBRACE { psObj->name=$1; psObj->s_line=s_line-1; onext(); }
-|       object ONAME LBRACE command RBRACE { psObj->name=$2; psObj->s_line=s_line-1; onext(); }
+object: ONAME LBRACE command RBRACE { psObj->name=$1; psObj->s_line=s_line-1;  onext(); iObj_idx=psObjIni->next->key-1; }
+|       object ONAME LBRACE command RBRACE { psObj->name=$2; psObj->s_line=s_line-1;onext(); iObj_idx=psObjIni->next->key-1; }
 ;
 
 command: CNAME LPAREN plist RPAREN SEMICOLON { psObj->psCom->name=$1; psObj->psCom->s_line=s_line-1; cnext(psObj); }
@@ -117,7 +117,8 @@ int main(int argc, char *argv[])
      yyparse();
    } while(!feof(yyin));
    
-   closelog();
+
+   fprintf(stderr,"Uups, \"feof(yyin);\" found, exiting\n");
    quit();
    
    return 0;
@@ -494,8 +495,7 @@ void v_create()
       	iThr++;
   }
   else
-    { fprintf(stderr, "Max threads running: %i of %i, calling quit();\n", iThr,MAX_THREADS); quit();
-    }
+    { fprintf(stderr, "Max threads running: %i of %i\n", iThr,MAX_THREADS);  }
 }
 
 void *v_show() { xshow(0, NULL); return NULL; }
@@ -540,20 +540,23 @@ void ctrl(char* cmd, char* para)
 	{ ofree(); oinit(); onext(); }
       else if (! strncmp(cmd,"list",strlen("list")))
 	{ olist(); }
-       else if (! strncmp(cmd,"clear",strlen("clear")))
+      else if (! strncmp(cmd,"clear",strlen("clear")))
 	{ yyclearin; }
-       else if (! strncmp(cmd,"nobj",strlen("nobj")))
-	 { ctrl("next","object"); }
-       else if (! strncmp(cmd,"nstate",strlen("nstate")))
-	 { ctrl("next","state"); }
-       else if (! strncmp(cmd,"pstate",strlen("pstate")))
-	 { ctrl("prev","state"); }
-       else if (! strncmp(cmd,"pobj",strlen("pobj")))
-	 { ctrl("prev","object"); }
-       else if (! strncmp(cmd,"show",strlen("show")))
-	{ v_create(); }
-      else if (! strncmp(cmd,"close",strlen("close")))
-	{ v_destroy(); }
+      else if (! strncmp(cmd,"nobj",strlen("nobj")))
+	{ ctrl("object","next"); }
+      else if (! strncmp(cmd,"nstate",strlen("nstate")))
+	{ ctrl("state","next"); }
+      else if (! strncmp(cmd,"pstate",strlen("pstate")))
+	{ ctrl("state","prev"); }
+      else if (! strncmp(cmd,"pobj",strlen("pobj")))
+	{ ctrl("object","prev"); }
+      else if (! strncmp(cmd,"show",strlen("show")))
+	{
+	    if (iCstate == v_close)
+		v_create();
+	    else
+		fprintf(stderr, "Client already running\n");
+	}
       else if (! strncmp(cmd,"sleep",strlen("sleep")))
 	{ sleep(3); }
       else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
@@ -563,30 +566,31 @@ void ctrl(char* cmd, char* para)
     }
   else
     {
-      if (!strncmp(cmd,"next",strlen("next")) &&  !strncmp(para,"state",strlen("state")) )
+      if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"next",strlen("next")) )
 	{ if (iState_idx < MAX_STATE)
-	    iState_idx++;
+	    { iState_idx++; iCtask = v_redraw; }
 	  else
-	    iState_idx = 0; 
+	    { iState_idx = 0; iCtask = v_redraw; } 
 	}
       else
-	if (!strncmp(cmd,"prev",strlen("prev")) &&  !strncmp(para,"state",strlen("state")) )
+	if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"prev",strlen("prev")) )
 	  { if (iState_idx > 0)
-	      iState_idx--;
-	    else iState_idx = MAX_STATE;
+	      { iState_idx--; iCtask = v_redraw; }
+	    else { iState_idx = MAX_STATE; iCtask = v_redraw; }
 	  }
 	else
-	  if (!strncmp(cmd,"next",strlen("next")) &&  !strncmp(para,"object",strlen("object")) )
+	  if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"next",strlen("next")) )
 	    { if (iObj_idx < psObjIni->next->key)
-		iObj_idx++;
+		{ iObj_idx++; iCtask = v_redraw; }
 	      else
-		iObj_idx = 1; 
+		{ iObj_idx = 1; iCtask = v_redraw; } 
 	    }
 	  else
-	    if (!strncmp(cmd,"prev",strlen("prev")) &&  !strncmp(para,"object",strlen("object")) )
+	    if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"prev",strlen("prev")) )
 	      { if (iObj_idx > 1)
-		  iObj_idx--;
-		else iObj_idx = psObjIni->next->key;
+		  { iObj_idx--; iCtask = v_redraw; }
+		else
+		  { iObj_idx = psObjIni->next->key; iCtask = v_redraw; }
 	      }
 	    else
 	      if (!strncmp(cmd,"list", strlen("list")) &&  !strncmp(para,"all",strlen("all")) )
@@ -594,31 +598,22 @@ void ctrl(char* cmd, char* para)
 	      else
 		if (!strncmp(cmd,"list",strlen("list")) &&  !strncmp(para,"act",strlen("act")) )
 		  { olist_act();}
+	      else
+		if (!strncmp(cmd,"show",strlen("show")) &&  !strncmp(para,"last",strlen("last")) )
+		  { iObj_idx = (psObjIni->next->key-1); v_create() ;}
+
 		else
 		  { fprintf(stderr, "Command sequence %s %s not found.\n", cmd, para); }
     }
 }
 
-void v_destroy()
-{
-  fprintf(stderr, "close()\n");
-
-  if (iThr > 0)
-    {
-      fprintf(stderr, "Cancel thread %i of %i\n",iThr-1,MAX_THREADS);
-    }
-}
 
 void quit()
- {
-   // int i;
-   
-   //   for( i=0; i < iThr; i++)
-   //   pthread_join(v_thr[i], NULL);
+{
+    if (iCstate == v_open)
+	iCtask = v_exit;
 
-   //for( i=0; i < MAX_THREADS; i++)
-   //  printf("<-Thread %ld ist fertig\n", v_thr_ret[i]);
-
-   ofree();
-   exit(EXIT_SUCCESS);
- }
+    ofree();
+    closelog();
+    exit(EXIT_SUCCESS);
+}

@@ -9,12 +9,6 @@
 #include <X11/Xaw/Command.h>
 #include <X11/Xaw/Cardinals.h>
 
-/*
-#define GCFG "GCForegound"
-#define GCBG "GCBackground"
-#define GCLW "GCLineWidth"
-*/
-
 #define D_WIN_X_SIZE 400
 #define D_WIN_Y_SIZE 400
 #define C_WIN_X_SIZE 200
@@ -31,7 +25,7 @@
 #define LABEL_NEXT_OBJECT_COMMAND "Object >"
 #define LABEL_PREV_STATE_COMMAND "< State"
 #define LABEL_NEXT_STATE_COMMAND "State >"
-#define LABEL_CURR_COMMAND "--@--"
+#define LABEL_CURR_COMMAND "Reload"
 #define LABEL_QUIT_COMMAND "Close"
 
 
@@ -42,16 +36,16 @@ typedef struct Colortable{
 }sColortable;
 
 typedef struct Draw_container{
-  // int obj_idx;
   int last_x;
   int last_y;
   Colormap colormap;
   sColortable ctable[256];
 
 }sDraw_container;
-  
+ 
 typedef struct Viewer_container{
   XtAppContext app_context;
+
   Widget toplevel;
   Widget box;
   Widget draw_shell;
@@ -65,19 +59,20 @@ typedef struct Viewer_container{
   Widget curr_object_command;
   Widget quit_command;
 
-  int v_iThr;
-  pthread_t v_Pthread;
+  XtIntervalId vt_h;
   
   sDraw_container *psDraw_c;
   sObject *psObjIni;
   
 }sViewer_container;
 
+int fops;
+
+void v_timer_handler(XtPointer, XtIntervalId *);
 void v_event_handler(Widget, XtPointer, XEvent*, Boolean);
 void v_event_draw(Widget, XtPointer, XExposeEvent*);
 void v_event_color(Widget, XtPointer, XExposeEvent*);
-void v_timer_draw(XtPointer, XtIntervalId *);
-//void v_ev_draw_t(Widget, XtPointer, XEvent*);
+
 void v_draw(XtPointer);
 void v_next_object(Widget, XtPointer, XtPointer);
 void v_prev_object(Widget, XtPointer, XtPointer);
@@ -94,7 +89,6 @@ int v_get_draw_c(sDraw_container*, Widget, Display*, Window);
 void v_max_impl(sCommand*, sCommand*, int, Pixel, Display*, Drawable, GC);
 void v_floodfill(Display*, Drawable, GC, int, int, unsigned long);
 XImage* floodfill(XImage*, int, int, Pixel, Pixel, int, int);
-
 Pixel get_color_by_name(Display*, Colormap, char*);
 
 #endif

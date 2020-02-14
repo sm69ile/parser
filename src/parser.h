@@ -10,13 +10,23 @@
 #include <stdbool.h>
 
 #include <pthread.h>
-#include <signal.h> // fork
-
 
 #include "../config.h"
 
 #define MAX_STATE 10
-#define MAX_THREADS 10
+#define MAX_THREADS 1
+
+
+enum eVtask {
+    v_idle = 0,
+    v_redraw = 1,
+    v_exit = 2
+};
+
+enum eVState {
+    v_close= 0,
+    v_open= 1
+};
 
 typedef struct Vset
 {
@@ -51,15 +61,14 @@ typedef struct Object
   struct Object *next;
 }sObject;
 
-
-pthread_t v_thr[MAX_THREADS];
-// static int v_thr_ret[MAX_THREADS];
 int iThr;
-
+pthread_t v_thr[MAX_THREADS];
 sObject *psObjIni, *psObj;
 
 int iState_idx;
 int iObj_idx;
+int iCtask;
+int iCstate;
 
 int yy_scan_string(char*);
 int yylex_destroy();
@@ -94,7 +103,6 @@ void *v_show();
 void xshow(int, char **);
 void load_file(int, char **);
 void ctrl(char*, char*);
-void v_destroy();
 void quit();
 
 
