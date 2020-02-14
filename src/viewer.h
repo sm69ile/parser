@@ -26,7 +26,7 @@
 #define LABEL_PREV_STATE_COMMAND "< State"
 #define LABEL_NEXT_STATE_COMMAND "State >"
 #define LABEL_CURR_COMMAND "Reload"
-#define LABEL_QUIT_COMMAND "Close"
+#define LABEL_QUIT_COMMAND "Quit"
 
 
 typedef struct Colortable{

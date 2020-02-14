@@ -495,7 +495,7 @@ void v_create()
       	iThr++;
   }
   else
-    { fprintf(stderr, "Max threads running: %i of %i\n", iThr,MAX_THREADS);  }
+    { fprintf(stdout, "Max threads running: %i of %i\n", iThr,MAX_THREADS);  }
 }
 
 void *v_show() { xshow(0, NULL); return NULL; }

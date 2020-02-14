@@ -46,7 +46,7 @@ bool INTERACTIV = true;
 [ \t ]+                         { show_buffer(yytext); syslog(LOG_NOTICE, "Ignoring whitespace\n"); } /* ignore whitespace */
 #.*$                            { show_buffer(yytext); syslog(LOG_NOTICE, "Comment found\n"); } /* ignore comment */
 
-"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"moveto"|"floodfill"|"MAX"|"REM" { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++ ); return CNAME; }
+"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"arc"|"moveto"|"floodfill"|"flowways"|"MAX"|"REM" { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++ ); return CNAME; }
 
 "set" { show_buffer(yytext); yylval.set = strdup(yytext); syslog(LOG_NOTICE, "Returning SET, buffer[%i]\n", nbuf++); return SET; }
 
@@ -56,7 +56,8 @@ bool INTERACTIV = true;
 
 "all"|"prev"|"next"|"last"|"act"                       {  show_buffer(yytext); yylval.cpara = strdup(yytext);  syslog(LOG_NOTICE, "Control parameter received: %s, buffer[%i]\n", yytext, nbuf++);  return CPARA; }
 
-[A-Za-z]+                       { show_buffer(yytext); yylval.oname = strdup(yytext); syslog(LOG_NOTICE, "Returning ONAME, buffer[%i]\n", nbuf++); return ONAME; }
+
+[A-Za-z][A-Za-z0-9]*                       { show_buffer(yytext); yylval.oname = strdup(yytext); syslog(LOG_NOTICE, "Returning ONAME, buffer[%i]\n", nbuf++); return ONAME; }
 [0-9]+                          { show_buffer(yytext); yylval.integer=atoi(yytext); syslog(LOG_NOTICE, "Returning NUMBER, buffer[%i]\n", nbuf++); return NUMBER; }
 [0-9]+\.?|[0-9]*\.[0-9]+        { show_buffer(yytext); sscanf(yytext,"%lf",&yylval.real); syslog(LOG_NOTICE, "Returning REAL, buffer[%i]\n", nbuf++); return REAL; }
 ['+''\-''*''/''=']              { show_buffer(yytext); syslog(LOG_NOTICE, "Returning OPERATOR, buffer[%i]\n", nbuf++); return yytext[0]; }

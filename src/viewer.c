@@ -38,7 +38,6 @@ void xshow(int argc, char **argv)
       n=0;
       XtSetArg(wargs[n],XtNheight,C_WIN_Y_SIZE); n++;
       XtSetArg(wargs[n],XtNwidth,C_WIN_X_SIZE); n++;
-      XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
       XtSetValues(psV_c->color_shell, wargs, n);
       
       psV_c->object_label = XtVaCreateManagedWidget("object_label",labelWidgetClass, psV_c->box, NULL);
@@ -148,9 +147,6 @@ void v_timer_handler(XtPointer client_data, XtIntervalId *id)
   Widget w_quit = psV_c->quit_command;
   Widget w_current = psV_c->curr_object_command;
   
-  
-//  if (iCtask == v_redraw)
-///    { v_draw(psV_c); }
   if (iCtask == v_redraw)
     {
   if (XtHasCallbacks(w_current, XtNcallback) == XtCallbackHasSome)
@@ -165,7 +161,7 @@ void v_timer_handler(XtPointer client_data, XtIntervalId *id)
   iCtask = v_idle;
   iCstate = v_open;
   
-  psV_c->vt_h = XtAppAddTimeOut(psV_c->app_context,500, v_timer_handler, (XtPointer) psV_c);
+  psV_c->vt_h = XtAppAddTimeOut(psV_c->app_context,300, v_timer_handler, (XtPointer) psV_c);
 }
 
 void v_event_handler(Widget w, XtPointer client_data, XEvent* ev, Boolean continue_to_dispatch)
@@ -229,8 +225,8 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
 
       XClearWindow(display, window);
 
-      int y=10;
-      for(int i=0; i<20; i++)
+      int y=0;
+      for(int i=0; i<19; i++)
 	{
 	  values.line_width = 20;
 	  values.foreground = psV_c->psDraw_c->ctable[i].value;
@@ -415,18 +411,38 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=cact->para[0];
 	      psV_c->psDraw_c->last_y=cact->para[1];
 
-	    } else if (!strcmp(cact->name, "moveto") && cact->count_para == 2) 
+	    } else if (!strcmp(cact->name, "arc") && cact->count_para == 5)
+	      {
+		  XDrawArc(display, window, gc,
+			   cact->para[0]-cact->para[4],
+			   cact->para[1]-cact->para[4],
+			   2*cact->para[4],
+			   2*cact->para[4],
+			   64*cact->para[2],
+			   64*cact->para[3]);
+		  psV_c->psDraw_c->last_x=cact->para[0];
+		  psV_c->psDraw_c->last_y=cact->para[1];	  
+	    }
+
+	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4)
+	      {
+		  XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
+		  XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
+		  XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
+		  XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
+	      }
+	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2) 
 	    {
 	      psV_c->psDraw_c->last_x=cact->para[0];
 	      psV_c->psDraw_c->last_y=cact->para[1];
 
-	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 2) 
+	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 4) 
 	    {
 
 	      XDrawString(display, window, gc,
 			  cact->para[0],
 			  cact->para[1],
-			  "REM", 3
+			  "REM",strlen("REM")
 			  );
 
 	    } else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
@@ -496,20 +512,30 @@ void v_update_layout(XtPointer client_data)
 
   char* act_name = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx)->name;
 
-  label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 2*strlen("XX") + strlen(" [/]");
+  label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 4*strlen("XXXX") + 2*strlen(" [/]");
 
   if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
     fprintf(stderr, "malloc() failed: char*\n");
   else
     {	    
-
       bzero(label, label_length);
+      
+      buf_length = strlen("[XXXX/");
+      if ((buf = (char*)malloc((buf_length)*sizeof(char))))
+	  {
+	    snprintf(buf, buf_length," [%i/", iObj_idx);
+	    strcat(label, buf);
+	    bzero(buf,buf_length);
+	    snprintf(buf, buf_length,"%i] ", psV_c->psObjIni->key);
+	    strcat(label,buf);
+	    free(buf);
+	  }
 
       strcat(label,"Name: ");
       strcat(label, act_name);
       strcat(label,", State: ");
 
-      buf_length = strlen(" [XX/");
+      buf_length = strlen(" [XXXX/");
       if ((buf = (char*)malloc((buf_length)*sizeof(char))))
 	  {
 	    snprintf(buf, buf_length," [%i/", iState_idx);
