@@ -90,7 +90,7 @@ CTRL CPARA SEMICOLON { ctrl($1,$2);}
 
 %%
  void yyerror(const char* s) {
-  printf("[%s] Error: %s in line %d\n", PACKAGE_STRING, s, s_line-1);
+  printf("[%s] Error: %s near line %d\n", PACKAGE_STRING, s, s_line-1);
 }
 
 
@@ -99,8 +99,6 @@ int main(int argc, char *argv[])
   openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
   syslog (LOG_NOTICE, "Program started by User %d", getuid ());
   
-  iState_idx = 0;
-  iObj_idx = 1;
   iThr = 0;
   
   oinit();
@@ -127,6 +125,9 @@ int main(int argc, char *argv[])
 void oinit()
 {
   syslog(LOG_NOTICE, "Initialising memory for object, starting node\n");
+
+  iState_idx = 0;
+  iObj_idx = 1;
 
   if (!(psObjIni=(sObject*) malloc(sizeof(sObject))))
     {
@@ -180,11 +181,13 @@ void onext()
 
 void olist_act()
 {
-  sObject* act = get_object_by_key(psObjIni, psObjIni->next, iObj_idx);
-  
-  printf("obj: [source line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
-  vlist(act);
-  clist(act);
+//  sObject* act = get_object_by_key(psObjIni, psObjIni->next, iObj_idx);
+    
+    sObject* act = get_object_by_key(iObj_idx);
+    
+    printf("obj: [line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
+    vlist(act);
+    clist(act);
 }
 
 
@@ -198,7 +201,7 @@ void olist()
     {
       sObject* next = act->next;
 
-      printf("obj: [source line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
+      printf("obj: [line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
       vlist(act);
       clist(act);
       act=next;
@@ -226,20 +229,45 @@ void ofree()
   free(act);
 }
 
-
-sObject* get_object_by_key(sObject* first, sObject* last, int key)
+int olist_count_command()
 {
+  sObject* last = psObjIni->next;
+  sObject* first = psObjIni;
   sObject* act = last;
+  int i=0;
+  
   do
     {
       sObject* next = act->next;
-      if(act->key == key)
-	return act;
+      i+=act->psComIni->key;
       act=next;
     }
   while(act != first);
+  return i;
+}
 
-  return NULL;
+//sObject* get_object_by_key(sObject* first, sObject* last, int key)
+
+sObject* get_object_by_key(int key)
+{
+
+    fprintf(stderr,"Looking up object idx: %i\n",key);
+
+    sObject* last = psObjIni->next;
+    sObject* first = psObjIni;
+    sObject* act = last;
+    do
+	{
+	    sObject* next = act->next;
+	    if(act->key == key)
+		return act;
+	    act=next;
+	}
+    while(act != first);
+
+    fprintf(stderr,"Object not found, returning NULL\n");
+    
+    return NULL;
 }
 
 /* vset block */
@@ -483,13 +511,13 @@ void plist(int i, ...)
 }
 
 
-void v_create()
+void v_display()
 {
   if (iThr < MAX_THREADS)
   {
     fprintf(stderr, "Starting thread %i of %i\n",iThr,MAX_THREADS);
 
-      if ( pthread_create(&v_thr[iThr], NULL, v_show, (void*) NULL) != 0)
+      if ( pthread_create(&v_thr[iThr], NULL, x_show, (void*) NULL) != 0)
 	{ fprintf (stderr, "Could not start thread, max %i, curr %i\n", MAX_THREADS, iThr); }
       else
       	iThr++;
@@ -498,114 +526,214 @@ void v_create()
     { fprintf(stdout, "Max threads running: %i of %i\n", iThr,MAX_THREADS);  }
 }
 
-void *v_show() { xshow(0, NULL); return NULL; }
+void *x_show() { xshow(0, NULL); return NULL; }
 
 
 void load_file(int argc, char *argv[])
 {
-  int j,i = 1;
-  char * l_argv;
-  const char* LOAD = ". ";
+    int j,i = 1;
+    char * l_argv;
+    const char* LOAD = ". ";
   
-  do{
+    do{
     
-    j=strlen(LOAD)+strlen(argv[i])+1;
-    syslog (LOG_NOTICE, "File: %s - Command length: %i\n",argv[i],j);
+	j=strlen(LOAD)+strlen(argv[i])+1;
+	syslog (LOG_NOTICE, "File: %s - Command length: %i\n",argv[i],j);
     
-    if (!(l_argv=(char*) malloc(j*sizeof(char))))
-      {
-	syslog(LOG_NOTICE, "malloc() failed: char\n");
-	exit(EXIT_FAILURE);
-      }
+	if (!(l_argv=(char*) malloc(j*sizeof(char))))
+	    {
+		syslog(LOG_NOTICE, "malloc() failed: char\n");
+		exit(EXIT_FAILURE);
+	    }
     
-    bzero(l_argv,j);
-    strcat(l_argv,LOAD);
-    strcat(l_argv,argv[i]);
-    syslog (LOG_NOTICE, "Command line: %s\n",l_argv);
-    yy_scan_string(l_argv);
-    yyparse();
-    yylex_destroy();
-    free(l_argv);
+	bzero(l_argv,j);
+	strcat(l_argv,LOAD);
+	strcat(l_argv,argv[i]);
+	syslog (LOG_NOTICE, "Command line: %s\n",l_argv);
+	yy_scan_string(l_argv);
+	yyparse();
+	yylex_destroy();
+	free(l_argv);
 
-  } while (++i < argc);   
+    } while (++i < argc);   
 }
 
 
 void ctrl(char* cmd, char* para)
 {
 
-  if(! para)
-    {
-      if (! strncmp(cmd,"init",strlen("init")))
-	{ ofree(); oinit(); onext(); }
-      else if (! strncmp(cmd,"list",strlen("list")))
-	{ olist(); }
-      else if (! strncmp(cmd,"clear",strlen("clear")))
-	{ yyclearin; }
-      else if (! strncmp(cmd,"nobj",strlen("nobj")))
-	{ ctrl("object","next"); }
-      else if (! strncmp(cmd,"nstate",strlen("nstate")))
-	{ ctrl("state","next"); }
-      else if (! strncmp(cmd,"pstate",strlen("pstate")))
-	{ ctrl("state","prev"); }
-      else if (! strncmp(cmd,"pobj",strlen("pobj")))
-	{ ctrl("object","prev"); }
-      else if (! strncmp(cmd,"show",strlen("show")))
+    if(! para)
 	{
-	    if (iCstate == v_close)
-		v_create();
-	    else
-		fprintf(stderr, "Client already running\n");
-	}
-      else if (! strncmp(cmd,"sleep",strlen("sleep")))
-	{ sleep(3); }
-      else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
-	{ quit(); }
-      else
-	{ fprintf(stderr, "Command %s not found.\n", cmd ); }
-    }
-  else
-    {
-      if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"next",strlen("next")) )
-	{ if (iState_idx < MAX_STATE)
-	    { iState_idx++; iCtask = v_redraw; }
-	  else
-	    { iState_idx = 0; iCtask = v_redraw; } 
-	}
-      else
-	if (!strncmp(cmd,"state",strlen("state")) &&  !strncmp(para,"prev",strlen("prev")) )
-	  { if (iState_idx > 0)
-	      { iState_idx--; iCtask = v_redraw; }
-	    else { iState_idx = MAX_STATE; iCtask = v_redraw; }
-	  }
-	else
-	  if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"next",strlen("next")) )
-	    { if (iObj_idx < psObjIni->next->key)
-		{ iObj_idx++; iCtask = v_redraw; }
-	      else
-		{ iObj_idx = 1; iCtask = v_redraw; } 
-	    }
-	  else
-	    if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"prev",strlen("prev")) )
-	      { if (iObj_idx > 1)
-		  { iObj_idx--; iCtask = v_redraw; }
-		else
-		  { iObj_idx = psObjIni->next->key; iCtask = v_redraw; }
-	      }
-	    else
-	      if (!strncmp(cmd,"list", strlen("list")) &&  !strncmp(para,"all",strlen("all")) )
+	    if (! strncmp(cmd,"init",strlen("init")))
+		{ ofree(); oinit(); onext(); }
+	    else if (! strncmp(cmd,"list",strlen("list")))
 		{ olist(); }
-	      else
-		if (!strncmp(cmd,"list",strlen("list")) &&  !strncmp(para,"act",strlen("act")) )
-		  { olist_act();}
-	      else
-		if (!strncmp(cmd,"show",strlen("show")) &&  !strncmp(para,"last",strlen("last")) )
-		  { iObj_idx = (psObjIni->next->key-1); v_create() ;}
+	    else if (! strncmp(cmd,"save",strlen("save")))
+		{ save(); }
+	    else if (! strncmp(cmd,"clear",strlen("clear")))
+		{ yyclearin; }
 
+	    else if (! strncmp(cmd,"nobj",strlen("nobj")))
+		{ ctrl("object","next"); }
+	    else if (! strncmp(cmd,"pobj",strlen("pobj")))
+		{ ctrl("object","prev"); }
+	    else if (! strncmp(cmd,"lobj",strlen("lobj")))
+		{ ctrl("object","last"); }
+	    
+	    else if (! strncmp(cmd,"nstatus",strlen("nstatus")))
+		{ ctrl("status","next"); }
+	    else if (! strncmp(cmd,"pstatus",strlen("pstatus")))
+		{ ctrl("status","prev"); }
+	    
+	    else if (! strncmp(cmd,"display",strlen("display")))
+		{
+		    if (iCstate == v_close)
+			v_display();
+		    else
+			fprintf(stderr, "Client already running\n");
+		}
+	    else if (! strncmp(cmd,"sleep",strlen("sleep")))
+		{ sleep(3); }
+	    else if (! strncmp(cmd,"hide",strlen("hide")))
+		{ iCtask = v_hide; }
+
+	    else if (! strncmp(cmd,"show",strlen("show")))
+		{ iCtask = v_show; }
+	    
+	    else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
+		{ quit(); }
+	    else
+		{ fprintf(stderr, "Command %s not found.\n", cmd ); }
+	}
+    else
+	{
+	    if (!strncmp(cmd,"status",strlen("status")) &&  !strncmp(para,"next",strlen("next")) )
+		{ if (iState_idx < MAX_STATE)
+			{ iState_idx++; iCtask = v_redraw; }
+		    else
+			{ iState_idx = 0; iCtask = v_redraw; } 
+		}
+	    else
+		if (!strncmp(cmd,"status",strlen("status")) &&  !strncmp(para,"prev",strlen("prev")) )
+		    { if (iState_idx > 0)
+			    { iState_idx--; iCtask = v_redraw; }
+			else { iState_idx = MAX_STATE; iCtask = v_redraw; }
+		    }
 		else
-		  { fprintf(stderr, "Command sequence %s %s not found.\n", cmd, para); }
-    }
+		    if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"next",strlen("next")) )
+			{ if (iObj_idx < psObjIni->next->key)
+				{ iObj_idx++; iCtask = v_redraw; }
+			    else
+				{ iObj_idx = 1; iCtask = v_redraw; } 
+			}
+		    else
+			if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"prev",strlen("prev")) )
+			    { if (iObj_idx > 1)
+				    { iObj_idx--; iCtask = v_redraw; }
+				else
+				    { iObj_idx = psObjIni->next->key; iCtask = v_redraw; }
+			    }
+			else
+			    if (!strncmp(cmd,"list", strlen("list")) &&  !strncmp(para,"all",strlen("all")) )
+				{ olist(); }
+			    else
+				if (!strncmp(cmd,"list",strlen("list")) &&  !strncmp(para,"act",strlen("act")) )
+				    { olist_act();}
+				else
+				    if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"last",strlen("last")) )
+					{ iObj_idx = (psObjIni->next->key); iCtask = v_redraw; }
+				    else
+					if (!strncmp(cmd,"object",strlen("object")) &&  !strncmp(para,"count",strlen("count")) )
+					    { printf("%s %s (incl. reserved):\t%i\n", cmd, para, psObjIni->next->key);}
+					else
+					    if (!strncmp(cmd,"command",strlen("command")) &&  !strncmp(para,"count",strlen("count")) )
+						{ printf("%s %s (incl. reserved):\t%i\n", cmd, para, olist_count_command()); }
+
+					    else
+						{ fprintf(stderr, "Command sequence %s %s not found.\n", cmd, para); }
+	}
 }
+
+void save()
+{
+    static char * commands[]=
+	{
+	    "line",
+	    "lineto",
+	    "rectnagle",
+	    "circle",
+	    "ellipse",
+	    "moveto",
+	    "REM",
+	    "flowways",
+	    "arc",
+	    "state",
+	    "break"
+	};
+    
+    
+    int clength = sizeof(commands)/sizeof(commands[0]);  
+    char *lb;
+    char *pb;
+    
+    FILE* fp = fopen(P_OUT, "a+" );
+
+    if (! fp){ syslog(LOG_NOTICE,"Cannot open output file %s\n", P_OUT); }
+    else
+	{
+	    if (  (!(lb=(char*) malloc(L_BUFFER*sizeof(char))))  || (!(pb=(char*) malloc(P_BUFFER*sizeof(char)))))
+		{ syslog(LOG_NOTICE, "malloc failed: char*\n"); }
+	    else
+		{
+		    sObject* olast = psObjIni->next;
+		    sObject* ofirst = psObjIni;
+		    sObject* oact = olast;
+		    
+		    do
+			{
+			    bzero(lb,L_BUFFER);
+			    sObject* onext = oact->next;
+			    sprintf(lb,"%s~", oact->name);
+			    
+			    sCommand* clast = oact->psComIni->next;
+			    sCommand* cfirst = oact->psComIni;
+			    sCommand* cact = clast;
+			    
+			    do
+				{
+				    sCommand* cnext = cact->next;
+
+				    for(int i=0; i<clength; i++)
+					{
+					    if(! strncmp(cact->name, commands[i], strlen(commands[i])))
+						{
+						    bzero(pb,P_BUFFER);
+						    sprintf(pb,"%d^", i+DCB);
+						    strcat(lb, pb);
+
+						    for(int j=0;j<cact->count_para;j++)
+							{
+							    bzero(pb,P_BUFFER);
+							    sprintf(pb,"%d^", cact->para[j]);
+							    strcat(lb,pb);
+							}
+						    break;
+						}
+					}
+
+				    cact=cnext;
+				}
+			    while(cact != cfirst);	
+			    strcat(lb,"\n");
+			    fprintf(fp,lb);		    
+			    oact=onext;
+			}
+		    while(oact != ofirst);
+		}
+	    fclose(fp);
+	}
+}
+
 
 
 void quit()
@@ -617,3 +745,5 @@ void quit()
     closelog();
     exit(EXIT_SUCCESS);
 }
+
+

@@ -14,13 +14,14 @@
 #define C_WIN_X_SIZE 200
 #define C_WIN_Y_SIZE 400
 #define MAX_FLOODFILL 100000
-
+#define DCB 32513
 #define LABEL_HEIGHT 20
 #define LABEL_WIDTH 60
 
 #define O_LABEL_DEFAULT "default"
 #define C_LABEL_DEFAULT "Colormap"
 
+#define LABEL_SAVE_COMMAND "Save"
 #define LABEL_PREV_OBJECT_COMMAND "< Object"
 #define LABEL_NEXT_OBJECT_COMMAND "Object >"
 #define LABEL_PREV_STATE_COMMAND "< State"
@@ -52,6 +53,7 @@ typedef struct Viewer_container{
   Widget color_shell;
   Widget object_label; 
   Widget color_label;
+  Widget save_command;
   Widget prev_object_command;
   Widget next_object_command;
   Widget prev_state_command;
@@ -83,6 +85,7 @@ void v_prev_state(Widget, XtPointer, XtPointer);
 void v_next_state(Widget, XtPointer, XtPointer);
 void v_curr_object(Widget, XtPointer, XtPointer);
 void v_quit(Widget, XtPointer, XtPointer);
+void v_save(Widget, XtPointer, XtPointer);
 
 int v_get_draw_c(sDraw_container*, Widget, Display*, Window);
 

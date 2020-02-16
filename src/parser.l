@@ -46,15 +46,15 @@ bool INTERACTIV = true;
 [ \t ]+                         { show_buffer(yytext); syslog(LOG_NOTICE, "Ignoring whitespace\n"); } /* ignore whitespace */
 #.*$                            { show_buffer(yytext); syslog(LOG_NOTICE, "Comment found\n"); } /* ignore comment */
 
-"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"arc"|"moveto"|"floodfill"|"flowways"|"MAX"|"REM" { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++ ); return CNAME; }
+"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"arc"|"moveto"|"floodfill"|"flowways"|"MAX"|"REM"|"state"|"break"  { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_NOTICE, "Returning CNAME, buffer[%i]\n",nbuf++ ); return CNAME; }
 
 "set" { show_buffer(yytext); yylval.set = strdup(yytext); syslog(LOG_NOTICE, "Returning SET, buffer[%i]\n", nbuf++); return SET; }
 
 "v_background"|"v_foreground"|"v_line_width" { show_buffer(yytext); yylval.spara = strdup(yytext); syslog(LOG_NOTICE, "Returning SPARA, buffer[%i]\n", nbuf++); return SPARA; }
 
-"exit"|"quit"|"list"|"init"|"clear"|"show"|"state"|"nobj"|"pobj"|"nstate"|"pstate"|"sleep"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_NOTICE, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CTRL;  } 
+"exit"|"quit"|"list"|"init"|"clear"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_NOTICE, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CTRL;  } 
 
-"all"|"prev"|"next"|"last"|"act"                       {  show_buffer(yytext); yylval.cpara = strdup(yytext);  syslog(LOG_NOTICE, "Control parameter received: %s, buffer[%i]\n", yytext, nbuf++);  return CPARA; }
+"all"|"prev"|"next"|"last"|"act"|"count"                       {  show_buffer(yytext); yylval.cpara = strdup(yytext);  syslog(LOG_NOTICE, "Control parameter received: %s, buffer[%i]\n", yytext, nbuf++);  return CPARA; }
 
 
 [A-Za-z][A-Za-z0-9]*                       { show_buffer(yytext); yylval.oname = strdup(yytext); syslog(LOG_NOTICE, "Returning ONAME, buffer[%i]\n", nbuf++); return ONAME; }
@@ -68,7 +68,7 @@ bool INTERACTIV = true;
 \}                              { show_buffer(yytext); yylval.character=yytext[0]; syslog(LOG_NOTICE, "Returning RBRACE, buffer[%i]\n", nbuf++); return RBRACE; }
 ;                               { show_buffer(yytext); yylval.character=yytext[0]; syslog(LOG_NOTICE, "Returning SEMICOLON, buffer[%i]\n", nbuf++); return SEMICOLON; }
 .                               { show_buffer(yytext); syslog(LOG_NOTICE, "Ignoring character: %s\n", yytext); }  /* ignore any other character */
-\n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); s_line++;} }
+\n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }
 %%
 
 void show_buffer(char* str)

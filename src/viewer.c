@@ -56,6 +56,13 @@ void xshow(int argc, char **argv)
       XtSetArg(wargs[n], XtNlabel, C_LABEL_DEFAULT); n++; 
       XtSetValues(psV_c->color_label, wargs, n);
       
+      psV_c->save_command = XtVaCreateManagedWidget("save_command", commandWidgetClass, psV_c->box, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_SAVE_COMMAND); n++;
+      XtSetValues(psV_c->save_command, wargs, n);
+
       psV_c->prev_object_command = XtVaCreateManagedWidget("prev_object_command", commandWidgetClass, psV_c->box, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
@@ -124,6 +131,7 @@ void xshow(int argc, char **argv)
       XtAddEventHandler(psV_c->draw_shell, ExposureMask, FALSE, (XtEventHandler) v_event_draw, (XtPointer) psV_c);
 
       XtAddEventHandler(psV_c->color_shell, ExposureMask, FALSE, (XtEventHandler) v_event_color, (XtPointer) psV_c);
+      XtAddCallback(psV_c->save_command, XtNcallback, v_save, (XtPointer) psV_c);
       XtAddCallback(psV_c->next_object_command, XtNcallback, v_next_object, (XtPointer) psV_c);
       XtAddCallback(psV_c->prev_object_command, XtNcallback, v_prev_object, (XtPointer) psV_c);
       XtAddCallback(psV_c->next_state_command, XtNcallback, v_next_state, (XtPointer) psV_c);
@@ -143,25 +151,42 @@ void xshow(int argc, char **argv)
 
 void v_timer_handler(XtPointer client_data, XtIntervalId *id)
 {
-  sViewer_container *psV_c = (sViewer_container*) client_data; 
-  Widget w_quit = psV_c->quit_command;
-  Widget w_current = psV_c->curr_object_command;
+    sViewer_container *psV_c = (sViewer_container*) client_data; 
+    Widget w_quit = psV_c->quit_command;
+    Widget w_current = psV_c->curr_object_command;
   
-  if (iCtask == v_redraw)
-    {
-  if (XtHasCallbacks(w_current, XtNcallback) == XtCallbackHasSome)
-      { XtCallCallbacks(w_current, XtNcallback, client_data); }
-    }
-  else if ( iCtask == v_exit)
-  {
-    if (XtHasCallbacks(w_quit, XtNcallback) == XtCallbackHasSome)
-      { XtCallCallbacks(w_quit, XtNcallback, client_data); }
-  }
 
-  iCtask = v_idle;
-  iCstate = v_open;
+    if (iCtask == v_hide)
+	{
+	    Display *d = XtDisplay(psV_c->toplevel);
+	    Window w = XtWindow(psV_c->toplevel);
+
+	    XUnmapWindow(d, w);
+	}
+
+    if (iCtask == v_show)
+	{
+	    Display *d = XtDisplay(psV_c->toplevel);
+	    Window w = XtWindow(psV_c->toplevel);
+
+	    XMapWindow(d, w);
+	}
+
+    if (iCtask == v_redraw)
+	{
+	    if (XtHasCallbacks(w_current, XtNcallback) == XtCallbackHasSome)
+		{ XtCallCallbacks(w_current, XtNcallback, client_data); }
+	}
+    else if ( iCtask == v_exit)
+	{
+	    if (XtHasCallbacks(w_quit, XtNcallback) == XtCallbackHasSome)
+		{ XtCallCallbacks(w_quit, XtNcallback, client_data); }
+	}
+
+    iCtask = v_idle;
+    iCstate = v_open;
   
-  psV_c->vt_h = XtAppAddTimeOut(psV_c->app_context,300, v_timer_handler, (XtPointer) psV_c);
+    psV_c->vt_h = XtAppAddTimeOut(psV_c->app_context,300, v_timer_handler, (XtPointer) psV_c);
 }
 
 void v_event_handler(Widget w, XtPointer client_data, XEvent* ev, Boolean continue_to_dispatch)
@@ -293,15 +318,17 @@ void v_draw(XtPointer client_data)
   GC gc;
   Display *display;
   Drawable window;
+  int iDstate_idx = iState_idx;
 
   display = XtDisplay(psV_c->draw_shell);
   window = XtWindow(psV_c->draw_shell);
   
   v_set_window_attributes(display, window);
         
-  sObject* oact = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx);
-
-  fprintf(stderr,"Displaying symbols in running state: %i\n", iState_idx);
+//  sObject* oact = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx);
+  sObject* oact = get_object_by_key(iObj_idx);
+  
+  fprintf(stderr,"Displaying symbols, running state: %i\n", iState_idx);
   fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
   
   sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
@@ -318,23 +345,33 @@ void v_draw(XtPointer client_data)
 		 GCBackground |
 		 GCLineWidth, &values);
 
-
   
   XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
   fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
   XClearWindow(display, window);
 
-  for(int j=0; j<oact->psComIni->key; j++)
+   for(int j=0; j<oact->psComIni->key; j++)
     {
       sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
-      if(cact != NULL)
+      if(cact != NULL && iDstate_idx == iState_idx)
 	{
 	  fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
 
 	  for(int k=0; k<cact->count_para;k++)
 	    fprintf(stderr,"%d ", cact->para[k]);
 	  fprintf(stderr,"\n");
+
+	  if (!strcmp(cact->name, "state") && cact->count_para == 1) 
+	      {
+		  iDstate_idx = cact->para[0];
+		  fprintf(stderr,"\tState switched by Symbol definition \"state()\"\n");
+	      }
+	  if (!strcmp(cact->name, "break") && cact->count_para == 0) 
+	      {
+		  iDstate_idx = 0;
+		  fprintf(stderr,"\tState switched by Symbol definition \"break()\"\n"); 
+	      }
 	  
 	  if (!strcmp(cact->name, "line") && cact->count_para == 4) 
 	    {
@@ -348,7 +385,6 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_y=cact->para[3];
 	      
 	    }
-
 	  if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
 	    {
 	      sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
@@ -510,7 +546,10 @@ void v_update_layout(XtPointer client_data)
   char *label, *buf;
   size_t label_length, buf_length;
 
-  char* act_name = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx)->name;
+//  char* act_name = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx)->name;
+  char* act_name = get_object_by_key(iObj_idx)->name;
+
+
 
   label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 4*strlen("XXXX") + 2*strlen(" [/]");
 
@@ -553,7 +592,11 @@ void v_update_layout(XtPointer client_data)
   free(label);
 }
 
-
+void v_save(Widget w, XtPointer client_data, XtPointer call_data)
+{
+    //sViewer_container *psV_c = (sViewer_container*) client_data;
+    save();
+}
 
 void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
 {

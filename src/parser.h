@@ -15,12 +15,17 @@
 
 #define MAX_STATE 10
 #define MAX_THREADS 1
-
+#define P_OUT "p.out"
+#define L_BUFFER 1024
+#define P_BUFFER 32
+#define DCB 32513
 
 enum eVtask {
     v_idle = 0,
     v_redraw = 1,
-    v_exit = 2
+    v_exit = 2,
+    v_hide = 3,
+    v_show = 4
 };
 
 enum eVState {
@@ -87,7 +92,9 @@ void onext();
 void olist_act();
 void olist();
 void ofree();
-sObject *get_object_by_key(sObject*, sObject*, int);
+int olist_count_command();
+//sObject *get_object_by_key(sObject*, sObject*, int);
+sObject *get_object_by_key(int);
 
 void cinit(sObject *); 
 void cnext(sObject *);
@@ -98,11 +105,12 @@ sCommand *get_command_by_key(sCommand*, sCommand*, int);
 void plist(int, ... );
 
 void v_create();
-void *v_show();
+void *x_show();
 
 void xshow(int, char **);
 void load_file(int, char **);
 void ctrl(char*, char*);
+void save();
 void quit();
 
 
