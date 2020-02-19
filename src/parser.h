@@ -15,9 +15,7 @@
 
 #define MAX_STATE 10
 #define MAX_THREADS 1
-#define P_OUT "p.out"
-#define L_BUFFER 1024
-#define P_BUFFER 32
+#define P_OUT "p.agf"
 #define DCB 32513
 
 enum eVtask {
@@ -93,7 +91,6 @@ void olist_act();
 void olist();
 void ofree();
 int olist_count_command();
-//sObject *get_object_by_key(sObject*, sObject*, int);
 sObject *get_object_by_key(int);
 
 void cinit(sObject *); 

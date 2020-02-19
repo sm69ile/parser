@@ -13,7 +13,7 @@
 #define D_WIN_Y_SIZE 400
 #define C_WIN_X_SIZE 200
 #define C_WIN_Y_SIZE 400
-#define MAX_FLOODFILL 100000
+#define MAX_FLOODFILL D_WIN_X_SIZE * D_WIN_Y_SIZE
 #define DCB 32513
 #define LABEL_HEIGHT 20
 #define LABEL_WIDTH 60
@@ -64,11 +64,11 @@ typedef struct Viewer_container{
   XtIntervalId vt_h;
   
   sDraw_container *psDraw_c;
-  sObject *psObjIni;
   
 }sViewer_container;
 
 int fops;
+int iDstate_idx;
 
 void v_timer_handler(XtPointer, XtIntervalId *);
 void v_event_handler(Widget, XtPointer, XEvent*, Boolean);

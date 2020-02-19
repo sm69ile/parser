@@ -181,8 +181,6 @@ void onext()
 
 void olist_act()
 {
-//  sObject* act = get_object_by_key(psObjIni, psObjIni->next, iObj_idx);
-    
     sObject* act = get_object_by_key(iObj_idx);
     
     printf("obj: [line: %d] [node %d] %s\n", act->s_line, act->key, act->name);
@@ -246,12 +244,8 @@ int olist_count_command()
   return i;
 }
 
-//sObject* get_object_by_key(sObject* first, sObject* last, int key)
-
 sObject* get_object_by_key(int key)
 {
-
-    fprintf(stderr,"Looking up object idx: %i\n",key);
 
     sObject* last = psObjIni->next;
     sObject* first = psObjIni;
@@ -477,17 +471,17 @@ void cfree(sObject *psObj)
 
 sCommand* get_command_by_key(sCommand* first, sCommand* last, int key)
 {
-  sCommand* act = last;
-  do
-    {
-      sCommand* next = act->next;
-      if(act->key == key)
-	return act;
-      act=next;
-    }
-  while(act != first);
+    sCommand* act = last;
+    do
+	{
+	    sCommand* next = act->next;
+	    if(act->key == key)
+		return act;
+	    act=next;
+	}
+    while(act != first);
 
-  return NULL;
+    return NULL;
 }
 
 void plist(int i, ...)
@@ -673,66 +667,79 @@ void save()
     
     
     int clength = sizeof(commands)/sizeof(commands[0]);  
-    char *lb;
-    char *pb;
-    
-    FILE* fp = fopen(P_OUT, "a+" );
 
+    char * buf;
+    FILE* fp = fopen(P_OUT, "a+" );
+    
+    int count_o = 0;
+    int count_c = 0;
+    int count_p = 0;
+
+    int buf_length;
+    
     if (! fp){ syslog(LOG_NOTICE,"Cannot open output file %s\n", P_OUT); }
     else
 	{
-	    if (  (!(lb=(char*) malloc(L_BUFFER*sizeof(char))))  || (!(pb=(char*) malloc(P_BUFFER*sizeof(char)))))
-		{ syslog(LOG_NOTICE, "malloc failed: char*\n"); }
-	    else
+	    sObject* olast = psObjIni->next;
+	    sObject* ofirst = psObjIni;
+	    sObject* oact = olast;
+	    do
 		{
-		    sObject* olast = psObjIni->next;
-		    sObject* ofirst = psObjIni;
-		    sObject* oact = olast;
-		    
-		    do
+		    sObject* onext = oact->next;
+
+		    fprintf(fp,"%s%s",oact->name,"~");
+		    count_o++;
+
+		    buf_length = strlen("XXXXX^X");
+
+		    if ((buf = (char*)malloc((buf_length)*sizeof(char))))
 			{
-			    bzero(lb,L_BUFFER);
-			    sObject* onext = oact->next;
-			    sprintf(lb,"%s~", oact->name);
-			    
+				
 			    sCommand* clast = oact->psComIni->next;
 			    sCommand* cfirst = oact->psComIni;
 			    sCommand* cact = clast;
-			    
+
 			    do
 				{
 				    sCommand* cnext = cact->next;
-
+					    
 				    for(int i=0; i<clength; i++)
 					{
 					    if(! strncmp(cact->name, commands[i], strlen(commands[i])))
 						{
-						    bzero(pb,P_BUFFER);
-						    sprintf(pb,"%d^", i+DCB);
-						    strcat(lb, pb);
+						    bzero(buf,buf_length);
+						    sprintf(buf,"%d^", i+DCB);
+						    fprintf(fp,buf);
+						    count_c++;
 
 						    for(int j=0;j<cact->count_para;j++)
 							{
-							    bzero(pb,P_BUFFER);
-							    sprintf(pb,"%d^", cact->para[j]);
-							    strcat(lb,pb);
+							    bzero(buf,buf_length);
+							    sprintf(buf,"%d^", cact->para[j]);
+							    fprintf(fp,buf);
+							    count_p++;
 							}
+						    
 						    break;
 						}
 					}
-
 				    cact=cnext;
 				}
 			    while(cact != cfirst);	
-			    strcat(lb,"\n");
-			    fprintf(fp,lb);		    
-			    oact=onext;
+			    fprintf(fp,"%s","\n");
+
+			    free(buf);
 			}
-		    while(oact != ofirst);
-		}
-	    fclose(fp);
-	}
+		    else
+			{ syslog(LOG_NOTICE, "malloc failed: char*\n"); }
+		    oact=onext;
+		} 
+	    while(oact != ofirst);
+	} 
+    fclose(fp);
+    printf("Successfully wrote:\n%i Objects\n%i Commands\n%i Parameter\nto file: %s\n", count_o, count_c, count_p, P_OUT);
 }
+
 
 
 

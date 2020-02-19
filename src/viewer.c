@@ -16,9 +16,6 @@ void xshow(int argc, char **argv)
     }
   else
     {
-      //Global
-      psV_c->psObjIni = psObjIni;  
-      //
       iCtask = v_idle;
       psV_c->toplevel = XtVaAppInitialize(&psV_c->app_context, "Viewer", NULL, 0, &argc, argv, NULL, NULL);
 
@@ -140,6 +137,8 @@ void xshow(int argc, char **argv)
       XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
       
       XtAppAddTimeOut(psV_c->app_context, 300, v_timer_handler, (XtPointer) psV_c);
+
+      iDstate_idx=iState_idx;
       
       v_update_layout(psV_c);
       
@@ -312,225 +311,229 @@ void v_set_window_attributes(Display* display, Drawable window)
 
 void v_draw(XtPointer client_data)
 {
-  sViewer_container *psV_c = (sViewer_container*) client_data;
+    sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  XGCValues values, rvalues;
-  GC gc;
-  Display *display;
-  Drawable window;
-  int iDstate_idx = iState_idx;
+    XGCValues values, rvalues;
+    GC gc;
+    Display *display;
+    Drawable window;
+ 
 
-  display = XtDisplay(psV_c->draw_shell);
-  window = XtWindow(psV_c->draw_shell);
+    display = XtDisplay(psV_c->draw_shell);
+    window = XtWindow(psV_c->draw_shell);
   
-  v_set_window_attributes(display, window);
+    v_set_window_attributes(display, window);
         
-//  sObject* oact = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx);
-  sObject* oact = get_object_by_key(iObj_idx);
+    sObject* oact = get_object_by_key(iObj_idx);
+    fprintf(stderr,"Displaying symbols, running state: %i, display state: %i\n", iState_idx, iDstate_idx);
+    fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
   
-  fprintf(stderr,"Displaying symbols, running state: %i\n", iState_idx);
-  fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
-  
-  sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
-  if (sact) { values.foreground = psV_c->psDraw_c->ctable[sact->value].value; } else { values.foreground = 0; }  
+    sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
+    if (sact) { values.foreground = psV_c->psDraw_c->ctable[sact->value].value; } else { values.foreground = 0; }  
 
-  sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_background");
-  if (sact) { values.background = psV_c->psDraw_c->ctable[sact->value].value; } else { values.background = 0; }  
+    sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_background");
+    if (sact) { values.background = psV_c->psDraw_c->ctable[sact->value].value; } else { values.background = 0; }  
 
-  sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_line_width");
-  if (sact) { values.line_width = sact->value; } else { values.line_width = 0; }  
+    sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_line_width");
+    if (sact) { values.line_width = sact->value; } else { values.line_width = 0; }  
 
-  gc = XtGetGC(psV_c->draw_shell,
+    gc = XtGetGC(psV_c->draw_shell,
 		 GCForeground |
 		 GCBackground |
 		 GCLineWidth, &values);
 
   
-  XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
-  fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
+    XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
+    fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
-  XClearWindow(display, window);
+    XClearWindow(display, window);
 
-   for(int j=0; j<oact->psComIni->key; j++)
-    {
-      sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
-      if(cact != NULL && iDstate_idx == iState_idx)
+    for(int j=0; j<oact->psComIni->key; j++)
 	{
-	  fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
-
-	  for(int k=0; k<cact->count_para;k++)
-	    fprintf(stderr,"%d ", cact->para[k]);
-	  fprintf(stderr,"\n");
-
-	  if (!strcmp(cact->name, "state") && cact->count_para == 1) 
-	      {
-		  iDstate_idx = cact->para[0];
-		  fprintf(stderr,"\tState switched by Symbol definition \"state()\"\n");
-	      }
-	  if (!strcmp(cact->name, "break") && cact->count_para == 0) 
-	      {
-		  iDstate_idx = 0;
-		  fprintf(stderr,"\tState switched by Symbol definition \"break()\"\n"); 
-	      }
-	  
-	  if (!strcmp(cact->name, "line") && cact->count_para == 4) 
-	    {
-	      XDrawLine(display, window, gc,
-			cact->para[0],
-			cact->para[1],
-			cact->para[2],
-			cact->para[3]
-			);
-	      psV_c->psDraw_c->last_x=cact->para[2];
-	      psV_c->psDraw_c->last_y=cact->para[3];
-	      
-	    }
-	  if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
-	    {
-	      sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
-	      if(mact != 0 && !strncmp(mact->name,"line",strlen("line")))
+	    sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
+	    if(cact != NULL && iState_idx == iDstate_idx)
+//	  if(cact != NULL)
 		{
-		  Pixel mcolor = psV_c->psDraw_c->ctable[cact->para[4]].value; 
-		  v_max_impl(cact, mact, 1, mcolor, display, window, gc);
-		}
+		    fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
 
-	    }
-	  else if (!strcmp(cact->name, "lineto") && cact->count_para == 2) 
-	    {
-	      XDrawLine(display, window, gc,
-			psV_c->psDraw_c->last_x,
-			psV_c->psDraw_c->last_y,
-			cact->para[0],
-			cact->para[1]
-			);
+		    for(int k=0; k<cact->count_para;k++)
+			fprintf(stderr,"%d ", cact->para[k]);
+		    fprintf(stderr,"\n");
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+		    if (!strcmp(cact->name, "state") && cact->count_para == 1) 
+			{
+			    iDstate_idx = cact->para[0];
+			    fprintf(stderr,"\tState switched by Symbol definition \"state()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx);
+			}
+		    if (!strcmp(cact->name, "break") && cact->count_para == 1) 
+			{
+			    iDstate_idx = cact->para[0];
+
+			    fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
+			}
+	  
+		    if (!strcmp(cact->name, "line") && cact->count_para == 4) 
+			{
+			    XDrawLine(display, window, gc,
+				      cact->para[0],
+				      cact->para[1],
+				      cact->para[2],
+				      cact->para[3]
+				);
+			    psV_c->psDraw_c->last_x=cact->para[2];
+			    psV_c->psDraw_c->last_y=cact->para[3];
 	      
-	    } else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) 
-	    {
-	      XDrawRectangle(display, window, gc,
-		       cact->para[0],
-		       cact->para[1],
-		       cact->para[2],
-		       cact->para[3]
-		       );
+			}
+		    if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
+			{
+			    sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
 
-	      psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
-	      psV_c->psDraw_c->last_y=cact->para[1]+cact->para[3];
+			    if(mact != 0 && !strncmp(mact->name,"line",strlen("line")))
+				{
+				    Pixel mcolor = psV_c->psDraw_c->ctable[cact->para[4]].value; 
+				    v_max_impl(cact, mact, 1, mcolor, display, window, gc);
+				}
 
-	    } else if (!strcmp(cact->name, "circle") && cact->count_para == 3) 
-	    {
-	      XDrawArc(display, window, gc,
-		       cact->para[0]-cact->para[2],
-		       cact->para[1]-cact->para[2],
-		       2*cact->para[2],
-		       2*cact->para[2],
-		       0,
-		       64*360
-		       );
+			}
+		    else if (!strcmp(cact->name, "lineto") && cact->count_para == 2) 
+			{
+			    XDrawLine(display, window, gc,
+				      psV_c->psDraw_c->last_x,
+				      psV_c->psDraw_c->last_y,
+				      cact->para[0],
+				      cact->para[1]
+				);
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+			    psV_c->psDraw_c->last_x=cact->para[0];
+			    psV_c->psDraw_c->last_y=cact->para[1];
+	      
+			} else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) 
+			{
+			    XDrawRectangle(display, window, gc,
+					   cact->para[0],
+					   cact->para[1],
+					   cact->para[2],
+					   cact->para[3]
+				);
 
-	    } else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) 
-	    {
-	      XDrawArc(display, window, gc,
-		       cact->para[0],
-		       cact->para[1],
-		       cact->para[2],
-		       cact->para[3],
-		       0,
-		       64*360
-		       );
+			    psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
+			    psV_c->psDraw_c->last_y=cact->para[1]+cact->para[3];
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+			} else if (!strcmp(cact->name, "circle") && cact->count_para == 3) 
+			{
+			    XDrawArc(display, window, gc,
+				     cact->para[0]-cact->para[2],
+				     cact->para[1]-cact->para[2],
+				     2*cact->para[2],
+				     2*cact->para[2],
+				     0,
+				     64*360
+				);
 
-	    } else if (!strcmp(cact->name, "arc") && cact->count_para == 5)
-	      {
-		  XDrawArc(display, window, gc,
-			   cact->para[0]-cact->para[4],
-			   cact->para[1]-cact->para[4],
-			   2*cact->para[4],
-			   2*cact->para[4],
-			   64*cact->para[2],
-			   64*cact->para[3]);
-		  psV_c->psDraw_c->last_x=cact->para[0];
-		  psV_c->psDraw_c->last_y=cact->para[1];	  
-	    }
+			    psV_c->psDraw_c->last_x=cact->para[0];
+			    psV_c->psDraw_c->last_y=cact->para[1];
 
-	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4)
-	      {
-		  XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
-		  XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
-		  XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
-		  XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
-	      }
-	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2) 
-	    {
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+			} else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) 
+			{
+			    XDrawArc(display, window, gc,
+				     cact->para[0],
+				     cact->para[1],
+				     cact->para[2],
+				     cact->para[3],
+				     0,
+				     64*360
+				);
 
-	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 4) 
-	    {
+			    psV_c->psDraw_c->last_x=cact->para[0];
+			    psV_c->psDraw_c->last_y=cact->para[1];
 
-	      XDrawString(display, window, gc,
-			  cact->para[0],
-			  cact->para[1],
-			  "REM",strlen("REM")
-			  );
+			} else if (!strcmp(cact->name, "arc") && cact->count_para == 5)
+			{
+			    XDrawArc(display, window, gc,
+				     cact->para[0]-cact->para[4],
+				     cact->para[1]-cact->para[4],
+				     2*cact->para[4],
+				     2*cact->para[4],
+				     64*cact->para[2],
+				     64*cact->para[3]);
+			    psV_c->psDraw_c->last_x=cact->para[0];
+			    psV_c->psDraw_c->last_y=cact->para[1];	  
+			}
 
-	    } else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
-	    {
-	      fops=0;
-	      v_floodfill(display, window, gc,
-			 cact->para[0],
-			 cact->para[1],
-			  psV_c->psDraw_c->ctable[cact->para[2]].value 
-			 );
+		    else if (!strcmp(cact->name, "flowways") && cact->count_para == 4)
+			{
+			    XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
+			    XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
+			    XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
+			    XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
+			}
+		    else if (!strcmp(cact->name, "moveto") && cact->count_para == 2) 
+			{
+			    psV_c->psDraw_c->last_x=cact->para[0];
+			    psV_c->psDraw_c->last_y=cact->para[1];
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+			} else if (!strcmp(cact->name, "REM") && cact->count_para == 4) 
+			{
 
-	    }
+			    XDrawString(display, window, gc,
+					cact->para[0],
+					cact->para[1],
+					"REM",strlen("REM")
+				);
+
+			} else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
+			{
+			    v_floodfill(display, window, gc,
+					cact->para[0],
+					cact->para[1],
+					psV_c->psDraw_c->ctable[cact->para[2]].value 
+				);
+
+			    psV_c->psDraw_c->last_x=cact->para[0];
+			    psV_c->psDraw_c->last_y=cact->para[1];
+
+			}
+		}
 	}
-    }
-  fprintf(stderr,"]\n");
-  XtReleaseGC(psV_c->draw_shell, gc);
-
+    fprintf(stderr,"]\n");
+    XtReleaseGC(psV_c->draw_shell, gc);
 }
 
 
 void v_prev_object(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  sViewer_container *psV_c = (sViewer_container*) client_data;
+    sViewer_container *psV_c = (sViewer_container*) client_data;
 
-  if(iObj_idx > 1)
-    iObj_idx--;
-  else
-    iObj_idx = psV_c->psObjIni->next->key;
-
-  v_update_layout(psV_c);
-  v_draw(psV_c);
+    if(iObj_idx > 1)
+	iObj_idx--;
+    else
+	iObj_idx = psObjIni->next->key;
+    v_update_layout(psV_c);
+    v_draw(psV_c);
 }
 
 void v_next_object(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  sViewer_container *psV_c = (sViewer_container*) client_data;
+    sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  if(iObj_idx < psV_c->psObjIni->next->key)
-    iObj_idx++;
-  else
-    iObj_idx=1;
+    fprintf(stderr, "iObj_idx = %i, psObjIni->next->key = %i\n", iObj_idx, psObjIni->next->key);
 
-  v_update_layout(psV_c);
-  v_draw(psV_c);
+    if(iObj_idx < psObjIni->next->key)
+	iObj_idx++;
+    else
+	iObj_idx=1;
+
+    v_update_layout(psV_c);
+    v_draw(psV_c);
 }
 
 void v_curr_object(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
+
+  iDstate_idx=iState_idx;
+
+  fprintf(stderr,"Setting iState_idx = iDstate_idx\n"); 
 
   v_update_layout(psV_c);
   v_draw(psV_c);
@@ -540,61 +543,61 @@ void v_curr_object(Widget w, XtPointer client_data, XtPointer call_data)
 
 void v_update_layout(XtPointer client_data) 
 {
-  sViewer_container *psV_c = (sViewer_container*) client_data;
-  Arg wargs[10];
-  int n=0;
-  char *label, *buf;
-  size_t label_length, buf_length;
-
-//  char* act_name = get_object_by_key(psV_c->psObjIni, psV_c->psObjIni->next, iObj_idx)->name;
-  char* act_name = get_object_by_key(iObj_idx)->name;
+    sViewer_container *psV_c = (sViewer_container*) client_data;
+    Arg wargs[10];
+    int n=0;
+    char *label, *buf;
+    size_t label_length, buf_length;
 
 
+    fprintf(stderr,"iObj_idx = %i\n",iObj_idx);
+    char* act_name = get_object_by_key(iObj_idx)->name;
+    
+    label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 4*strlen("XXXX") + 2*strlen(" [/]")+ strlen(", DState: X") ;
 
-  label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 4*strlen("XXXX") + 2*strlen(" [/]");
-
-  if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
-    fprintf(stderr, "malloc() failed: char*\n");
-  else
-    {	    
-      bzero(label, label_length);
+    if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
+	fprintf(stderr, "malloc() failed: char*\n");
+    else
+	{	    
+	    bzero(label, label_length);
       
-      buf_length = strlen("[XXXX/");
-      if ((buf = (char*)malloc((buf_length)*sizeof(char))))
-	  {
-	    snprintf(buf, buf_length," [%i/", iObj_idx);
-	    strcat(label, buf);
-	    bzero(buf,buf_length);
-	    snprintf(buf, buf_length,"%i] ", psV_c->psObjIni->key);
-	    strcat(label,buf);
-	    free(buf);
-	  }
+	    buf_length = strlen("[XXXX/");
+	    if ((buf = (char*)malloc((buf_length)*sizeof(char))))
+		{
+		    bzero(buf,buf_length);
+		    snprintf(buf, buf_length," [%i/", iObj_idx);
+		    strcat(label, buf);
+		    bzero(buf,buf_length);
+		    snprintf(buf, buf_length,"%i] ", psObjIni->next->key);
+		    strcat(label,buf);
+		    strcat(label,"Name: ");
+		    strcat(label, act_name);
+		    strcat(label,", State: ");
 
-      strcat(label,"Name: ");
-      strcat(label, act_name);
-      strcat(label,", State: ");
-
-      buf_length = strlen(" [XXXX/");
-      if ((buf = (char*)malloc((buf_length)*sizeof(char))))
-	  {
-	    snprintf(buf, buf_length," [%i/", iState_idx);
-	    strcat(label, buf);
-	    bzero(buf,buf_length);
-	    snprintf(buf, buf_length,"%i]", MAX_STATE);
-	    strcat(label,buf);
-	    free(buf);
-	  }
-    }
-  XtSetArg(wargs[n], XtNlabel, label); n++;
-  XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-  XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
-  XtSetValues(psV_c->object_label, wargs, n);
-  free(label);
+		    bzero(buf,buf_length);
+		    snprintf(buf, buf_length," [%i/", iState_idx);
+		    strcat(label, buf);
+		    bzero(buf,buf_length);
+		    snprintf(buf, buf_length,"%i]", MAX_STATE);
+		    strcat(label,buf);
+		    strcat(label,", dState: ");
+		    bzero(buf,buf_length);
+		    snprintf(buf, buf_length, "%i", iDstate_idx);
+		    strcat(label, buf);
+		    free(buf);
+		}
+	    else
+		fprintf(stderr, "malloc() failed: char*\n"); 
+	}
+    XtSetArg(wargs[n], XtNlabel, label); n++;
+    XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+    XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
+    XtSetValues(psV_c->object_label, wargs, n);
+    free(label);
 }
 
 void v_save(Widget w, XtPointer client_data, XtPointer call_data)
 {
-    //sViewer_container *psV_c = (sViewer_container*) client_data;
     save();
 }
 
@@ -651,10 +654,10 @@ Pixel get_color_by_name(Display* display, Colormap cm, char* cname)
   return 0;
 }
 
-
 void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display* display, Drawable window , GC gc)
 {
-  if (cact->para[1] == 6)
+
+    if (cact->para[1] == 6)
     {
       int y = mact->para[1];
       for(int k=0; k < iState_idx && k < cact->para[3]; k++)
@@ -671,7 +674,6 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
 	  if (x<0)
 	    x=mact->para[0]-mact->para[2];
 
-	  fops=0;	  
 	  v_floodfill(display, window, gc,
 		      x,
 		      y-cact->para[2]/2,
@@ -695,7 +697,7 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
 	  int x=mact->para[2]-mact->para[0];
 	  if (x< 0)
 	    x=mact->para[0]-mact->para[2];
-	  fops=0;
+
 	  v_floodfill(display, window, gc,
 		      x,
 		      y+cact->para[2]/2,
@@ -717,12 +719,11 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
 		    mact->para[3]
 		    );
 
-
 	  int y=mact->para[1]-mact->para[3];
 	  if (y<0)
 	    y=mact->para[3]-mact->para[1];
 
-	  fops=0;	  
+
 	  v_floodfill(display, window, gc,
 		      x-cact->para[2]/2,
 		      y,
@@ -748,7 +749,6 @@ void v_max_impl(sCommand* cact, sCommand* mact, int state, Pixel mcolor, Display
 	  if (y<0)
 	    y=mact->para[3]-mact->para[1];
 
-	  fops=0;	  
 	  v_floodfill(display, window, gc,
 		      x+cact->para[2]/2,
 		      y,
@@ -763,7 +763,8 @@ void v_floodfill(Display* display, Drawable window, GC gc, int x, int y, Pixel f
 {
   Pixel  bcp;
   XImage* image = XGetImage(display, window, 0, 0, D_WIN_X_SIZE, D_WIN_Y_SIZE, AllPlanes, ZPixmap);
-
+  fops=0;	  
+    
   if( image != NULL)
     {
       bcp = XGetPixel(image, x, y);
@@ -780,19 +781,17 @@ void v_floodfill(Display* display, Drawable window, GC gc, int x, int y, Pixel f
 
 XImage* floodfill(XImage* image, int x, int y, Pixel fcp, Pixel bcp, int max_x, int max_y)
 {
-  Pixel actp;
-  
-  if(x<max_x && x>0 && y<max_y && y>0 && (actp=XGetPixel(image, x, y)) == bcp && fops<MAX_FLOODFILL)
-    {
-      if(fops++ < MAX_FLOODFILL)
-	{
-	XPutPixel(image, x, y, fcp);
-	floodfill(image, x+1, y, fcp, bcp, max_x, max_y);
-	floodfill(image, x, y+1, fcp, bcp, max_x, max_y);
-	floodfill(image, x-1, y, fcp, bcp, max_x, max_y);
-	floodfill(image, x, y-1, fcp, bcp, max_x, max_y);
-	}
-    }
+    Pixel actp;
 
-  return image;
+    if(x<max_x && x>0 && y<max_y && y>0 && (actp=XGetPixel(image, x, y)) == bcp && fops++<MAX_FLOODFILL)
+	{
+	    XPutPixel(image, x, y, fcp);
+	    floodfill(image, x+1, y, fcp, bcp, max_x, max_y);
+	    floodfill(image, x, y+1, fcp, bcp, max_x, max_y);
+	    floodfill(image, x-1, y, fcp, bcp, max_x, max_y);
+	    floodfill(image, x, y-1, fcp, bcp, max_x, max_y);
+
+	}
+
+    return image;
 };
