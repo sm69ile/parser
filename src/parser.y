@@ -97,7 +97,7 @@ CTRL CPARA SEMICOLON { ctrl($1,$2);}
 int main(int argc, char *argv[])
 {
   openlog(PACKAGE_STRING, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
-  syslog (LOG_NOTICE, "Program started by User %d", getuid ());
+  syslog (LOG_DEBUG, "Program started by User %d", getuid ());
   
   iThr = 0;
   
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
    } while(!feof(yyin));
    
 
-   fprintf(stderr,"Uups, \"feof(yyin);\" found, exiting\n");
+   printf("Uups, \"feof(yyin);\" found, exiting\n");
    quit();
    
    return 0;
@@ -124,14 +124,14 @@ int main(int argc, char *argv[])
 
 void oinit()
 {
-  syslog(LOG_NOTICE, "Initialising memory for object, starting node\n");
+  syslog(LOG_DEBUG, "Initialising memory for object, starting node\n");
 
   iState_idx = 0;
   iObj_idx = 1;
 
   if (!(psObjIni=(sObject*) malloc(sizeof(sObject))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sObject*\n");
+      syslog(LOG_DEBUG, "malloc failed: sObject*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -151,11 +151,11 @@ void oinit()
 void onext()
 {
   psObjIni->key++;
-  syslog(LOG_NOTICE, "Initialising memory, object key: %d\n", psObjIni->key);
+  syslog(LOG_DEBUG, "Initialising memory, object key: %d\n", psObjIni->key);
   
   if (!(psObj=(sObject*) malloc(sizeof(sObject))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sObject*\n");
+      syslog(LOG_DEBUG, "malloc failed: sObject*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -259,8 +259,6 @@ sObject* get_object_by_key(int key)
 	}
     while(act != first);
 
-    fprintf(stderr,"Object not found, returning NULL\n");
-    
     return NULL;
 }
 
@@ -268,11 +266,11 @@ sObject* get_object_by_key(int key)
  
 void vinit(sObject* psObj)
 {
-  syslog(LOG_NOTICE, "Initialising memory for drawing parameters, starting node\n");
+  syslog(LOG_DEBUG, "Initialising memory for drawing parameters, starting node\n");
 
   if (!(psObj->psVsetIni=(sVset*) malloc(sizeof(sVset))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sVset*\n");
+      syslog(LOG_DEBUG, "malloc failed: sVset*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -288,11 +286,11 @@ void vinit(sObject* psObj)
 void vnext(sObject* psObj)
 {
   psObj->psVsetIni->key++;
-  syslog(LOG_NOTICE, "Initialising memory, drawing parameter, key: %d\n", psObj->psVsetIni->key);
+  syslog(LOG_DEBUG, "Initialising memory, drawing parameter, key: %d\n", psObj->psVsetIni->key);
   
   if (!(psObj->psVset=(sVset*) malloc(sizeof(sVset))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sVset*\n");
+      syslog(LOG_DEBUG, "malloc failed: sVset*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -332,7 +330,7 @@ sVset* get_vset(sObject* psObj, char *para)
 
       if (!strcmp(act->para, para))
 	{
-	  fprintf(stderr,"Found [source line: %d] [node %d] %s: %lu\n",act->d_line, act->key, act-> para, act->value);
+	  //	  fprintf(stderr,"Found [source line: %d] [node %d] %s: %lu\n",act->d_line, act->key, act-> para, act->value);
 	  return act;
 	}
       act=next;
@@ -388,11 +386,11 @@ sVset* get_setting_by_name(sVset* first, sVset* last, const char* para)
 
 void cinit(sObject *psObj)
 {
-  syslog(LOG_NOTICE, "Initialising memory for command, starting node\n");
+  syslog(LOG_DEBUG, "Initialising memory for command, starting node\n");
 
   if (!(psObj->psComIni=(sCommand*) malloc(sizeof(sCommand))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sCommand*\n");
+      syslog(LOG_DEBUG, "malloc failed: sCommand*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -409,11 +407,11 @@ void cinit(sObject *psObj)
 void cnext(sObject *psObj)
 {
   psObj->psComIni->key++;
-  syslog(LOG_NOTICE, "Initialising memory, command node: %d\n", psObj->psComIni->key);
+  syslog(LOG_DEBUG, "Initialising memory, command node: %d\n", psObj->psComIni->key);
   
   if (!(psObj->psCom=(sCommand*) malloc(sizeof(sCommand))))
     {
-      syslog(LOG_NOTICE, "malloc failed: sCommand*\n");
+      syslog(LOG_DEBUG, "malloc failed: sCommand*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -492,7 +490,7 @@ void plist(int i, ...)
   
   if (!(act->para=(int*) malloc(i*sizeof(int))))
     {
-      syslog(LOG_NOTICE, "malloc() failed: int*\n");
+      syslog(LOG_DEBUG, "malloc failed: int*\n");
       exit(EXIT_FAILURE);
     }
 
@@ -532,18 +530,18 @@ void load_file(int argc, char *argv[])
     do{
     
 	j=strlen(LOAD)+strlen(argv[i])+1;
-	syslog (LOG_NOTICE, "File: %s - Command length: %i\n",argv[i],j);
+	syslog (LOG_DEBUG, "File: %s - Command length: %i\n",argv[i],j);
     
 	if (!(l_argv=(char*) malloc(j*sizeof(char))))
 	    {
-		syslog(LOG_NOTICE, "malloc() failed: char\n");
+		syslog(LOG_DEBUG, "malloc failed: char\n");
 		exit(EXIT_FAILURE);
 	    }
     
 	bzero(l_argv,j);
 	strcat(l_argv,LOAD);
 	strcat(l_argv,argv[i]);
-	syslog (LOG_NOTICE, "Command line: %s\n",l_argv);
+	syslog (LOG_DEBUG, "Command line: %s\n",l_argv);
 	yy_scan_string(l_argv);
 	yyparse();
 	yylex_destroy();
@@ -584,7 +582,7 @@ void ctrl(char* cmd, char* para)
 		    if (iCstate == v_close)
 			v_display();
 		    else
-			fprintf(stderr, "Client already running\n");
+			printf("Client already running\n");
 		}
 	    else if (! strncmp(cmd,"sleep",strlen("sleep")))
 		{ sleep(3); }
@@ -597,7 +595,7 @@ void ctrl(char* cmd, char* para)
 	    else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
 		{ quit(); }
 	    else
-		{ fprintf(stderr, "Command %s not found.\n", cmd ); }
+		{ printf("Command %s not found.\n", cmd ); }
 	}
     else
 	{
@@ -644,7 +642,7 @@ void ctrl(char* cmd, char* para)
 						{ printf("%s %s (incl. reserved):\t%i\n", cmd, para, olist_count_command()); }
 
 					    else
-						{ fprintf(stderr, "Command sequence %s %s not found.\n", cmd, para); }
+						{ printf("Command sequence %s %s not found.\n", cmd, para); }
 	}
 }
 
@@ -677,7 +675,7 @@ void save()
 
     int buf_length;
     
-    if (! fp){ syslog(LOG_NOTICE,"Cannot open output file %s\n", P_OUT); }
+    if (! fp){ syslog(LOG_DEBUG,"Cannot open output file %s\n", P_OUT); }
     else
 	{
 	    sObject* olast = psObjIni->next;
@@ -731,7 +729,7 @@ void save()
 			    free(buf);
 			}
 		    else
-			{ syslog(LOG_NOTICE, "malloc failed: char*\n"); }
+			{ syslog(LOG_DEBUG, "malloc failed: char*\n"); }
 		    oact=onext;
 		} 
 	    while(oact != ofirst);

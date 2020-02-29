@@ -7,11 +7,12 @@ void xshow(int argc, char **argv)
   Arg wargs[10];
   int n;
     
-  fprintf(stderr,"\t-> Thread with id: %ld, internal id (iThr): %i started\n", pthread_self(), iThr);
+  //fprintf(stderr,"\t-> Thread with id: %ld, internal id (iThr): %i started\n", pthread_self(), iThr);
 
   if (!(psV_c = (sViewer_container*) malloc(sizeof(sViewer_container))))
     {
-      fprintf(stderr, "malloc() failed: sViewer_container*\n");
+      syslog(LOG_DEBUG,"malloc failed: sViewer_container*\n"); 
+      //      fprintf(stderr, "malloc() failed: sViewer_container*\n");
       return; //pthread closed
     }
   else
@@ -109,7 +110,8 @@ void xshow(int argc, char **argv)
  
       if (!(psV_c->psDraw_c = (sDraw_container*) malloc(sizeof(sDraw_container))))
 	{
-	  fprintf(stderr, "malloc() failed: sDraw_container*\n");
+	  syslog(LOG_DEBUG, "malloc failed: sDraw_container*\n");
+	    //	  fprintf(stderr, "malloc() failed: sDraw_container*\n");
 	  return; //pthread closed
 	}
       else
@@ -268,7 +270,8 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
 	  int fno_length = snprintf( NULL, 0, "%02d", psV_c->psDraw_c->ctable[i].key);
 
 	  if(!(fno = (char*)malloc((fno_length+1)*sizeof(char))))
-	    fprintf(stderr, "malloc() failed: char*\n");
+	    syslog(LOG_DEBUG, "malloc failed: char*\n");
+	  //	    fprintf(stderr, "malloc() failed: char*\n");
 	  else
 	    {
 	      snprintf( fno, fno_length + 1, "%02d", psV_c->psDraw_c->ctable[i].key);
@@ -304,7 +307,7 @@ void v_set_window_attributes(Display* display, Drawable window)
       XChangeWindowAttributes(display, window, valuemask, &s_attributes);
 
       XGetWindowAttributes(display, window, &g_attributes);
-      fprintf(stderr,"Backing_store set to: %i\n", g_attributes.backing_store);
+      //fprintf(stderr,"Backing_store set to: %i\n", g_attributes.backing_store);
     }
 }
 
@@ -516,8 +519,6 @@ void v_next_object(Widget w, XtPointer client_data, XtPointer call_data)
 {
     sViewer_container *psV_c = (sViewer_container*) client_data;
   
-    fprintf(stderr, "iObj_idx = %i, psObjIni->next->key = %i\n", iObj_idx, psObjIni->next->key);
-
     if(iObj_idx < psObjIni->next->key)
 	iObj_idx++;
     else
@@ -533,12 +534,9 @@ void v_curr_object(Widget w, XtPointer client_data, XtPointer call_data)
 
   iDstate_idx=iState_idx;
 
-  fprintf(stderr,"Setting iState_idx = iDstate_idx\n"); 
-
   v_update_layout(psV_c);
   v_draw(psV_c);
 }
-
 
 
 void v_update_layout(XtPointer client_data) 
@@ -550,13 +548,13 @@ void v_update_layout(XtPointer client_data)
     size_t label_length, buf_length;
 
 
-    fprintf(stderr,"iObj_idx = %i\n",iObj_idx);
     char* act_name = get_object_by_key(iObj_idx)->name;
     
     label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 4*strlen("XXXX") + 2*strlen(" [/]")+ strlen(", DState: X") ;
 
     if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
-	fprintf(stderr, "malloc() failed: char*\n");
+      syslog(LOG_DEBUG, "malloc failed: char*\n");
+    //      fprintf(stderr, "malloc() failed: char*\n");
     else
 	{	    
 	    bzero(label, label_length);
@@ -587,7 +585,8 @@ void v_update_layout(XtPointer client_data)
 		    free(buf);
 		}
 	    else
-		fprintf(stderr, "malloc() failed: char*\n"); 
+	      syslog(LOG_DEBUG, "malloc failed: char*\n");
+	    //	      fprintf(stderr, "malloc() failed: char*\n"); 
 	}
     XtSetArg(wargs[n], XtNlabel, label); n++;
     XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
@@ -775,7 +774,8 @@ void v_floodfill(Display* display, Drawable window, GC gc, int x, int y, Pixel f
       XDestroyImage(image);
     }
   else
-    fprintf(stderr,"Problem occured with XGetImage()\n");
+    syslog(LOG_DEBUG, "Problem occured with XGetImage()\n");
+  //  fprintf(stderr,"Problem occured with XGetImage()\n");
 }
 
 
