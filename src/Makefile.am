@@ -1,6 +1,13 @@
+LIBX11 = @LIBX11@
+LIBXt = @LIBXt@
+LIBXaw = @LIBXaw@
+LIBpthread = @LIBpthread@
+
 bin_PROGRAMS = parser
 parser_SOURCES = y.tab.c lex.yy.c viewer.c viewer.h
-parser_CFLAGS = -Wall -g -O2 -lX11 -lXt -lXaw -lpthread
+parser_CFLAGS = -Wall
+parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread)
+
 AM_YFLAGS = -d
 
 y.tab.c: parser.y parser.h
