@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-		sh 'autoreconf --install && ./configure --prefix=/tmp && make && make install'
+		sh 'autoreconf --install && ./configure --prefix=/usr/local/jenkins && make && make install'
             }
         }
     }
