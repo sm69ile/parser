@@ -15,7 +15,9 @@
 
 #define MAX_STATE 10
 #define MAX_THREADS 1
-#define P_OUT "p.agf"
+
+#define FIRST_LINE "Graphikfile Viewer Ver. 0.1\n"
+#define P_OUT "parser.agf"
 #define DCB 32513
 
 enum eVtask {
