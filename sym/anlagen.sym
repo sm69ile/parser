@@ -1,0 +1,1296 @@
+#
+#	anlagen.sym
+#
+tank5d20{
+#
+#	Zulauf, oben
+#
+	line(190,0,190,30);
+	line(189,0,189,30);
+	line(210,0,210,30);
+	line(211,0,211,30);
+#
+#	der Koerper
+#
+#	Kruemmung oben links
+#	
+	arc(225,375,96,24,350);
+	arc(225,375,96,24,351);
+#
+#	Kruemmung oben rechts
+#	
+	arc(175,375,60,24,350);
+	arc(175,375,60,24,351);
+	line(350,70,350,330);
+#
+#	Kruemmung unten links
+#	
+	arc(225,25,240,24,350);
+	arc(225,25,240,24,351);
+#
+#	Kruemmung unten rechts
+#	
+	arc(175,25,276,24,350);
+	arc(175,25,276,24,351);
+
+	line(50,330,50,70);
+#
+#	der Ablauf, unten
+#
+	line(190,370,190,400);
+	line(189,370,189,400);
+	line(210,370,210,400);
+	line(211,370,211,400);
+#
+#	Testzulauf, links
+#
+#	line(0,114,50,114);
+#	line(0,126,50,126);
+	REM(0,10,15,1);
+}
+
+
+tank15d20{
+#
+#	Zulauf, oben
+#
+	line(190,0,190,30);
+	line(189,0,189,30);
+	line(210,0,210,30);
+	line(211,0,211,30);
+#
+#	der Koerper
+#
+#	Kruemmung oben links
+#	
+	arc(225,375,96,24,350);
+	arc(225,375,96,24,351);
+#
+#	Kruemmung oben rechts
+#	
+	arc(175,375,60,24,350);
+	arc(175,375,60,24,351);
+#
+#	Kruemmung unten links
+#	
+	arc(225,25,240,24,350);
+	arc(225,25,240,24,351);
+#
+#	Kruemmung unten rechts
+#	
+	arc(175,25,276,24,350);
+	arc(175,25,276,24,351);
+
+#
+#	der Ablauf, unten
+#
+	line(190,370,190,400);
+	line(189,370,189,400);
+	line(210,370,210,400);
+	line(211,370,211,400);
+#
+#	Zulauf, links
+#
+	line(0,190,50,190);
+	line(0,210,50,210);
+#
+#	Zulauf, rechts
+#
+	line(350,190,400,190);
+	line(350,210,400,210);
+
+	line(350,70,350,330);
+	line(50,70,50,330);
+
+	REM(0,10,15,1);
+}
+
+
+tank7d20{
+	state(0);
+
+	line(190,0,190,20);
+	lineto(90,20);
+	lineto(90,300);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,20);
+	lineto(310,20);
+	lineto(310,190);
+	lineto(400,190);
+
+	line(400,210,310,210);
+	lineto(310,300);
+	lineto(210,350);
+	lineto(210,400);
+
+# Horizontale fuer die 1. Fuellposition
+	line(90,50,310,50);
+# fuer schatten an den tank schraegen ;-)
+	line(90,299,190,350);
+	line(90,298,190,350);
+	line(90,297,190,350);
+	line(310,299,210,350);
+	line(310,298,210,350);
+	line(310,297,210,350);
+
+	line(190,20,210,20);
+	flowways(200,10,200,375);	
+
+	REM(0,10,15,1);
+	break(1);
+	line(190,0,190,20);
+	lineto(90,20);
+	lineto(90,300);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,20);
+	lineto(310,20);
+	lineto(310,190);
+	lineto(400,190);
+	line(400,210,310,210);
+	lineto(310,300);
+	lineto(210,350);
+	lineto(210,400);
+# Horizontale fuer die 2. Fuellposition
+	line(90,100,310,100);
+# fuer schatten an den tank schraegen ;-)
+	line(90,299,190,350);
+	line(90,298,190,350);
+	line(90,297,190,350);
+	line(310,299,210,350);
+	line(310,298,210,350);
+	line(310,297,210,350);
+
+	line(190,20,210,20);
+	flowways(200,10,200,375);	
+
+	REM(0,10,15,1);
+	break(2);
+	line(190,0,190,20);
+	lineto(90,20);
+	lineto(90,300);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,20);
+	lineto(310,20);
+	lineto(310,190);
+	lineto(400,190);
+	line(400,210,310,210);
+	lineto(310,300);
+	lineto(210,350);
+	lineto(210,400);
+# Horizontale fuer die 3. Fuellposition
+	line(90,150,310,150);
+# fuer schatten an den tank schraegen ;-)
+	line(90,299,190,350);
+	line(90,298,190,350);
+	line(90,297,190,350);
+	line(310,299,210,350);
+	line(310,298,210,350);
+	line(310,297,210,350);
+
+	line(190,20,210,20);
+	flowways(200,10,200,375);	
+
+	REM(0,10,15,1);
+	break(3);
+	line(190,0,190,20);
+	lineto(90,20);
+	lineto(90,300);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,20);
+	lineto(310,20);
+	lineto(310,190);
+	lineto(400,190);
+	line(400,210,310,210);
+	lineto(310,300);
+	lineto(210,350);
+	lineto(210,400);
+# Horizontale fuer die 4. Fuellposition
+	line(90,200,310,200);
+# fuer schatten an den tank schraegen ;-)
+	line(90,299,190,350);
+	line(90,298,190,350);
+	line(90,297,190,350);
+	line(310,299,210,350);
+	line(310,298,210,350);
+	line(310,297,210,350);
+
+	line(190,20,210,20);
+	flowways(200,10,200,375);	
+
+	REM(0,10,15,1);
+	break(4);
+	line(190,0,190,20);
+	lineto(90,20);
+	lineto(90,300);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,20);
+	lineto(310,20);
+	lineto(310,190);
+	lineto(400,190);
+	line(400,210,310,210);
+	lineto(310,300);
+	lineto(210,350);
+	lineto(210,400);
+# Horizontale fuer die 5. Fuellposition
+	line(90,250,310,250);
+# fuer schatten an den tank schraegen ;-)
+	line(90,299,190,350);
+	line(90,298,190,350);
+	line(90,297,190,350);
+	line(310,299,210,350);
+	line(310,298,210,350);
+	line(310,297,210,350);
+
+	line(190,20,210,20);
+	flowways(200,10,200,375);	
+
+	REM(0,10,15,1);
+}
+
+#
+# Waermetauscher mit Rohrschlange, geschwungen.
+#
+wtr10F4t1d20{
+#
+# der Randbereich, oben.
+#
+	line(65,51,190,51);
+	line(65,50,190,50);
+	
+	lineto(190,0);
+	
+	line(210,0,210,50);
+	lineto(335,50);
+	line(210,51,335,51);
+#
+# Zustrom links.
+#
+	line(0,190,50,190);
+	line(0,210,50,210);
+#
+# Wandkruemmung links.
+#
+	
+	arc(200,200,132,45,200);
+	arc(200,200,183,45,200);
+
+#
+# Verrohrung, linke Seite
+#
+#
+# Hilfsstueck	
+#
+	line(40,190,60,190);
+	line(40,210,60,210);
+	arc(50,150,270,90,40);
+	arc(50,150,270,90,60);
+#
+# Hilfsstueck	
+#
+	line(90,140,90,160);
+	line(110,140,110,160);
+	arc(150,150,0,180,40);
+	arc(150,150,0,180,60);
+#
+# Hilfsstueck	
+#
+	line(190,140,190,160);
+	line(210,140,210,160);
+#
+# Senkrechtes Rohrstueck 
+#	
+	line(190,150,190,250);
+	line(210,150,210,250);
+#
+# Verrohrung, rechte Seite
+#
+#
+# Hilfsstueck	
+#
+	line(190,240,190,260);
+	line(210,240,210,260);
+	arc(250,250,180,180,40);
+	arc(250,250,180,180,60);
+#
+# Hilfsstueck	
+#
+	line(290,240,290,260);
+	line(310,240,310,260);
+	arc(350,250,90,90,60);
+	arc(350,250,90,90,40);
+#
+# Hilfsstueck	
+#
+	line(340,190,360,190);
+	line(340,210,360,210);
+#
+# Wandkruemmung rechts.
+#
+	arc(200,200,312,45,200);		
+	arc(200,200,363,45,200);			
+# 
+# Abstrom rechts.
+#
+	line(350,190,400,190);
+	line(350,210,400,210);
+#
+# der Randbereich, unten.
+#
+	line(65,349,190,349);
+	line(65,350,190,350);
+	lineto(190,400);
+	line(210,400,210,350);
+	lineto(335,350);
+	line(210,349,335,349);
+
+	flowways(200,75,200,325);
+	REM(0,10,15,1);
+}
+#
+# Bottich mit 2 Zustromleitungen oben, 1 Abstromleitung unten, Waende gekruemmt.
+#
+bottich5d12{
+#
+#	Kruemmung links oben
+#
+	arc(140,140,101,80,140);
+#
+#	Einfuellstutzen oben links
+#
+	line(114,0,114,20);
+	line(126,0,126,20);
+#
+#	Einfuellstutzen oben rechts
+#
+	line(274,0,274,20);
+	line(286,0,286,20);
+#
+#	Kruemmung rechts oben
+#
+	arc(260,140,0,80,140);	
+#
+#	Kruemmung links unten
+#
+	arc(140,260,180,90,140);	
+#
+#	Kruemmung rechs unten
+#
+	arc(260,260,270,90,140);
+#
+#	Zulaeufe oben, unten
+#
+	line(126,0,276,0);
+	line(126,400,194,400);
+	line(206,400,280,400);
+#
+#	Wandung links, rechts
+#
+	line(0,120,0,280);
+	line(400,120,400,280);
+
+	REM(0,10,15,1);
+}
+
+
+#
+# Waermetauscher mit gekreuzten Rohren. Ein u. Ausgaenge jeweils an der Ober - und Unterseite des Behaelters.
+#
+wtrkr10F4t1d12{	
+#
+# der Randbereich, oben.
+#
+#
+#	--- Prototy Anfang ---	
+
+	line(49,100,114,100);
+	lineto(114,0);
+	line(126,0,126,100);
+	lineto(274,100);
+	lineto(274,0);
+	line(286,0,286,100);
+	lineto(353,100);
+#
+# Kruemmung links.
+#
+	arc(200,200,146,68,180);
+#
+# Kruemmung rechts.
+#
+	arc(200,200,326,68,180);		
+#
+# der Randbereich, unten.
+#
+	line(49,300,114,300);
+	lineto(114,400);
+	line(126,400,126,300);
+	lineto(274,300);
+	lineto(274,400);
+	line(286,400,286,300);
+	lineto(353,300);
+
+#	---- Prototyp Ende ---
+#
+#	Die Verrohrung
+#
+	line(110,100,270,300);
+	line(130,100,290,300);
+	line(270,100,200,190);
+	line(290,100,210,200);
+	line(110,300,190,200);
+	line(130,300,200,210);
+#
+#	Die Platten
+#
+	line(100,100,100,300);
+	line(99,100,99,300);
+	line(98,100,98,300);
+	line(97,100,97,300);
+	line(96,100,96,300);	
+
+	line(198,100,198,185);
+	line(199,100,199,186);
+	line(200,100,200,187);
+	line(201,100,201,188);
+	line(202,100,202,189);
+
+	line(198,212,198,300);
+	line(199,213,199,300);
+	line(200,214,200,300);
+	line(201,215,201,300);
+	line(202,216,202,300);
+
+	line(300,100,300,300);
+	line(301,100,301,300);
+	line(302,100,302,300);
+	line(303,100,303,300);
+	line(304,100,304,300);	
+
+	flowways(280,50,120,350);
+	REM(0,10,15,1);
+}
+
+wtrlin10F4t1d12{
+#
+# der Randbereich, oben.
+#
+	line(49,100,114,100);
+	lineto(114,0);
+	line(126,0,126,100);
+	lineto(353,100);
+#
+# Zustrom links.
+#
+	line(0,194,400,194);
+	line(0,206,400,206);
+#
+# Kruemmung links.
+#
+	
+	arc(200,200,146,32,180);
+	arc(200,200,146,31,180);	
+
+	arc(200,200,182,32,180);	
+	arc(200,200,182,31,180);	
+#
+# Kruemmung rechts.
+#
+	arc(200,200,326,32,180);		
+	arc(200,200,362,32,180);			
+
+#
+# der Randbereich, unten.
+#
+	line(49,300,274,300);
+	lineto(274,400);
+	line(286,400,286,300);
+	lineto(353,300);
+
+	flowways(120,150,280,250);
+	REM(0,10,15,1);
+}
+
+
+#
+# Kreuzstromwaermetauscher.
+#
+
+kwtF8t2F4t1d20{
+#
+# Das Durchgangsrohr
+#	
+	line(190,0,190,400);
+	line(210,0,210,400);
+#
+# Das Gehaeuse	
+#	
+	line(0,190,50,190);
+	lineto(50,50);
+	lineto(190,50);
+	line(0,210,50,210);
+	lineto(50,350);
+	lineto(190,350);
+	line(210,50,350,50);
+	lineto(350,190);
+	lineto(400,190);
+	line(210,350,350,350);
+	lineto(350,210);
+	lineto(400,210);
+#
+# Kondensationsrohre
+#
+	line(85,50,85,340);
+	line(86,50,86,340);
+	line(87,50,87,340);
+
+	line(125,60,125,350);
+	line(126,60,126,350);
+	line(127,60,127,350);
+
+	line(165,50,165,340);
+	line(166,50,166,340);
+	line(167,50,167,340);
+
+	line(243,50,243,340);
+	line(244,50,244,340);
+	line(245,50,245,340);
+
+	line(283,60,283,350);
+	line(284,60,284,350);
+	line(285,60,285,350);
+
+	line(323,50,323,340);
+	line(324,50,324,340);
+	line(325,50,325,340);
+
+	flowways(40,200,360,200);
+	REM(0,10,15,1);
+}
+
+#
+# Hammermuehle.
+#
+
+hmuehle5d20{
+#
+#	Der Behaelter
+#	Behaelter-Prototyp zwischen $$ 
+#
+#	--- Prototy Anfang ---	
+	
+	line(190,0,190,50);
+	lineto(50,50);
+	lineto(100,350);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,50);
+	lineto(350,50);
+	lineto(300,350);
+	lineto(210,350);
+	lineto(210,400);
+	
+#	Verstrebungen link u. rechts
+
+	line(66,150,150,50);
+	line(66,149,150,49);
+	line(66,151,150,51);
+	line(251,50,334,150);
+	line(251,49,334,149);
+	line(251,51,334,151);
+	
+#	---- Prototyp Ende ---
+#
+#	Das Werkzeug
+#
+#	Strebe von links oben nach rechts unten
+#	
+	line(151,150,251,250);
+	line(150,150,250,250);	
+	line(149,150,249,250);
+#	
+#	Hammer rechts oben	
+#
+	line(125,167,175,117);
+	line(125,168,175,118);
+	line(125,169,175,119);
+	line(125,170,175,120);
+	line(125,171,175,121);
+	line(125,172,175,122);
+	line(125,173,175,123);
+	line(125,174,175,124);
+	line(125,175,175,125);	
+	line(125,176,175,126);
+	line(125,177,175,127);
+	line(125,178,175,128);
+	line(125,179,175,129);
+#
+#	Strebe von rechts oben nach links unten
+
+	line(249,150,149,250);
+	line(250,150,150,250);
+	line(251,150,151,250);
+#
+#	Hammer links unten
+#
+	line(225,267,275,217);
+	line(225,268,275,218);
+	line(225,269,275,219);
+	line(225,270,275,220);
+	line(225,271,275,221);
+	line(225,272,275,222);
+	line(225,273,275,223);
+	line(225,274,275,224);
+	line(225,275,275,225);
+	line(225,276,275,226);
+	line(225,277,275,227);
+	line(225,278,275,228);
+	line(225,279,275,229);
+#
+#	Hammer rechts oben
+#
+	line(275,167,225,117);
+	line(275,168,225,118);
+	line(275,169,225,119);
+	line(275,170,225,120);
+	line(275,171,225,121);
+	line(275,172,225,122);
+	line(275,173,225,123);
+	line(275,174,225,124);
+	line(275,175,225,125);
+	line(275,176,225,126);
+	line(275,177,225,127);
+	line(275,178,225,128);
+	line(275,179,225,129);
+#
+#	Hammer links unten
+#
+	line(125,217,175,267);
+	line(125,218,175,268);
+	line(125,219,175,269);
+	line(125,220,175,270);
+	line(125,221,175,271);	
+	line(125,222,175,272);
+	line(125,223,175,273);
+	line(125,224,175,274);
+	line(125,225,175,275);
+	line(125,226,175,276);	
+	line(125,227,175,277);
+	line(125,228,175,278);	
+	line(125,229,175,279);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+
+sksmuehle5d20{
+#
+#	Der Behaelter
+#	Behaelter-Prototyp zwischen $$ 
+#
+#	--- Prototy Anfang ---	
+	
+	line(190,0,190,50);
+	lineto(50,50);
+	lineto(100,350);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,50);
+	lineto(350,50);
+	lineto(300,350);
+	lineto(210,350);
+	lineto(210,400);
+	
+#	Verstrebungen link u. rechts
+
+	line(66,150,150,50);
+	line(66,149,150,49);
+	line(66,151,150,51);
+	line(251,50,334,150);
+	line(251,49,334,149);
+	line(251,51,334,151);
+	
+#	---- Prototyp Ende ---
+#
+#	Das Werkzeug
+#
+
+	line(230,148,180,148);
+	line(230,149,180,149);
+	line(230,150,180,150);
+
+	line(180,150,180,300);
+	line(181,150,181,300);
+	line(182,150,182,300);
+
+	line(180,300,230,300);
+	line(180,301,230,301);
+	line(180,302,230,302);
+
+	line(200,170,230,170);
+	line(200,171,230,171);
+	line(200,172,230,172);
+
+	line(230,170,230,280);
+	line(231,170,231,280);
+	line(232,170,232,280);
+
+	line(230,280,200,280);
+	line(230,279,200,279);
+	line(230,278,200,278);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+#
+# Bauteile fuer Destillationskolonnen. Vergroesserung X=3 fuer grosse Kolonnen.
+#
+
+kolboden5d20{
+
+	line(0,0,100,0);
+	line(300,0,400,0);
+
+	line(50,50,190,50)
+	line(210,50,350,50);
+#
+#	Durchfluss von oben
+#		
+	line(190,50,190,0);	
+	line(210,50,210,0);
+#
+#	Seitenteile links
+#
+	line(0,0,0,400);
+	line(50,50,50,350);
+#
+#	Seitenteile rechts
+#
+	line(400,0,400,400);
+	line(350,50,350,350);
+
+#
+#	Durchfluss nach unten
+#
+
+	line(190,350,190,400);
+	line(210,350,210,400);
+
+	line(350,350,210,350);
+	line(190,350,50,350);
+
+	line(0,400,100,400);
+	line(400,400,300,400);
+#
+#	Das Bullauge
+#
+	circle(200,125,30);
+
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+kolkopf5F8t2d20{
+#
+#	Aeussere Umrandung
+#
+	line(0,0,0,170);
+	line(0,230,0,400);
+	line(0,400,100,400);
+
+	line(300,400,400,400);
+
+	line(400,400,400,230);
+	line(400,170,400,0);
+	line(400,0,210,0);
+	line(190,0,0,0);
+#
+#	Zufluss links 
+#
+	line(0,170,20,170);
+	line(20,170,20,340);
+#
+#	Verbindungslinie zwischen den beiden 
+#
+
+	line(20,340,190,340);
+	line(210,340,380,340);
+
+#	Abfluss
+	
+	line(190,340,190,400);
+	line(210,340,210,400);
+#
+#	Zufluss rechts
+#	
+	line(380,340,380,170);
+	line(380,170,400,170);
+	
+	flowways(150,360,250,360);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+kolkopf10d20{
+#
+#	Aeussere Umrandung
+#
+	line(0,0,0,170);
+	line(0,230,0,400);
+	line(0,400,100,400);
+
+	line(300,400,400,400);
+
+	line(400,400,400,230);
+	line(400,170,400,0);
+	line(400,0,0,0);
+
+#
+#	Zufluss links 
+#
+	line(0,170,20,170);
+	line(20,170,20,340);
+#
+#	Verbindungslinie zwischen den beiden 
+#
+
+	line(20,340,190,340);
+	line(210,340,380,340);
+
+#	Abfluss
+	
+	line(190,340,190,400);
+	line(210,340,210,400);
+#
+#	Zufluss rechts
+#	
+	line(380,340,380,170);
+	line(380,170,400,170);
+	
+	flowways(150,360,250,360);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+
+
+kolkopf5d20{
+#
+#	Aeussere Umrandung
+#
+	line(0,0,0,170);
+	line(0,230,0,400);
+	line(0,400,100,400);
+
+	line(300,400,400,400);
+
+	line(400,400,400,230);
+	line(400,170,400,0);
+	line(400,0,0,0);
+#
+#	Zufluss links 
+#
+	line(0,170,20,170);
+	line(20,170,20,340);
+#
+#	Verbindungslinie zwischen den beiden 
+#
+
+	line(20,340,190,340);
+	line(210,340,380,340);
+
+#	Abfluss
+	
+	line(190,340,190,400);
+	line(210,340,210,400);
+#
+#	Zufluss rechts
+#	
+	line(380,340,380,170);
+	line(380,170,400,170);
+	
+	flowways(150,360,250,360);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+kolzwischen15d20{
+	
+	line(0,0,100,0);
+	line(0,0,0,170);
+	
+	line(300,0,400,0);
+	line(400,0,400,170);
+	
+	line(0,230,0,400);
+	line(0,400,100,400);
+	
+	line(400,230,400,400);
+	line(400,400,300,400);
+#
+#	Rohrstueck
+#
+	line(190,0,190,400);
+	line(210,0,210,400);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+
+kolzwischen13d20{
+	
+	line(0,0,100,0);
+	line(0,0,0,170);
+	
+	line(300,0,400,0);
+	line(400,0,400,400);
+	
+	line(0,230,0,400);
+	line(0,400,100,400);
+	
+	line(400,400,300,400);
+#
+#	Rohrstueck
+#
+	line(190,0,190,400);
+	line(210,0,210,400);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+koltrenn5d20{
+	line(0,0,190,0);
+	line(210,0,400,0);
+	line(400,0,400,400);
+	line(400,400,300,400);
+	line(100,400,0,400);
+	line(0,400,0,0);
+#
+#	Durchflussrohr
+#
+	line(190,0,190,400);
+	line(210,0,210,400);
+	
+	flowways(100,200,300,200);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+
+kolfuss14d20{
+	
+	line(0,0,100,0);
+	line(0,0,0,170);
+	
+	line(300,0,400,0);
+	line(400,0,400,170);
+	
+	line(0,230,0,400);
+	line(0,400,400,400);
+	
+	line(400,230,400,400);
+	line(400,400,300,400);
+#
+#	Knie
+#
+	line(190,0,190,170);
+	line(210,0,210,230);
+	line(190,170,0,170);
+	line(210,230,0,230);
+
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+# 
+#	Trichter
+#
+
+trichter5d20{
+#
+#	linie oben, horizontal
+#
+	line(50,50,350,50);
+	line(50,50,190,350);
+	line(350,50,210,350);
+#
+#	Rohrstueck
+#
+	line(190,350,190,400);
+	line(210,350,210,400);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+#
+#	Foerderschnecke
+#
+schnecke{
+
+	circle(75,200,40);
+	circle(325,200,40);
+	line(75,150,325,150);
+	line(75,250,325,250);
+
+	arc(75,200,90,180,50);
+	arc(325,200,270,180,50);
+#
+#	Lagerung
+#
+	line(150,200,250,200);
+	line(150,200,50,350);
+	line(250,200,350,350);
+#
+#	Staender
+#
+	line(25,350,75,350);
+	line(325,350,375,350);
+
+	line(25,350,15,360);
+	line(35,350,25,360);
+	line(45,350,35,360);
+	line(55,350,45,360);
+	line(65,350,55,360);
+	line(75,350,65,360);
+
+	line(325,350,315,360);
+	line(335,350,325,360);
+	line(345,350,335,360);
+	line(355,350,345,360);
+	line(365,350,355,360);
+	line(375,350,365,360);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+fallverdkopfd20{
+#
+#	Zustrom, oben
+# 
+	line(190,0,190,400);
+	line(210,0,210,400);
+#
+#	Umrandung des ganzen
+#	
+	line(50,50,190,50);
+	line(210,50,350,50);
+	line(50,50,50,400);
+	line(350,50,350,170);
+	line(350,230,350,400);
+#
+#	linkes Gegenstromrohr
+#
+	line(90,50,90,400);
+	line(110,50,110,400);
+#
+#	rechtes Gegenstromrohr, mit Zufluss rechts
+#
+	line(290,50,290,400);
+	line(310,50,310,170);
+	line(310,170,400,170);
+	line(310,230,400,230);
+	line(310,230,310,400);
+	
+	flowways(400,200,100,200);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+fallverdmitted20{
+#
+#	8  Parallele Linien, 2 fuer die Umrandung, 6 fuer die 3 Rohre
+#
+	line(50,0,50,400);
+	line(90,0,90,400);
+	line(110,0,110,400);
+	line(190,0,190,400);
+	line(210,0,210,400);
+	line(290,0,290,400);
+	line(310,0,310,400);
+	line(350,0,350,400);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+fallverfussd20{
+#
+#	Zufluss oben
+#
+	line(50,0,50,350);
+	line(90,0,90,350);
+	line(110,0,110,350);
+	line(190,0,190,400);
+	line(210,0,210,400);
+	line(290,0,290,350);
+	line(310,0,310,170);
+	line(310,170,400,170);
+	line(310,230,400,230);
+	line(310,230,310,350);
+	line(350,0,350,170);
+	line(350,230,350,350);
+	line(50,350,190,350);
+	line(210,350,350,350);
+
+	flowways(400,200,100,200);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+smallwt5F8t2d60{
+#	
+#	Zustrom oben
+#
+	line(170,0,170,400);
+	line(230,0,230,400);
+#
+#	Body
+#
+	line(170,50,100,50);
+	line(100,50,100,170);
+	line(100,230,100,350);
+	line(100,350,170,350);
+	line(230,350,300,350);
+	line(300,350,300,230);
+	line(300,170,300,50);
+	line(300,50,230,50);
+
+#
+#	Zustrom links
+#
+	line(0,170,100,170);
+	line(0,230,100,230);
+
+#
+#	Abfluss rechts
+#
+	line(300,170,400,170);
+	line(300,230,400,230);
+#
+#	Verrohrung	
+#
+	line(100,50,170,200);
+	line(170,200,100,350);
+
+	line(300,50,230,200);
+	line(230,200,300,350);
+
+	flowways(10,200,390,200);
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+smallwt5d60{
+#	
+#	Zustrom oben
+#
+	line(170,0,170,400);
+	line(230,0,230,400);
+#
+#	Body
+#
+	line(170,50,100,50);
+	line(100,50,100,170);
+	line(100,230,100,350);
+	line(100,350,170,350);
+	line(230,350,300,350);
+	line(300,350,300,50);
+	line(300,50,230,50);
+
+#
+#	Zustrom links
+#
+	line(0,170,100,170);
+	line(0,230,100,230);
+
+
+#
+#	Verrohrung	
+#
+	line(100,50,170,200);
+	line(170,200,100,350);
+
+#	line(300,50,230,200);
+#	line(230,200,300,350);
+
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+tank5d12{
+#
+#	Zustrom
+#
+	line(194,0,194,50);
+	line(206,0,206,50);
+
+	line(50,50,194,50);
+	line(206,50,350,50);
+	
+	line(50,50,50,300);
+	line(350,50,350,300);
+	
+#
+#	Isolierung
+#
+	line(75,50,75,310);
+	line(325,50,325,310);
+
+	line(50,300,194,350);
+	line(50,299,194,349);
+	line(50,298,194,348);
+	line(50,297,194,347);
+
+	line(350,300,206,350);
+	line(350,299,206,349);
+	line(350,298,206,348);
+	line(350,297,206,347);
+#
+#	Abfluss
+#
+	line(194,350,194,400);
+	line(206,350,206,400);
+
+#	
+#	Der Kommentar
+#
+	REM(0,10,15,1);
+}
+
+

@@ -1,0 +1,52 @@
+Projekt1{
+          line(100,200,200,200); # Rohrleitung horiz.
+          circle(225,200,25);    # Pumpe
+          line(210,220,249,205);
+          line(210,180,249,195);
+          line(250,200,300,200); # Rohrleitung horiz.
+          line(300,185,300,215); # Ventil
+          line(300,215,360,185);
+          line(300,185,360,215);
+          line(360,185,360,215);
+          line(0,140,0,150);
+          line(100,140,100,150);
+          rectangle(0,150,100,250);
+          circle(50,200,50);
+          line(360,200,368,200); # Rohrleitung horiz.
+          circle(370,200,2); # Verteiler
+          line(372,200,380,200); # Rohrleitung horiz.
+          line(380,150,380,250); # Tank
+          line(380,250,430,300);
+          line(430,300,480,250);
+          line(480,250,480,150);
+          line(380,150,480,150);
+          line(370,202,370,250); # Rohrleitung vert.
+          line(370,250,200,250); # Rohrleitung horiz.
+          line(200,260,200,240);
+          line(190,250,200,240);
+          line(190,250,200,260);
+          line(120,300,120,320);
+          line(120,320,220,320);
+          line(220,320,220,300);
+          moveto(50,100);
+          lineto(50,50);
+          lineto(40,50);
+          rectangle(5,40,40,60); 
+          line(5,40,40,60);
+          line(5,60,40,40);
+          line(0,50,5,50); # Zuleitung
+          line(25,100,75,100); # Berieselung
+          line(25,106,75,106);
+          circle(25,103,3);
+          circle(75,103,3);
+          moveto(430,300);
+          lineto(430,330);  # vert. Rohrleitung
+          lineto(520,330);  # horiz. Rohrleitung
+          $
+# Bemerkungen
+          REM(1,100,20,2);
+          REM(2,0,120,4);
+          REM(3,195,160,9);
+
+                }
+
