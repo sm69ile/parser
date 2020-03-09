@@ -18,7 +18,9 @@
 
 #define FIRST_LINE "Graphikfile Viewer Ver. 0.1\n"
 #define P_OUT "parser.agf"
+#define HELP_FILE "../help.txt"
 #define DCB 32513
+#define LINE_BUF 80
 
 enum eVtask {
     v_idle = 0,
@@ -109,6 +111,7 @@ void *x_show();
 void xshow(int, char **);
 void load_file(int, char **);
 void ctrl(char*, char*);
+void help();
 void save();
 void quit();
 

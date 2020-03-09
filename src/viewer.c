@@ -363,19 +363,19 @@ void v_draw(XtPointer client_data)
 			fprintf(stderr,"%d ", cact->para[k]);
 		    fprintf(stderr,"\n");
 
-		    if (!strcmp(cact->name, "state") && cact->count_para == 1) 
+		    if (!strcmp(cact->name, "state") && cact->count_para == 1)  //32522
 			{
 			    iDstate_idx = cact->para[0];
 			    fprintf(stderr,"\tState switched by Symbol definition \"state()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx);
 			}
-		    if (!strcmp(cact->name, "break") && cact->count_para == 1) 
+		    if (!strcmp(cact->name, "break") && cact->count_para == 1)   //32523
 			{
 			    iDstate_idx = cact->para[0];
 
 			    fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
 			}
 	  
-		    if (!strcmp(cact->name, "line") && cact->count_para == 4) 
+		    if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
 			{
 			    XDrawLine(display, window, gc,
 				      cact->para[0],
@@ -398,7 +398,7 @@ void v_draw(XtPointer client_data)
 				}
 
 			}
-		    else if (!strcmp(cact->name, "lineto") && cact->count_para == 2) 
+		    else if (!strcmp(cact->name, "lineto") && cact->count_para == 2)  //32514
 			{
 			    XDrawLine(display, window, gc,
 				      psV_c->psDraw_c->last_x,
@@ -410,7 +410,7 @@ void v_draw(XtPointer client_data)
 			    psV_c->psDraw_c->last_x=cact->para[0];
 			    psV_c->psDraw_c->last_y=cact->para[1];
 	      
-			} else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) 
+			} else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) //32515
 			{
 			    XDrawRectangle(display, window, gc,
 					   cact->para[0],
@@ -422,7 +422,7 @@ void v_draw(XtPointer client_data)
 			    psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
 			    psV_c->psDraw_c->last_y=cact->para[1]+cact->para[3];
 
-			} else if (!strcmp(cact->name, "circle") && cact->count_para == 3) 
+			} else if (!strcmp(cact->name, "circle") && cact->count_para == 3)  //32516
 			{
 			    XDrawArc(display, window, gc,
 				     cact->para[0]-cact->para[2],
@@ -436,7 +436,7 @@ void v_draw(XtPointer client_data)
 			    psV_c->psDraw_c->last_x=cact->para[0];
 			    psV_c->psDraw_c->last_y=cact->para[1];
 
-			} else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) 
+			} else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) //32517
 			{
 			    XDrawArc(display, window, gc,
 				     cact->para[0],
@@ -450,7 +450,7 @@ void v_draw(XtPointer client_data)
 			    psV_c->psDraw_c->last_x=cact->para[0];
 			    psV_c->psDraw_c->last_y=cact->para[1];
 
-			} else if (!strcmp(cact->name, "arc") && cact->count_para == 5)
+			} else if (!strcmp(cact->name, "arc") && cact->count_para == 5)  //32521
 			{
 			    XDrawArc(display, window, gc,
 				     cact->para[0]-cact->para[4],
@@ -459,23 +459,24 @@ void v_draw(XtPointer client_data)
 				     2*cact->para[4],
 				     64*cact->para[2],
 				     64*cact->para[3]);
+
 			    psV_c->psDraw_c->last_x=cact->para[0];
 			    psV_c->psDraw_c->last_y=cact->para[1];	  
 			}
 
-		    else if (!strcmp(cact->name, "flowways") && cact->count_para == 4)
+		    else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) //32520
 			{
 			    XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
 			    XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
 			    XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
 			    XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
 			}
-		    else if (!strcmp(cact->name, "moveto") && cact->count_para == 2) 
+		    else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  //32518
 			{
 			    psV_c->psDraw_c->last_x=cact->para[0];
 			    psV_c->psDraw_c->last_y=cact->para[1];
 
-			} else if (!strcmp(cact->name, "REM") && cact->count_para == 4) 
+			} else if (!strcmp(cact->name, "REM") && cact->count_para == 4) //32519
 			{
 
 			    XDrawString(display, window, gc,

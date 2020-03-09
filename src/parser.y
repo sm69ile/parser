@@ -536,7 +536,32 @@ int main(int argc, char *argv[])
 
   void *x_show() { xshow(0, NULL); return NULL; }
 
+void help()
+{
+  FILE *fp;
+  char *s;
+  
+  if ((fp = fopen(HELP_FILE, "r")))
+    {
+      if((s = (char *) malloc(LINE_BUF * sizeof(char))))
+	{
+	  while(!feof(fp))
+	    {
+	      bzero(s,LINE_BUF);
+	      fgets(s,LINE_BUF,fp);
+	      printf("%s",s);
+	    }
+	  free(s);
+	}
+      else
+	{ syslog(LOG_DEBUG, "malloc failed: char*\n"); }
+      fclose(fp);
+    }
+  else
+    { syslog(LOG_DEBUG, "Cannot open help file: %s\n",HELP_FILE); }
+}
 
+  
   void load_file(int argc, char *argv[])
   {
     int j,i = 1;
@@ -550,7 +575,7 @@ int main(int argc, char *argv[])
     
       if (!(l_argv=(char*) malloc(j*sizeof(char))))
 	{
-	  syslog(LOG_DEBUG, "malloc failed: char\n");
+	  syslog(LOG_DEBUG, "malloc failed: char*\n");
 	  exit(EXIT_FAILURE);
 	}
     
@@ -607,6 +632,9 @@ int main(int argc, char *argv[])
 
 	else if (! strncmp(cmd,"show",strlen("show")))
 	  { iCtask = v_show; }
+
+	else if (! strncmp(cmd,"help",strlen("help")))
+	  { help(); }
 	    
 	else if (( !strncmp(cmd,"quit",strlen("quit"))) || ( !strncmp(cmd,"exit",strlen("exit"))))
 	  { quit(); }
@@ -666,17 +694,17 @@ int main(int argc, char *argv[])
   {
     static char * commands[]=
       {
-       "line",
-       "lineto",
-       "rectnagle",
-       "circle",
-       "ellipse",
-       "moveto",
-       "REM",
-       "flowways",
-       "arc",
-       "state",
-       "break"
+       "line",       //32513
+       "lineto",     //32514
+       "rectnagle",  //32515
+       "circle",     //32516
+       "ellipse",    //32117
+       "moveto",     //32518
+       "REM",        //32519
+       "flowways",   //32520
+       "arc",        //32521
+       "state",      //32522
+       "break"       //32523
       };
     
     
