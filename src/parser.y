@@ -434,10 +434,10 @@ int main(int argc, char *argv[])
     psObj->psCom->key=psObj->psComIni->key;
     psObj->psCom->s_line=0;
     psObj->psCom->name=strdup(CURR);
-  
     psObj->psCom->count_para=0;
     psObj->psCom->para=NULL;
   
+
     psObj->psCom->next=psObj->psComIni->next;
     psObj->psComIni->next=psObj->psCom;
   }
@@ -690,7 +690,9 @@ void help()
       }
   }
 
-  void save()
+
+
+void save()
   {
     static char * commands[]=
       {
@@ -709,16 +711,14 @@ void help()
     
     
     int clength = sizeof(commands)/sizeof(commands[0]);  
-
     char * buf;
-
-    
     int count_o = 0;
     int count_c = 0;
     int count_p = 0;
     int buf_length;
     
     FILE* fp = fopen(P_OUT, "a+" );
+
     if (! fp){ syslog(LOG_DEBUG,"Cannot open output file %s\n", P_OUT); }
     else
       {
@@ -736,38 +736,37 @@ void help()
 
 	    if ((buf = (char*)malloc((buf_length)*sizeof(char))))
 	      {
-				
-		sCommand* clast = oact->psComIni->next;
-		sCommand* cfirst = oact->psComIni;
-		sCommand* cact = clast;
-
-		do
+		for(int j=0; j<oact->psComIni->key; j++)
 		  {
-		    sCommand* cnext = cact->next;
-					    
-		    for(int i=0; i<clength; i++)
-		      {
-			if(! strncmp(cact->name, commands[i], strlen(commands[i])))
-			  {
-			    bzero(buf,buf_length);
-			    sprintf(buf,"%d^", i+DCB);
-			    fprintf(fp,buf);
-			    count_c++;
+		    sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
+		    
+		    // check if the object has any comman parameters
 
-			    for(int j=0;j<cact->count_para;j++)
+		    if(cact != NULL)
+		      {
+			for(int i=0; i<clength; i++)
+			  {
+			    if(! strncmp(cact->name, commands[i], strlen(commands[i])))
 			      {
+				fprintf(stderr,"Command: %s\n",cact->name);
+				
 				bzero(buf,buf_length);
-				sprintf(buf,"%d^", cact->para[j]);
+				sprintf(buf,"%d^", i+DCB);
 				fprintf(fp,buf);
-				count_p++;
+				count_c++;
+				
+				for(int j=0;j<cact->count_para;j++)
+				  {
+				    bzero(buf,buf_length);
+				    sprintf(buf,"%d^", cact->para[j]);
+				    fprintf(fp,buf);
+				    count_p++;
+				  }
+				break;
 			      }
-						    
-			    break;
 			  }
 		      }
-		    cact=cnext;
 		  }
-		while(cact != cfirst);	
 		fprintf(fp,"%s","\n");
 
 		free(buf);

@@ -1,7 +1,4 @@
 pcX2{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -40,8 +37,8 @@ pcX2{
 
 	REM(0,10,15,1);
 
-	break(1);
 	### STATE 1: PC Gestrichen
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -83,12 +80,10 @@ pcX2{
 	line(376,151,400,151);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 pcX4{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -131,9 +126,9 @@ pcX4{
 
 	REM(0,10,15,1);
 
-	### STATE 2: PC Gestrichen
+	### STATE 1: PC Gestrichen
 
-	break(1);
+#	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -179,12 +174,10 @@ pcX4{
 	lineto(201,0);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 pcX8{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -224,7 +217,7 @@ pcX8{
 	REM(0,10,15,1);
 
 	### STATE 1: PC Gestrichen
-	break(1);
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -266,11 +259,10 @@ pcX8{
 	line(26,151,0,151);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 pcX1{
-	### STATE 1: PC Normal
-	state(1);
 
 	line(100,20,300,20);
 	lineto(300,200);
@@ -314,8 +306,8 @@ pcX1{
 
 	REM(0,10,15,1);
 
-	### STATE 2: PC Gestrichen
-	break(1);
+	### STATE 1: PC Gestrichen
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -361,12 +353,10 @@ pcX1{
 	lineto(201,400);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 pc9{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -421,8 +411,8 @@ pc9{
 
 	REM(0,10,15,1);
 
-	### STATE 2: PC Gestrichen
-	break(1);
+	### STATE 1: PC Gestrichen
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -480,12 +470,10 @@ pc9{
 	line(26,151,0,151);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 pc10{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -536,8 +524,8 @@ pc10{
 
 	REM(0,10,15,1);
 
-	### STATE 2: PC Gestrichen
-	break(1);
+	### STATE 1: PC Gestrichen
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -591,13 +579,11 @@ pc10{
 	line(26,151,0,151);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 
 pc11{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -652,8 +638,8 @@ pc11{
 
 	REM(0,10,15,1);
 
-	### STATE 2: PC Gestrichen
-	break(1);
+	### STATE 1: PC Gestrichen
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -711,12 +697,11 @@ pc11{
 	line(201,270,201,400);
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 
 pc11u2{
-	### STATE 1: PC Normal
-	state(1);
 
 	line(100,20,300,20);
 	lineto(300,200);
@@ -777,8 +762,8 @@ pc11u2{
 
 	REM(0,10,15,1);
 
-	### STATE 2: PC Gestrichen
-	break(1);
+	### STATE 1: PC Gestrichen
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -841,12 +826,10 @@ pc11u2{
 
 
 	REM(0,10,15,1);
+	break(0);
 }
 
 pc12{
-	### STATE 1: PC Normal
-	state(1);
-
 	line(100,20,300,20);
 	lineto(300,200);
 	lineto(100,200);
@@ -899,8 +882,8 @@ pc12{
 	lineto(201,0);
 	REM(0,10,15,1);
 
-	### STATE 2: PC GESTRICHEN
-	break(1);
+	### STATE 1: PC GESTRICHEN
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -956,13 +939,11 @@ pc12{
 	lineto(201,9);
 	lineto(201,0);
 	REM(0,10,15,1);
+	break(0);
 }
 
 
 nbook2{
-	### STATE 1: Notebook Normal
-	state(1);
-
 	line(100,210,150,110);
 	lineto(350,110);
 	lineto(300,210);
@@ -991,7 +972,7 @@ nbook2{
 	REM(0,10,15,1);
 
 	### STATE 2: Notebook Gestrichen
-	break(1);
+	state(1);
 
 	line(400,400,0,0);
 	line(0,400,400,0);
@@ -1022,6 +1003,7 @@ nbook2{
 	line(376,151,400,151);
         
 	REM(0,10,15,1);
+	break(0);
 }
 
 
@@ -1151,10 +1133,6 @@ kabelb5{
 }
 
 printer8{
-
-	### STATE 1: Drucker Normal
-	state(1);
-
 	line(0,150,50,150);
 	line(0,149,50,149);
 	line(0,151,50,151);
@@ -1168,7 +1146,7 @@ printer8{
 	REM(0,10,15,1);
 
 	### STATE 1: Drucker Gestrichen
-	break(1);
+	state(1);
 
 	line(0,0,400,400);
 	line(0,400,400,0);
@@ -1184,6 +1162,7 @@ printer8{
 	line(50,180,350,180);
 	line(150,100,200,50);
 	REM(0,10,15,1);
+	break(0);
 }
 
 kreuz{

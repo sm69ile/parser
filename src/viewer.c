@@ -314,193 +314,206 @@ void v_set_window_attributes(Display* display, Drawable window)
 
 void v_draw(XtPointer client_data)
 {
-    sViewer_container *psV_c = (sViewer_container*) client_data;
+  sViewer_container *psV_c = (sViewer_container*) client_data;
   
-    XGCValues values, rvalues;
-    GC gc;
-    Display *display;
-    Drawable window;
+  XGCValues values, rvalues;
+  GC gc;
+  Display *display;
+  Drawable window;
  
 
-    display = XtDisplay(psV_c->draw_shell);
-    window = XtWindow(psV_c->draw_shell);
+  display = XtDisplay(psV_c->draw_shell);
+  window = XtWindow(psV_c->draw_shell);
   
-    v_set_window_attributes(display, window);
+  v_set_window_attributes(display, window);
         
-    sObject* oact = get_object_by_key(iObj_idx);
-    fprintf(stderr,"Displaying symbols, running state: %i, display state: %i\n", iState_idx, iDstate_idx);
-    fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
+  sObject* oact = get_object_by_key(iObj_idx);
+  fprintf(stderr,"Displaying symbols, running state: %i, display state: %i\n", iState_idx, iDstate_idx);
+  fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
   
-    sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
-    if (sact) { values.foreground = psV_c->psDraw_c->ctable[sact->value].value; } else { values.foreground = 0; }  
+  sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
+  if (sact) { values.foreground = psV_c->psDraw_c->ctable[sact->value].value; } else { values.foreground = 0; }  
 
-    sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_background");
-    if (sact) { values.background = psV_c->psDraw_c->ctable[sact->value].value; } else { values.background = 0; }  
+  sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_background");
+  if (sact) { values.background = psV_c->psDraw_c->ctable[sact->value].value; } else { values.background = 0; }  
 
-    sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_line_width");
-    if (sact) { values.line_width = sact->value; } else { values.line_width = 0; }  
+  sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_line_width");
+  if (sact) { values.line_width = sact->value; } else { values.line_width = 0; }  
 
-    gc = XtGetGC(psV_c->draw_shell,
-		 GCForeground |
-		 GCBackground |
-		 GCLineWidth, &values);
+  gc = XtGetGC(psV_c->draw_shell,
+	       GCForeground |
+	       GCBackground |
+	       GCLineWidth, &values);
 
   
-    XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
-    fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
+  XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
+  fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
-    XClearWindow(display, window);
+  XClearWindow(display, window);
+  
+  // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
+  for(int j=0; j<oact->psComIni->key; j++)
+    {
 
-    for(int j=0; j<oact->psComIni->key; j++)
+      //fprintf(stderr,"j: %i, psComIni-key: %i\n",i, psComIni->key);
+
+      sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
+
+      if(cact != NULL && iState_idx == iDstate_idx)
+	//	  if(cact != NULL)
 	{
-	    sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
-	    if(cact != NULL && iState_idx == iDstate_idx)
-//	  if(cact != NULL)
-		{
-		    fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
+	  // draw all commands iState_idx = 0
+	  // next_state button pressed iState_idx = 1
+	  // walk through the list of commands until command state(1) is found;
+	  // draw all commands until break (0)
 
-		    for(int k=0; k<cact->count_para;k++)
-			fprintf(stderr,"%d ", cact->para[k]);
-		    fprintf(stderr,"\n");
 
-		    if (!strcmp(cact->name, "state") && cact->count_para == 1)  //32522
-			{
-			    iDstate_idx = cact->para[0];
-			    fprintf(stderr,"\tState switched by Symbol definition \"state()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx);
-			}
-		    if (!strcmp(cact->name, "break") && cact->count_para == 1)   //32523
-			{
-			    iDstate_idx = cact->para[0];
+	  fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
 
-			    fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
-			}
+	  for(int k=0; k<cact->count_para;k++)
+	    fprintf(stderr,"%d ", cact->para[k]);
+	  fprintf(stderr,"\n");
+
+	  if (!strcmp(cact->name, "state") && cact->count_para == 1)  //32522
+	    {
+	      
+	      iDstate_idx = cact->para[0];
+
+	      fprintf(stderr,"\tState switched by Symbol definition \"state()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx);
+	    }
+	  if (!strcmp(cact->name, "break") && cact->count_para == 1)   //32523
+	    {
+	      iDstate_idx = cact->para[0];
+
+	      fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
+	    }
 	  
-		    if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
-			{
-			    XDrawLine(display, window, gc,
-				      cact->para[0],
-				      cact->para[1],
-				      cact->para[2],
-				      cact->para[3]
-				);
-			    psV_c->psDraw_c->last_x=cact->para[2];
-			    psV_c->psDraw_c->last_y=cact->para[3];
+	  if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
+	    {
+	      XDrawLine(display, window, gc,
+			cact->para[0],
+			cact->para[1],
+			cact->para[2],
+			cact->para[3]
+			);
+	      psV_c->psDraw_c->last_x=cact->para[2];
+	      psV_c->psDraw_c->last_y=cact->para[3];
 	      
-			}
-		    if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
-			{
-			    sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
+	    }
+	  if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
+	    {
+	      sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
 
-			    if(mact != 0 && !strncmp(mact->name,"line",strlen("line")))
-				{
-				    Pixel mcolor = psV_c->psDraw_c->ctable[cact->para[4]].value; 
-				    v_max_impl(cact, mact, 1, mcolor, display, window, gc);
-				}
-
-			}
-		    else if (!strcmp(cact->name, "lineto") && cact->count_para == 2)  //32514
-			{
-			    XDrawLine(display, window, gc,
-				      psV_c->psDraw_c->last_x,
-				      psV_c->psDraw_c->last_y,
-				      cact->para[0],
-				      cact->para[1]
-				);
-
-			    psV_c->psDraw_c->last_x=cact->para[0];
-			    psV_c->psDraw_c->last_y=cact->para[1];
-	      
-			} else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) //32515
-			{
-			    XDrawRectangle(display, window, gc,
-					   cact->para[0],
-					   cact->para[1],
-					   cact->para[2],
-					   cact->para[3]
-				);
-
-			    psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
-			    psV_c->psDraw_c->last_y=cact->para[1]+cact->para[3];
-
-			} else if (!strcmp(cact->name, "circle") && cact->count_para == 3)  //32516
-			{
-			    XDrawArc(display, window, gc,
-				     cact->para[0]-cact->para[2],
-				     cact->para[1]-cact->para[2],
-				     2*cact->para[2],
-				     2*cact->para[2],
-				     0,
-				     64*360
-				);
-
-			    psV_c->psDraw_c->last_x=cact->para[0];
-			    psV_c->psDraw_c->last_y=cact->para[1];
-
-			} else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) //32517
-			{
-			    XDrawArc(display, window, gc,
-				     cact->para[0],
-				     cact->para[1],
-				     cact->para[2],
-				     cact->para[3],
-				     0,
-				     64*360
-				);
-
-			    psV_c->psDraw_c->last_x=cact->para[0];
-			    psV_c->psDraw_c->last_y=cact->para[1];
-
-			} else if (!strcmp(cact->name, "arc") && cact->count_para == 5)  //32521
-			{
-			    XDrawArc(display, window, gc,
-				     cact->para[0]-cact->para[4],
-				     cact->para[1]-cact->para[4],
-				     2*cact->para[4],
-				     2*cact->para[4],
-				     64*cact->para[2],
-				     64*cact->para[3]);
-
-			    psV_c->psDraw_c->last_x=cact->para[0];
-			    psV_c->psDraw_c->last_y=cact->para[1];	  
-			}
-
-		    else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) //32520
-			{
-			    XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
-			    XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
-			    XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
-			    XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
-			}
-		    else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  //32518
-			{
-			    psV_c->psDraw_c->last_x=cact->para[0];
-			    psV_c->psDraw_c->last_y=cact->para[1];
-
-			} else if (!strcmp(cact->name, "REM") && cact->count_para == 4) //32519
-			{
-
-			    XDrawString(display, window, gc,
-					cact->para[0],
-					cact->para[1],
-					"REM",strlen("REM")
-				);
-
-			} else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
-			{
-			    v_floodfill(display, window, gc,
-					cact->para[0],
-					cact->para[1],
-					psV_c->psDraw_c->ctable[cact->para[2]].value 
-				);
-
-			    psV_c->psDraw_c->last_x=cact->para[0];
-			    psV_c->psDraw_c->last_y=cact->para[1];
-
-			}
+	      if(mact != 0 && !strncmp(mact->name,"line",strlen("line")))
+		{
+		  Pixel mcolor = psV_c->psDraw_c->ctable[cact->para[4]].value; 
+		  v_max_impl(cact, mact, 1, mcolor, display, window, gc);
 		}
+
+	    }
+	  else if (!strcmp(cact->name, "lineto") && cact->count_para == 2)  //32514
+	    {
+	      XDrawLine(display, window, gc,
+			psV_c->psDraw_c->last_x,
+			psV_c->psDraw_c->last_y,
+			cact->para[0],
+			cact->para[1]
+			);
+
+	      psV_c->psDraw_c->last_x=cact->para[0];
+	      psV_c->psDraw_c->last_y=cact->para[1];
+	      
+	    } else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) //32515
+	    {
+	      XDrawRectangle(display, window, gc,
+			     cact->para[0],
+			     cact->para[1],
+			     cact->para[2],
+			     cact->para[3]
+			     );
+
+	      psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
+	      psV_c->psDraw_c->last_y=cact->para[1]+cact->para[3];
+
+	    } else if (!strcmp(cact->name, "circle") && cact->count_para == 3)  //32516
+	    {
+	      XDrawArc(display, window, gc,
+		       cact->para[0]-cact->para[2],
+		       cact->para[1]-cact->para[2],
+		       2*cact->para[2],
+		       2*cact->para[2],
+		       0,
+		       64*360
+		       );
+
+	      psV_c->psDraw_c->last_x=cact->para[0];
+	      psV_c->psDraw_c->last_y=cact->para[1];
+
+	    } else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) //32517
+	    {
+	      XDrawArc(display, window, gc,
+		       cact->para[0],
+		       cact->para[1],
+		       cact->para[2],
+		       cact->para[3],
+		       0,
+		       64*360
+		       );
+
+	      psV_c->psDraw_c->last_x=cact->para[0];
+	      psV_c->psDraw_c->last_y=cact->para[1];
+
+	    } else if (!strcmp(cact->name, "arc") && cact->count_para == 5)  //32521
+	    {
+	      XDrawArc(display, window, gc,
+		       cact->para[0]-cact->para[4],
+		       cact->para[1]-cact->para[4],
+		       2*cact->para[4],
+		       2*cact->para[4],
+		       64*cact->para[2],
+		       64*cact->para[3]);
+
+	      psV_c->psDraw_c->last_x=cact->para[0];
+	      psV_c->psDraw_c->last_y=cact->para[1];	  
+	    }
+
+	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) //32520
+	    {
+	      XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
+	      XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
+	      XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
+	      XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
+	    }
+	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  //32518
+	    {
+	      psV_c->psDraw_c->last_x=cact->para[0];
+	      psV_c->psDraw_c->last_y=cact->para[1];
+
+	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 4) //32519
+	    {
+
+	      XDrawString(display, window, gc,
+			  cact->para[0],
+			  cact->para[1],
+			  "REM",strlen("REM")
+			  );
+
+	    } else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
+	    {
+	      v_floodfill(display, window, gc,
+			  cact->para[0],
+			  cact->para[1],
+			  psV_c->psDraw_c->ctable[cact->para[2]].value 
+			  );
+
+	      psV_c->psDraw_c->last_x=cact->para[0];
+	      psV_c->psDraw_c->last_y=cact->para[1];
+
+	    }
 	}
-    fprintf(stderr,"]\n");
-    XtReleaseGC(psV_c->draw_shell, gc);
+    }
+  fprintf(stderr,"]\n");
+  XtReleaseGC(psV_c->draw_shell, gc);
 }
 
 
