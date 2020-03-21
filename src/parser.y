@@ -746,10 +746,8 @@ void save()
 		      {
 			for(int i=0; i<clength; i++)
 			  {
-			    if(! strncmp(cact->name, commands[i], strlen(commands[i])))
-			      {
-				fprintf(stderr,"Command: %s\n",cact->name);
-				
+			    if(! strncmp(cact->name, commands[i], strlen(cact->name)))
+			    {
 				bzero(buf,buf_length);
 				sprintf(buf,"%d^", i+DCB);
 				fprintf(fp,buf);
