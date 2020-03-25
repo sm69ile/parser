@@ -7,8 +7,12 @@ bin_PROGRAMS = parser
 parser_SOURCES = y.tab.c lex.yy.c viewer.c viewer.h
 parser_CFLAGS = -Wall -Wpedantic
 parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread)
+
 symboldir = $(datadir)/$(PACKAGE)/symbols
 symbol_DATA = ../sym/plain.sym
+
+app-defaultsdir = $(datadir)/$(PACKAGE)/app-defaults
+app-defaults_DATA = Viewer
 
 AM_YFLAGS = -d
 
