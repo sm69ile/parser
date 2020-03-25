@@ -548,8 +548,8 @@ void help()
 	  while(!feof(fp))
 	    {
 	      bzero(s,LINE_BUF);
-	      fgets(s,LINE_BUF,fp);
-	      printf("%s",s);
+	      if(fgets(s,LINE_BUF,fp))
+		printf("%s",s);
 	    }
 	  free(s);
 	}
@@ -750,14 +750,14 @@ void save()
 			    {
 				bzero(buf,buf_length);
 				sprintf(buf,"%d^", i+DCB);
-				fprintf(fp,buf);
+				fprintf(fp,"%s",buf);
 				count_c++;
 				
 				for(int j=0;j<cact->count_para;j++)
 				  {
 				    bzero(buf,buf_length);
 				    sprintf(buf,"%d^", cact->para[j]);
-				    fprintf(fp,buf);
+				    fprintf(fp,"%s",buf);
 				    count_p++;
 				  }
 				break;
@@ -789,5 +789,6 @@ void save()
     closelog();
     exit(EXIT_SUCCESS);
   }
+
 
 
