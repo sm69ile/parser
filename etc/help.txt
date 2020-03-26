@@ -1,0 +1,16 @@
+
+help							show help file
+list [all] [act]  					list object information in memory
+init							initialize memory, reset
+clear							clear input buffer
+display							start graphic window
+hide							hide graphic window
+show							show graphic window
+sleep							sleep 3 seconds
+save							save objects in memeory to file: ./parser.agf
+object [next] [prev] [last] {nobj,pobj,lobj}		switch to next, previous, last object in memory
+object [count]	     	       				display sum of objects in memory
+status [next] [prev] {nstatus, pstatus}			switch to next, previous object state
+command [count]	     	       				display sum of commands in memory
+exit, quit						leave program
+
