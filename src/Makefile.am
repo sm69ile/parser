@@ -12,7 +12,11 @@ symboldir = $(datadir)/$(PACKAGE)/symbols
 symbol_DATA = ../sym/plain.sym
 
 appdefaultsdir = $(datadir)/$(PACKAGE)/app-defaults
-appdefaults_DATA = Viewer
+appdefaults_DATA = ../app-defaults/Viewer
+
+helpdir = $(datadir)/$(PACKAGE)/etc
+help_DATA = ../etc/help.txt
+
 
 AM_YFLAGS = -d
 

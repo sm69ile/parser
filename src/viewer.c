@@ -628,8 +628,7 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
   free(psV_c->psDraw_c);
   free(psV_c);
   quit(); 
-};
-
+}
 
 void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
@@ -808,4 +807,4 @@ XImage* floodfill(XImage* image, int x, int y, Pixel fcp, Pixel bcp, int max_x, 
 	}
 
     return image;
-};
+}
