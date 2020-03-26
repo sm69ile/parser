@@ -11,8 +11,8 @@ parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread)
 symboldir = $(datadir)/$(PACKAGE)/symbols
 symbol_DATA = ../sym/plain.sym
 
-appdefaultsdir = $(datadir)/$(PACKAGE)/app-defaults
-appdefaults_DATA = ../app-defaults/Viewer
+appdir = $(datadir)/$(PACKAGE)/app-defaults
+app_DATA = ../app-defaults/Viewer
 
 helpdir = $(datadir)/$(PACKAGE)/etc
 help_DATA = ../etc/help.txt
