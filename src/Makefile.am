@@ -9,7 +9,7 @@ parser_CFLAGS = -Wall -Wpedantic
 parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread)
 
 symboldir = $(datadir)/$(PACKAGE)/symbols
-symbol_DATA = ../sym/plain.sym
+symbol_DATA = ../sym/*
 
 appdir = $(datadir)/$(PACKAGE)/app-defaults
 app_DATA = ../app-defaults/Viewer
