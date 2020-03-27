@@ -20,8 +20,8 @@ Viewer.box.curr_object_command*background:	darkgray
 Viewer.box.curr_object_command*foreground:	black
 Viewer.box.quit_command*background:	darkgray
 Viewer.box.quit_command*foreground:	black
-!Viewer.box.save_command.background:	darkgray
-!Viewer.box.save_command.foreground:	black
+Viewer.box.save_command.background:	darkgray
+Viewer.box.save_command.foreground:	black
 
 
 
