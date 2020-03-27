@@ -14,7 +14,6 @@ AC_SUBST(LIBXaw)
 AC_CHECK_LIB(pthread, main, LIBpthread=pthread, LIBpthread=no, -lpthread)
 AC_SUBST(LIBpthread)
 
-
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

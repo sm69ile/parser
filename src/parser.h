@@ -18,7 +18,7 @@
 
 #define FIRST_LINE "Graphikfile Viewer Ver. 0.1\n"
 #define P_OUT "parser.agf"
-#define HELP_FILE "help.txt"
+#define HELP_FILE DATAROOTDIR "/" PACKAGE "/" "help.txt"
 #define DCB 32513
 #define LINE_BUF 80
 

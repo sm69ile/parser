@@ -541,8 +541,7 @@ void help()
   FILE *fp;
   char *s;
 
-  fprintf(stderr, "datarootdir: %s\n", DATAROOTDIR);
-  fprintf(stderr, "package: %s\n", PACKAGE);  
+  syslog(LOG_DEBUG,"Using Help file: %s\n", HELP_FILE);
   
   if ((fp = fopen(HELP_FILE, "r")))
     {
