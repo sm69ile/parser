@@ -1,10 +1,5 @@
 LinieH{
-	state(1);
 	line(0,200,400,200); 
-	break(1);
-	line(200,200,400,200); 
-	break(2);
-	line(200,0,200,400);
 }
 LinieV{
        	line(200,0,200,400);
