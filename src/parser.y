@@ -540,6 +540,9 @@ void help()
 {
   FILE *fp;
   char *s;
+
+  fprintf(stderr, "datarootdir: %s\n", DATAROOTDIR);
+  fprintf(stderr, "package: %s\n", PACKAGE);  
   
   if ((fp = fopen(HELP_FILE, "r")))
     {
