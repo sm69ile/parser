@@ -6,18 +6,19 @@ LIBpthread = @LIBpthread@
 bin_PROGRAMS = parser
 parser_SOURCES = y.tab.c lex.yy.c viewer.c viewer.h
 
-parser_CFLAGS = -Wall -Wpedantic -DDATADIR=\"$(datadir)\"
+#parser_CFLAGS = -Wall -Wpedantic -DDATADIR=\"$(datadir)\"
 
+parser_CFLAGS = -Wall -Wpedantic -DETCDIR=\"$(etcdir)\"
 parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread)
-
-symboldir = $(datadir)/$(PACKAGE)/symbols
-symbol_DATA = ../sym/*
 
 appdir = $(datadir)/$(PACKAGE)/app-defaults
 app_DATA = ../app-defaults/Viewer
 
-helpdir = $(datadir)/$(PACKAGE)/etc
-help_DATA = ../etc/help.txt
+symboldir = $(datadir)/$(PACKAGE)/symbols
+symbol_DATA = ../sym/*
+
+etcdir = $(datadir)/$(PACKAGE)/etc
+etc_DATA = ../etc/help.txt
 
 
 AM_YFLAGS = -d
