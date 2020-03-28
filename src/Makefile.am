@@ -3,7 +3,6 @@ LIBXt = @LIBXt@
 LIBXaw = @LIBXaw@
 LIBpthread = @LIBpthread@
 
-
 bin_PROGRAMS = parser
 parser_SOURCES = y.tab.c lex.yy.c viewer.c viewer.h
 
