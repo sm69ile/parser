@@ -14,7 +14,7 @@ bool INTERACTIV = true;
 
 %}
 
-%option noyywrap noinput nounput
+%option noyywrap noinput nounput reentrant
 
 %%
 \.    BEGIN(load);
