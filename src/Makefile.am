@@ -6,8 +6,6 @@ LIBpthread = @LIBpthread@
 bin_PROGRAMS = parser
 parser_SOURCES = y.tab.c lex.yy.c viewer.c viewer.h
 
-#parser_CFLAGS = -Wall -Wpedantic -DDATADIR=\"$(datadir)\"
-
 parser_CFLAGS = -Wall -Wpedantic -DETCDIR=\"$(etcdir)\"
 parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread)
 
