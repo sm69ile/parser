@@ -20,90 +20,107 @@ void xshow(int argc, char **argv)
       iCtask = v_idle;
       psV_c->toplevel = XtVaAppInitialize(&psV_c->app_context, "Viewer", NULL, 0, &argc, argv, NULL, NULL);
 
-      psV_c->box = XtVaCreateManagedWidget("box", boxWidgetClass, psV_c->toplevel, NULL);
+      psV_c->form = XtVaCreateManagedWidget("form", formWidgetClass, psV_c->toplevel, NULL);
       n=0;
-      XtSetArg(wargs[n],XtNheight,D_WIN_Y_SIZE+C_WIN_Y_SIZE+50); n++;
-      XtSetArg(wargs[n],XtNwidth,D_WIN_X_SIZE+C_WIN_X_SIZE+50); n++;
-      XtSetValues(psV_c->box, wargs, n);
+      XtSetArg(wargs[n], XtNheight, D_WIN_Y_SIZE+C_WIN_Y_SIZE+50); n++;
+      XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE+C_WIN_X_SIZE+50); n++;
+      XtSetValues(psV_c->form, wargs, n);
       
-      psV_c->draw_shell = XtVaCreateManagedWidget("draw_shell", coreWidgetClass, psV_c->box, NULL);
+      psV_c->draw_shell = XtVaCreateManagedWidget("draw_shell", coreWidgetClass, psV_c->form, NULL);
       n=0;
-      XtSetArg(wargs[n],XtNheight,D_WIN_Y_SIZE); n++;
-      XtSetArg(wargs[n],XtNwidth,D_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNheight, D_WIN_Y_SIZE); n++;
+      XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
       XtSetValues(psV_c->draw_shell, wargs, n);
       
-      psV_c->color_shell = XtVaCreateManagedWidget("color_shell", coreWidgetClass, psV_c->box, NULL);
+      psV_c->color_shell = XtVaCreateManagedWidget("color_shell", coreWidgetClass, psV_c->form, NULL);
       n=0;
-      XtSetArg(wargs[n],XtNheight,C_WIN_Y_SIZE); n++;
-      XtSetArg(wargs[n],XtNwidth,C_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNheight, C_WIN_Y_SIZE); n++;
+      XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->draw_shell); n++;
       XtSetValues(psV_c->color_shell, wargs, n);
       
-      psV_c->object_label = XtVaCreateManagedWidget("object_label",labelWidgetClass, psV_c->box, NULL);
+      psV_c->object_label = XtVaCreateManagedWidget("object_label",labelWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, D_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->draw_shell); n++;
       XtSetArg(wargs[n], XtNborderWidth, 0); n++;
       XtSetArg(wargs[n], XtNlabel, O_LABEL_DEFAULT); n++; 
       XtSetValues(psV_c->object_label, wargs, n);
       
-      psV_c->color_label = XtVaCreateManagedWidget("color_label",labelWidgetClass, psV_c->box, NULL);
+      psV_c->color_label = XtVaCreateManagedWidget("color_label",labelWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
-      XtSetArg(wargs[n], XtNborderWidth, 0); n++;
       XtSetArg(wargs[n], XtNwidth, C_WIN_X_SIZE); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->color_shell); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNborderWidth, 0); n++;
       XtSetArg(wargs[n], XtNlabel, C_LABEL_DEFAULT); n++; 
       XtSetValues(psV_c->color_label, wargs, n);
       
-      psV_c->save_command = XtVaCreateManagedWidget("save_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->save_command = XtVaCreateManagedWidget("save_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_SAVE_COMMAND); n++;
       XtSetValues(psV_c->save_command, wargs, n);
 
-      psV_c->prev_object_command = XtVaCreateManagedWidget("prev_object_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->prev_object_command = XtVaCreateManagedWidget("prev_object_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->save_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_PREV_OBJECT_COMMAND); n++;
       XtSetValues(psV_c->prev_object_command, wargs, n);
       
-      psV_c->next_object_command = XtVaCreateManagedWidget("next_object_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->next_object_command = XtVaCreateManagedWidget("next_object_command", commandWidgetClass, psV_c->form, NULL);
 
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->prev_object_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_NEXT_OBJECT_COMMAND); n++;
       XtSetValues(psV_c->next_object_command, wargs, n);
       
-      psV_c->prev_state_command = XtVaCreateManagedWidget("prev_state_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->prev_state_command = XtVaCreateManagedWidget("prev_state_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->next_object_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_PREV_STATE_COMMAND); n++;
       XtSetValues(psV_c->prev_state_command, wargs, n);
       n=0;
 
-      psV_c->next_state_command = XtVaCreateManagedWidget("next_state_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->next_state_command = XtVaCreateManagedWidget("next_state_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->prev_state_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_NEXT_STATE_COMMAND); n++;
       XtSetValues(psV_c->next_state_command, wargs, n);
       n=0;
 
-      psV_c->curr_object_command = XtVaCreateManagedWidget("curr_object_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->curr_object_command = XtVaCreateManagedWidget("curr_object_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->next_state_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_CURR_COMMAND); n++;
       XtSetValues(psV_c->curr_object_command, wargs, n);
       n=0;
 
-      psV_c->quit_command = XtVaCreateManagedWidget("quit_command", commandWidgetClass, psV_c->box, NULL);
+      psV_c->quit_command = XtVaCreateManagedWidget("quit_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->curr_object_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_QUIT_COMMAND); n++;
       XtSetValues(psV_c->quit_command, wargs, n);
       

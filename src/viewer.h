@@ -5,7 +5,7 @@
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
-#include <X11/Xaw/Box.h>
+#include <X11/Xaw/Form.h>
 #include <X11/Xaw/Command.h>
 #include <X11/Xaw/Cardinals.h>
 
@@ -48,7 +48,7 @@ typedef struct Viewer_container{
   XtAppContext app_context;
 
   Widget toplevel;
-  Widget box;
+  Widget form;
   Widget draw_shell;
   Widget color_shell;
   Widget object_label; 
