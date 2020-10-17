@@ -204,7 +204,7 @@ void v_timer_handler(XtPointer client_data, XtIntervalId *id)
     iCtask = v_idle;
     iCstate = v_open;
   
-    psV_c->vt_h = XtAppAddTimeOut(psV_c->app_context,300, v_timer_handler, (XtPointer) psV_c);
+    psV_c->vt_h = XtAppAddTimeOut(psV_c->app_context, 300, v_timer_handler, (XtPointer) psV_c);
 }
 
 void v_event_handler(Widget w, XtPointer client_data, XEvent* ev, Boolean continue_to_dispatch)

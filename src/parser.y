@@ -700,7 +700,7 @@ void save()
       {
        "line",       //32513
        "lineto",     //32514
-       "rectnagle",  //32515
+       "rectangle",  //32515
        "circle",     //32516
        "ellipse",    //32117
        "moveto",     //32518
