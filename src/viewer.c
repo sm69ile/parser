@@ -445,8 +445,8 @@ void v_draw(XtPointer client_data)
 	      XDrawRectangle(display, window, gc,
 			     cact->para[0],
 			     cact->para[1],
-			     cact->para[2],
-			     cact->para[3]
+			     cact->para[2]-cact->para[0],
+			     cact->para[3]-cact->para[1]
 			     );
 
 	      psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
