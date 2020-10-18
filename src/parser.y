@@ -631,6 +631,8 @@ void help()
 	  { sleep(3); }
 	else if (! strncmp(cmd,"hide",strlen("hide")))
 	  { iCtask = v_hide; }
+	else if (! strncmp(cmd,"redraw",strlen("redraw")))
+	  { iCtask = v_redraw; }
 
 	else if (! strncmp(cmd,"show",strlen("show")))
 	  { iCtask = v_show; }

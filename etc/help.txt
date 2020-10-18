@@ -8,6 +8,7 @@ hide							hide graphic window
 show							show graphic window
 sleep							sleep 3 seconds
 save							save objects to file: ./parser.agf
+redraw							redraw current object
 object [next] [prev] [last] {nobj,pobj,lobj}		switch to next, previous, last object in memory
 object [count]	     	       				display sum of objects in memory
 status [next] [prev] {nstatus, pstatus}			switch to next, previous object state

@@ -52,7 +52,7 @@ bool INTERACTIV = true;
 
 "v_background"|"v_foreground"|"v_line_width" { show_buffer(yytext); yylval.spara = strdup(yytext); syslog(LOG_DEBUG, "Returning SPARA, buffer[%i]\n", nbuf++); return SPARA; }
 
-"exit"|"quit"|"list"|"init"|"clear"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"|"help"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_DEBUG, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CTRL;  } 
+"exit"|"quit"|"list"|"init"|"clear"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"|"redraw"|"help"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_DEBUG, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CTRL;  } 
 
 "all"|"prev"|"next"|"last"|"act"|"count"                       {  show_buffer(yytext); yylval.cpara = strdup(yytext);  syslog(LOG_DEBUG, "Control parameter received: %s, buffer[%i]\n", yytext, nbuf++);  return CPARA; }
 
