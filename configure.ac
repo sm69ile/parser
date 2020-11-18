@@ -13,6 +13,9 @@ AC_CHECK_LIB(Xaw, main, LIBXaw=Xaw, AC_MSG_ERROR("libXaw not found"), -lXaw)
 AC_SUBST(LIBXaw)
 AC_CHECK_LIB(pthread, main, LIBpthread=pthread, AC_MSG_ERROR("libpthread not found"), -lpthread)
 AC_SUBST(LIBpthread)
+AC_CHECK_LIB(readline, main, LIBreadline=readline, AC_MSG_ERROR("libreadline not found"), -lreadline)
+AC_SUBST(LIBreadline)
+
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])

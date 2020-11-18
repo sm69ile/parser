@@ -5,6 +5,8 @@
 #include "y.tab.h"
 #include "syslog.h"
 #include <stdbool.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 void show_buffer(char*);
 int nbuf = 0;
@@ -68,13 +70,15 @@ bool INTERACTIV = true;
 \}                              { show_buffer(yytext); yylval.character=yytext[0]; syslog(LOG_DEBUG, "Returning RBRACE, buffer[%i]\n", nbuf++); return RBRACE; }
 ;                               { show_buffer(yytext); yylval.character=yytext[0]; syslog(LOG_DEBUG, "Returning SEMICOLON, buffer[%i]\n", nbuf++); return SEMICOLON; }
 .                               { show_buffer(yytext); syslog(LOG_DEBUG, "Ignoring character: %s\n", yytext); }  /* ignore any other character */
-\n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }
+\n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }  
 %%
 
 void show_buffer(char* str)
 {
    /*
-    syslog(LOG_DEBUG,"[lex] new buffer");
+     \n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }  
+
+  syslog(LOG_DEBUG,"[lex] new buffer");
         int j = strlen(str);
 
     for(int i=0; i<j; i++)
