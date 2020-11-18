@@ -15,3 +15,4 @@ status [next] [prev] {nstatus, pstatus}			switch to next, previous object state
 command [count]	     	       				display sum of commands in memory
 exit, quit						leave program
 
+tool  
