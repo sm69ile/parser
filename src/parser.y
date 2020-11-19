@@ -90,7 +90,7 @@ CTRL CPARA SEMICOLON { ctrl($1,$2);}
 
 %%
  void yyerror(const char* s) {
-  printf("[%s] Error: %s near line %d\n", PACKAGE_STRING, s, s_line-1);
+  printf("[%s] Error: %s near line %d\n", PACKAGE_STRING, s, s_line);
 }
 
 
