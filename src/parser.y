@@ -1,5 +1,7 @@
 %{
 
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "parser.h"
   
   extern int yylex (void);
@@ -72,6 +74,7 @@ object: ONAME LBRACE command RBRACE { psObj->name=$1; psObj->s_line=s_line-1;  o
 
 command: CNAME LPAREN plist RPAREN SEMICOLON { psObj->psCom->name=$1; psObj->psCom->s_line=s_line-1; cnext(psObj); }
 |        command CNAME LPAREN plist RPAREN SEMICOLON { psObj->psCom->name=$2; psObj->psCom->s_line=s_line-1; cnext(psObj); }
+
 ;
 
 plist: NUMBER { plist(1,$1); }
@@ -124,15 +127,25 @@ int main(int argc, char *argv[])
 
   if (argc > 1)
     { load_file(argc, argv); }
-   
-  printf("[%i] > ",s_line++);
-  yyin = stdin;
-  do { 
-    yyparse();
-  } while(!feof(yyin));
-   
 
-  printf("Uups, \"feof(yyin);\" found, exiting\n");
+  char prompt[LINE_BUF];
+
+  do { 
+
+      bzero(prompt, LINE_BUF);
+      snprintf(prompt, LINE_BUF, "[%i] > ", s_line); 
+
+      char *f = readline(prompt);
+      YY_BUFFER_STATE b = yy_scan_string(f);
+      yyparse();
+      yy_delete_buffer(b);
+
+      add_history(f); 
+      free(f);
+  }while(1);
+
+
+  printf("Uups, unreachable code detected, exiting\n");
   quit();
    
   return 0;
@@ -166,7 +179,7 @@ int main(int argc, char *argv[])
 
   void onext()
   {
-    psObjIni->key++;
+      psObjIni->key++;
     syslog(LOG_DEBUG, "Initialising memory, object key: %d\n", psObjIni->key);
   
     if (!(psObj=(sObject*) malloc(sizeof(sObject))))

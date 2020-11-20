@@ -22,6 +22,13 @@
 #define DCB 32513
 #define LINE_BUF 80
 
+
+typedef struct yy_buffer_state * YY_BUFFER_STATE;
+extern int yyparse();
+extern YY_BUFFER_STATE yy_scan_string(const char * str);
+extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
+extern int yylex_destroy();
+
 enum eVtask {
     v_idle = 0,
     v_redraw = 1,
@@ -77,8 +84,8 @@ int iObj_idx;
 int iCtask;
 int iCstate;
 
-int yy_scan_string(char*);
-int yylex_destroy();
+//int yy_scan_string(char*);
+//int yylex_destroy();
 void yyerror(const char *s);
 
 void vinit(sObject *);
