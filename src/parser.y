@@ -3,6 +3,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "parser.h"
+#define CRED "\001\33[1m\33[31m\002"
+#define CWHITE "\001\33[0m\002"
   
   extern int yylex (void);
   extern int yyparse();
@@ -133,7 +135,7 @@ int main(int argc, char *argv[])
   do { 
 
       bzero(prompt, LINE_BUF);
-      snprintf(prompt, LINE_BUF, "[%i] > ", s_line); 
+      snprintf(prompt, LINE_BUF, "%s [%i] > %s", CRED, s_line, CWHITE); 
 
       char *f = readline(prompt);
       YY_BUFFER_STATE b = yy_scan_string(f);
