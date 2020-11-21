@@ -30,7 +30,7 @@
 %token <cname> CNAME
 %token <set> SET
 %token <spara> SPARA
-%token <ctrl> CTRL
+%token <ctrl> CONTROL
 %token <cpara> CPARA
 %token <integer> NUMBER
 %token <real> REAL
@@ -87,9 +87,9 @@ plist: NUMBER { plist(1,$1); }
 set:  SET SPARA NUMBER SEMICOLON { if (! set_vset(psObj, $2, $3)) { psObj->psVset->para=$2; psObj->psVset->value=$3; vnext(psObj); } }
 |     set SET SPARA NUMBER SEMICOLON { if (! set_vset(psObj, $3, $4)) { psObj->psVset->para=$3; psObj->psVset->value=$4; vnext(psObj); } }
 ;
-ctrl: CTRL SEMICOLON { ctrl($1,NULL); }
+ctrl: CONTROL SEMICOLON { ctrl($1,NULL); }
 |
-CTRL CPARA SEMICOLON { ctrl($1,$2);}
+CONTROL CPARA SEMICOLON { ctrl($1,$2);}
 
 %%
  void yyerror(const char* s) {
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
       yyparse();
       yy_delete_buffer(b);
 
-      add_history(f); 
+      add_history(f); s_line++;
       free(f);
   }while(1);
 

@@ -5,48 +5,12 @@
 #include "y.tab.h"
 #include "syslog.h"
 #include <stdbool.h>
-/*
-#include <readline/readline.h>
-#include <readline/history.h>
-*/
-//#define P_BUFFER 80
 
 void show_buffer(char*);
 int nbuf = 0;
 int s_line = 0;
 FILE *fp;
 bool INTERACTIV = true;
-
-
-/* #define YY_INPUT(buf, result, max_size) result = get_input(buf, max_size); */
-
-/* static int get_input(char *buf, int size) */
-/* { */
-/*     char *line; */
-/*     char prompt[P_BUFFER]; */
-
-/*     bzero(prompt, P_BUFFER); */
-/*     snprintf(prompt, P_BUFFER-1, "[%i|%i] > ", size, s_line); */
-
-/*     if (feof(yyin)) */
-/* 	return YY_NULL; */
-    
-    
-/*     line = readline(prompt); */
-/*     if (!line) */
-/* 	return YY_NULL; */
-/*     if (strlen(line) > size - 2) { */
-/* 	perror("input line too long"); //size = 8192 bytes */
-/* 	return YY_NULL; */
-/*     } */
-/*    strcpy(buf, line); */
-
-/*    free(line); */
-/*    add_history(buf); */
-/*    strcat(buf, "\n"); */
-
-/* 	return strlen(buf); */
-/* } */
 
 
 %}
@@ -73,7 +37,7 @@ bool INTERACTIV = true;
                      if (! INTERACTIV)
 		        { yypop_buffer_state(); }
 		     else
-		        { yyterminate(); }
+		        { /* yyterminate(); */ return(0); }
 
 		     INTERACTIV=true;
 	             syslog(LOG_DEBUG, "Closing input file\n");  
@@ -89,7 +53,7 @@ bool INTERACTIV = true;
 
 "v_background"|"v_foreground"|"v_line_width" { show_buffer(yytext); yylval.spara = strdup(yytext); syslog(LOG_DEBUG, "Returning SPARA, buffer[%i]\n", nbuf++); return SPARA; }
 
-"exit"|"quit"|"list"|"init"|"clear"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"|"redraw"|"help"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_DEBUG, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CTRL;  } 
+"exit"|"quit"|"list"|"init"|"clear"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"|"redraw"|"help"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_DEBUG, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CONTROL;  } 
 
 "all"|"prev"|"next"|"last"|"act"|"count"                       {  show_buffer(yytext); yylval.cpara = strdup(yytext);  syslog(LOG_DEBUG, "Control parameter received: %s, buffer[%i]\n", yytext, nbuf++);  return CPARA; }
 
@@ -105,7 +69,7 @@ bool INTERACTIV = true;
 \}                              { show_buffer(yytext); yylval.character=yytext[0]; syslog(LOG_DEBUG, "Returning RBRACE, buffer[%i]\n", nbuf++); return RBRACE; }
 ;                               { show_buffer(yytext); yylval.character=yytext[0]; syslog(LOG_DEBUG, "Returning SEMICOLON, buffer[%i]\n", nbuf++); return SEMICOLON; }
 .                               { show_buffer(yytext); syslog(LOG_DEBUG, "Ignoring character: %s\n", yytext); }  /* ignore any other character */
-\n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }
+\n                              {  /*if (INTERACTIV) { printf("[%i] > ",s_line); } */ s_line++; }
 %%
 
 void show_buffer(char* str)
@@ -113,7 +77,7 @@ void show_buffer(char* str)
 
 
     /*
-      \n                              {  if (INTERACTIV)  s_line++; }  
+     \n                              {  if (INTERACTIV)  s_line++; }  
      \n                              {  if (INTERACTIV) { printf("[%i] > ",s_line); } s_line++; }  
 
   syslog(LOG_DEBUG,"[lex] new buffer");

@@ -758,7 +758,7 @@ kolboden5d20{
 	line(0,0,100,0);
 	line(300,0,400,0);
 
-	line(50,50,190,50)
+	line(50,50,190,50);
 	line(210,50,350,50);
 #
 #	Durchfluss von oben
