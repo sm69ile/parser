@@ -213,7 +213,7 @@ void v_event_handler(Widget w, XtPointer client_data, XEvent* ev, Boolean contin
   sViewer_container *psV_c = (sViewer_container*) client_data; 
   if(ev->type == EnterNotify){ v_draw(psV_c);}
 }
-
+ 
 void v_event_draw(Widget w, XtPointer client_data, XExposeEvent* ev)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data; 
