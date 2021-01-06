@@ -17,6 +17,7 @@
 #define DCB 32513
 #define LABEL_HEIGHT 20
 #define LABEL_WIDTH 60
+#define CHAR_BUF 80
 
 #define O_LABEL_DEFAULT "default"
 #define C_LABEL_DEFAULT "Colormap"
@@ -75,6 +76,8 @@ void v_event_handler(Widget, XtPointer, XEvent*, Boolean);
 void v_event_draw(Widget, XtPointer, XExposeEvent*);
 void v_event_color(Widget, XtPointer, XExposeEvent*);
 
+int v_count_resource(char *f);
+char **v_load_resource(char *f, int k);
 void v_draw(XtPointer);
 void v_next_object(Widget, XtPointer, XtPointer);
 void v_prev_object(Widget, XtPointer, XtPointer);

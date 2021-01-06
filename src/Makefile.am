@@ -17,7 +17,7 @@ symboldir = $(datadir)/$(PACKAGE)/symbols
 symbol_DATA = ../sym/*
 
 etcdir = $(datadir)/$(PACKAGE)/etc
-etc_DATA = ../etc/help.txt
+etc_DATA = ../etc/*
 
 
 AM_YFLAGS = -d

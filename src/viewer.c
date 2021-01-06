@@ -222,6 +222,63 @@ void v_event_draw(Widget w, XtPointer client_data, XExposeEvent* ev)
     v_draw(psV_c);
 }
 
+int v_count_resource(char *f)
+{
+  FILE *fp;
+  char c;
+
+  int i = 0;
+
+  if ((fp = fopen(f,"r")) == NULL)
+    fprintf(stderr,"%s, %d: Cannot open file: %s for reading\n", __FILE__, __LINE__, f);
+  else
+    {
+      while((c=getc(fp)) != EOF )
+	if ( c == '\n')
+	  i++;
+
+      fclose(fp);
+      return i;
+    }
+  return -1;
+}
+
+char **v_load_resource(char *f, int k)
+{
+  FILE *fp;
+   char c;      
+  static char **r; 
+  int i, j;
+  
+  r = (char **) calloc(k+1, sizeof(char*));
+  
+  i = j = 0;
+
+  if ((fp = fopen(f,"r")) == NULL)
+    fprintf(stderr,"%s, %d: Cannot open file: %s for reading\n", __FILE__, __LINE__, f);
+  else
+    {
+      r[i] = (char*) calloc(CHAR_BUF, sizeof(char));
+      while((c=getc(fp)) != EOF )
+	{
+	  switch(c)
+	    {
+	    case '\n':
+	      i++; j=0;
+	      r[i] = (char*) calloc(CHAR_BUF, sizeof(char));
+	      break;
+	      
+	    default:
+	      r[i][j++]=c;
+	      break;
+	    }
+	}
+      
+      free(r[i]);
+      fclose(fp);
+    }
+  return r;
+}
 
 int v_get_draw_c(sDraw_container* act, Widget w, Display *display, Window window)
 {
@@ -237,10 +294,13 @@ int v_get_draw_c(sDraw_container* act, Widget w, Display *display, Window window
   act->colormap = XCopyColormapAndFree(display,DefaultColormap(display, 0));
   XInstallColormap(display,act->colormap);
 
-  static char *v_colors[] = { "black", "white", "green", "red", "lightblue", "blue", "orange","magenta", "yellow","grey","darkgrey","grey14","cyan"};
 
-  int clength = sizeof(v_colors)/sizeof(v_colors[0]);
-    
+  /* static char *v_colors[] = { "black", "white", "green", "red", "lightblue", "blue", "orange","magenta", "yellow","grey","darkgrey","grey14","cyan"}; */
+  /* int clength = sizeof(v_colors)/sizeof(v_colors[0]); */
+
+  int clength = v_count_resource(COLOR_FILE);
+  char** v_colors = v_load_resource(COLOR_FILE, clength);
+  
   for (int i=0; i<clength; i++)
     {
       act->ctable[i].key=i;
@@ -269,7 +329,7 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
       XClearWindow(display, window);
 
       int y=0;
-      for(int i=0; i<19; i++)
+      for(int i=0; i<v_count_resource(COLOR_FILE); i++)
 	{
 	  values.line_width = 20;
 	  values.foreground = psV_c->psDraw_c->ctable[i].value;
@@ -333,8 +393,8 @@ void v_draw(XtPointer client_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  XGCValues values, rvalues;
-  GC gc;
+  XGCValues values, rvalues, bvalues;
+  GC gc, gc_border;
   Display *display;
   Drawable window;
  
@@ -357,6 +417,15 @@ void v_draw(XtPointer client_data)
   sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_line_width");
   if (sact) { values.line_width = sact->value; } else { values.line_width = 0; }  
 
+  bvalues.foreground = 1;
+  bvalues.line_width = 2;
+  bvalues.line_style = LineOnOffDash;
+  
+  gc_border = XtGetGC(psV_c->draw_shell,
+	       GCForeground |
+	       GCLineStyle  |      
+	       GCLineWidth, &bvalues);
+
   gc = XtGetGC(psV_c->draw_shell,
 	       GCForeground |
 	       GCBackground |
@@ -367,7 +436,8 @@ void v_draw(XtPointer client_data)
   fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
   XClearWindow(display, window);
-  
+  XDrawRectangle(display, window, gc_border, 0, 0,  D_WIN_X_SIZE,  D_WIN_Y_SIZE);
+
   // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
   for(int j=0; j<oact->psComIni->key; j++)
     {
@@ -531,6 +601,7 @@ void v_draw(XtPointer client_data)
     }
   fprintf(stderr,"]\n");
   XtReleaseGC(psV_c->draw_shell, gc);
+  XtReleaseGC(psV_c->draw_shell, gc_border);
 }
 
 

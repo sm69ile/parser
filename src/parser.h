@@ -19,6 +19,7 @@
 #define FIRST_LINE "Graphikfile Viewer Ver. 0.1\n"
 #define P_OUT "parser.agf"
 #define HELP_FILE ETCDIR "/help.txt"
+#define COLOR_FILE ETCDIR "/colors.txt"
 #define DCB 32513
 #define LINE_BUF 80
 
