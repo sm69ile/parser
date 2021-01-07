@@ -736,7 +736,7 @@ void save()
     int count_p = 0;
     int buf_length;
     
-    FILE* fp = fopen(P_OUT, "a+" );
+    FILE* fp = fopen(P_OUT, "w+" );
 
     if (! fp){ syslog(LOG_DEBUG,"Cannot open output file %s\n", P_OUT); }
     else
