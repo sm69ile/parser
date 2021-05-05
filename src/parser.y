@@ -105,22 +105,22 @@ int main(int argc, char *argv[])
   syslog (LOG_DEBUG, "Program started by User %d", getuid ());
   printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);      
   
-  FILE* fp = fopen(P_OUT, "r" );
-  if (! fp)
-    {
-      syslog(LOG_DEBUG,"Output file %s not found, trying to create\n", P_OUT);
-      if(!(fp = fopen(P_OUT, "a+")))
-	{
-	  syslog(LOG_DEBUG,"Cannot open output file for writing: %s\n", P_OUT);
-	  exit(EXIT_FAILURE);
-	}
-      else
-	{
-	  syslog(LOG_DEBUG,"New output file %s created\n", P_OUT);
-	  fprintf(fp,FIRST_LINE);
-	  fclose(fp);
-	}
-    }
+  /* FILE* fp = fopen(P_OUT, "r" ); */
+  /* if (! fp) */
+  /*   { */
+  /*     syslog(LOG_DEBUG,"Output file %s not found, trying to create\n", P_OUT); */
+  /*     if(!(fp = fopen(P_OUT, "a+"))) */
+  /* 	{ */
+  /* 	  syslog(LOG_DEBUG,"Cannot open output file for writing: %s\n", P_OUT); */
+  /* 	  exit(EXIT_FAILURE); */
+  /* 	} */
+  /*     else */
+  /* 	{ */
+  /* 	  syslog(LOG_DEBUG,"New output file %s created\n", P_OUT); */
+  /* 	  fprintf(fp,FIRST_LINE); */
+  /* 	  fclose(fp); */
+  /* 	} */
+  /*   } */
   
   iThr = 0;
   
@@ -736,6 +736,8 @@ void save()
     int count_p = 0;
     int buf_length;
     
+
+
     FILE* fp = fopen(P_OUT, "w+" );
 
     if (! fp){ syslog(LOG_DEBUG,"Cannot open output file %s\n", P_OUT); }

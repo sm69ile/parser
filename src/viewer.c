@@ -122,6 +122,7 @@ void xshow(int argc, char **argv)
       XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
       XtSetArg(wargs[n], XtNfromHoriz, psV_c->curr_object_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_QUIT_COMMAND); n++;
+      XtSetArg(wargs[n], XtNsensitive, false); n++;
       XtSetValues(psV_c->quit_command, wargs, n);
       
  
@@ -704,6 +705,7 @@ void v_save(Widget w, XtPointer client_data, XtPointer call_data)
 
 void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
 {
+
   sViewer_container *psV_c = (sViewer_container*) client_data;
 
   XFreeColormap(XtDisplay(psV_c->draw_shell),psV_c->psDraw_c->colormap);
@@ -715,7 +717,7 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
   
   free(psV_c->psDraw_c);
   free(psV_c);
-  quit(); 
+  quit();
 }
 
 void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
