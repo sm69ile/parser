@@ -9,10 +9,12 @@
 #include <X11/Xaw/Command.h>
 #include <X11/Xaw/Cardinals.h>
 
-#define D_WIN_X_SIZE 400
-#define D_WIN_Y_SIZE 400
+#define V_WIN_X_SIZE 400
+#define V_WIN_Y_SIZE 400
+#define D_WIN_X_SIZE 600
+#define D_WIN_Y_SIZE 600
 #define C_WIN_X_SIZE 200
-#define C_WIN_Y_SIZE 400
+#define C_WIN_Y_SIZE 600
 #define MAX_FLOODFILL D_WIN_X_SIZE * D_WIN_Y_SIZE
 #define DCB 32513
 #define LABEL_HEIGHT 20

@@ -437,7 +437,7 @@ void v_draw(XtPointer client_data)
   fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
   XClearWindow(display, window);
-  XDrawRectangle(display, window, gc_border, 0, 0,  D_WIN_X_SIZE,  D_WIN_Y_SIZE);
+  XDrawRectangle(display, window, gc_border, 0, 0,  V_WIN_X_SIZE,  V_WIN_Y_SIZE);
 
   // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
   for(int j=0; j<oact->psComIni->key; j++)
