@@ -399,7 +399,6 @@ void v_draw(XtPointer client_data)
   Display *display;
   Drawable window;
  
-
   display = XtDisplay(psV_c->draw_shell);
   window = XtWindow(psV_c->draw_shell);
   
@@ -447,17 +446,14 @@ void v_draw(XtPointer client_data)
 
       sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
 
-      if(cact != NULL && iState_idx == iDstate_idx)
+      if(cact != NULL && iState_idx >= iDstate_idx)
 	//	  if(cact != NULL)
 	{
 	  // draw all commands iState_idx = 0
 	  // next_state button pressed iState_idx = 1
 	  // walk through the list of commands until command state(1) is found;
 	  // draw all commands until break (0)
-
-
 	  fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
-
 	  for(int k=0; k<cact->count_para;k++)
 	    fprintf(stderr,"%d ", cact->para[k]);
 	  fprintf(stderr,"\n");
@@ -469,14 +465,14 @@ void v_draw(XtPointer client_data)
 
 	      fprintf(stderr,"\tState switched by Symbol definition \"state()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx);
 	    }
-	  if (!strcmp(cact->name, "break") && cact->count_para == 1)   //32523
+	  else if (!strcmp(cact->name, "break") && cact->count_para == 1)   //32523
 	    {
 	      iDstate_idx = cact->para[0];
 
 	      fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
 	    }
 	  
-	  if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
+	  else if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
 	    {
 	      XDrawLine(display, window, gc,
 			cact->para[0],
@@ -488,7 +484,7 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_y=cact->para[3];
 	      
 	    }
-	  if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
+	  else if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
 	    {
 	      sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
 
@@ -597,6 +593,9 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=cact->para[0];
 	      psV_c->psDraw_c->last_y=cact->para[1];
 
+	    } else if (!strcmp(cact->name, "clear"))  //32524
+	    {
+	      XClearArea(display, window, 0, 0, V_WIN_X_SIZE, V_WIN_Y_SIZE, FALSE);
 	    }
 	}
     }

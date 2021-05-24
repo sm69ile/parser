@@ -79,7 +79,8 @@ command: CNAME LPAREN plist RPAREN SEMICOLON { psObj->psCom->name=$1; psObj->psC
 
 ;
 
-plist: NUMBER { plist(1,$1); }
+plist:
+|      NUMBER { plist(1,$1); }
 |      NUMBER COMMA NUMBER { plist(2,$1,$3); }
 |      NUMBER COMMA NUMBER COMMA NUMBER { plist(3,$1,$3,$5); }
 |      NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER { plist(4,$1,$3,$5,$7); }
@@ -620,7 +621,7 @@ void help()
 	  { olist(); }
 	else if (! strncmp(cmd,"save",strlen("save")))
 	  { save(); }
-	else if (! strncmp(cmd,"clear",strlen("clear")))
+	else if (! strncmp(cmd,"flush",strlen("flush")))
 	  { yyclearin; }
 
 	else if (! strncmp(cmd,"nobj",strlen("nobj")))
@@ -725,7 +726,8 @@ void save()
        "flowways",   //32520
        "arc",        //32521
        "state",      //32522
-       "break"       //32523
+       "break",      //32523
+       "clear"       //32524
       };
     
     
@@ -735,11 +737,9 @@ void save()
     int count_c = 0;
     int count_p = 0;
     int buf_length;
-    
-
 
     FILE* fp = fopen(P_OUT, "w+" );
-
+    
     if (! fp){ syslog(LOG_DEBUG,"Cannot open output file %s\n", P_OUT); }
     else
       {

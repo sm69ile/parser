@@ -47,13 +47,13 @@ bool INTERACTIV = true;
 [ \t ]+                         { show_buffer(yytext); syslog(LOG_DEBUG, "Ignoring whitespace\n"); } /* ignore whitespace */
 #.*$                            { show_buffer(yytext); syslog(LOG_DEBUG, "Comment found\n"); } /* ignore comment */
 
-"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"arc"|"moveto"|"floodfill"|"flowways"|"MAX"|"REM"|"state"|"break"  { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_DEBUG, "Returning CNAME, buffer[%i]\n",nbuf++ ); return CNAME; }
+"line"|"lineto"|"rectangle"|"circle"|"ellipse"|"arc"|"moveto"|"floodfill"|"flowways"|"MAX"|"REM"|"state"|"break"|"clear"  { show_buffer(yytext); yylval.cname = strdup(yytext); syslog(LOG_DEBUG, "Returning CNAME, buffer[%i]\n",nbuf++ ); return CNAME; }
 
 "set" { show_buffer(yytext); yylval.set = strdup(yytext); syslog(LOG_DEBUG, "Returning SET, buffer[%i]\n", nbuf++); return SET; }
 
 "v_background"|"v_foreground"|"v_line_width" { show_buffer(yytext); yylval.spara = strdup(yytext); syslog(LOG_DEBUG, "Returning SPARA, buffer[%i]\n", nbuf++); return SPARA; }
 
-"exit"|"quit"|"list"|"init"|"clear"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"|"redraw"|"help"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_DEBUG, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CONTROL;  } 
+"exit"|"quit"|"list"|"init"|"flush"|"show"|"status"|"nobj"|"pobj"|"lobj"|"nstatus"|"pstatus"|"sleep"|"save"|"hide"|"display"|"object"|"command"|"redraw"|"help"   {  show_buffer(yytext);  yylval.ctrl = strdup(yytext);  syslog(LOG_DEBUG, "Control command received: %s, buffer[%i]\n",yytext, nbuf++);  return CONTROL;  } 
 
 "all"|"prev"|"next"|"last"|"act"|"count"                       {  show_buffer(yytext); yylval.cpara = strdup(yytext);  syslog(LOG_DEBUG, "Control parameter received: %s, buffer[%i]\n", yytext, nbuf++);  return CPARA; }
 

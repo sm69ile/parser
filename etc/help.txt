@@ -2,7 +2,7 @@
 help							show help file
 list [all] [act]  					list object information in memory
 init							initialize memory, reset
-clear							clear input buffer
+flush							flush input buffer
 display							start graphic window
 hide							hide graphic window
 show							show graphic window
