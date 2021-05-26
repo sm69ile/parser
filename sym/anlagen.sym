@@ -1,6 +1,7 @@
 #
 #	anlagen.sym
 #
+init;
 tank5d20{
 #
 #	Zulauf, oben
@@ -107,7 +108,6 @@ tank15d20{
 
 
 tank7d20{
-	state(0);
 
 	line(190,0,190,20);
 	lineto(90,20);
@@ -126,7 +126,7 @@ tank7d20{
 
 # Horizontale fuer die 1. Fuellposition
 	line(90,50,310,50);
-# fuer schatten an den tank schraegen ;-)
+# Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
 	line(90,297,190,350);
@@ -136,9 +136,10 @@ tank7d20{
 
 	line(190,20,210,20);
 	flowways(200,10,200,375);	
-
 	REM(0,10,15,1);
-	break(1);
+
+	state(1);
+	clear();
 	line(190,0,190,20);
 	lineto(90,20);
 	lineto(90,300);
@@ -154,7 +155,7 @@ tank7d20{
 	lineto(210,400);
 # Horizontale fuer die 2. Fuellposition
 	line(90,100,310,100);
-# fuer schatten an den tank schraegen ;-)
+# Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
 	line(90,297,190,350);
@@ -164,9 +165,10 @@ tank7d20{
 
 	line(190,20,210,20);
 	flowways(200,10,200,375);	
-
 	REM(0,10,15,1);
-	break(2);
+
+	state(2);
+	clear();
 	line(190,0,190,20);
 	lineto(90,20);
 	lineto(90,300);
@@ -182,7 +184,7 @@ tank7d20{
 	lineto(210,400);
 # Horizontale fuer die 3. Fuellposition
 	line(90,150,310,150);
-# fuer schatten an den tank schraegen ;-)
+# Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
 	line(90,297,190,350);
@@ -192,10 +194,11 @@ tank7d20{
 
 	line(190,20,210,20);
 	flowways(200,10,200,375);	
-
 	REM(0,10,15,1);
-	break(3);
-	line(190,0,190,20);
+	
+	state(3);
+	clear();	
+	line(190,0,190,20);	
 	lineto(90,20);
 	lineto(90,300);
 	lineto(190,350);
@@ -210,7 +213,7 @@ tank7d20{
 	lineto(210,400);
 # Horizontale fuer die 4. Fuellposition
 	line(90,200,310,200);
-# fuer schatten an den tank schraegen ;-)
+# Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
 	line(90,297,190,350);
@@ -220,9 +223,10 @@ tank7d20{
 
 	line(190,20,210,20);
 	flowways(200,10,200,375);	
-
 	REM(0,10,15,1);
-	break(4);
+
+	state(4);
+	clear();
 	line(190,0,190,20);
 	lineto(90,20);
 	lineto(90,300);
@@ -236,9 +240,10 @@ tank7d20{
 	lineto(310,300);
 	lineto(210,350);
 	lineto(210,400);
+
 # Horizontale fuer die 5. Fuellposition
 	line(90,250,310,250);
-# fuer schatten an den tank schraegen ;-)
+# Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
 	line(90,297,190,350);
@@ -248,9 +253,10 @@ tank7d20{
 
 	line(190,20,210,20);
 	flowways(200,10,200,375);	
-
 	REM(0,10,15,1);
+	break(0);
 }
+redraw;
 
 #
 # Waermetauscher mit Rohrschlange, geschwungen.
@@ -400,7 +406,7 @@ bottich5d12{
 #
 # Waermetauscher mit gekreuzten Rohren. Ein u. Ausgaenge jeweils an der Ober - und Unterseite des Behaelters.
 #
-wtrkr10F4t1d12{	
+wtrkr5F4t1d12{	
 #
 # der Randbereich, oben.
 #
@@ -474,7 +480,7 @@ wtrkr10F4t1d12{
 	REM(0,10,15,1);
 }
 
-wtrlin10F4t1d12{
+wtrlin15F4t1d12{
 #
 # der Randbereich, oben.
 #
@@ -519,7 +525,7 @@ wtrlin10F4t1d12{
 # Kreuzstromwaermetauscher.
 #
 
-kwtF8t2F4t1d20{
+kwt15F4t1d20{
 #
 # Das Durchgangsrohr
 #	
@@ -681,9 +687,7 @@ hmuehle5d20{
 	line(125,227,175,277);
 	line(125,228,175,278);	
 	line(125,229,175,279);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -693,7 +697,7 @@ sksmuehle5d20{
 #	Der Behaelter
 #	Behaelter-Prototyp zwischen $$ 
 #
-#	--- Prototy Anfang ---	
+#	--- Prototyp Anfang ---	
 	
 	line(190,0,190,50);
 	lineto(50,50);
@@ -743,9 +747,7 @@ sksmuehle5d20{
 	line(230,280,200,280);
 	line(230,279,200,279);
 	line(230,278,200,278);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -793,9 +795,6 @@ kolboden5d20{
 #
 	circle(200,125,30);
 
-#	
-#	Der Kommentar
-#
 	REM(0,10,15,1);
 }
 
@@ -836,9 +835,7 @@ kolkopf5F8t2d20{
 	line(380,170,400,170);
 	
 	flowways(150,360,250,360);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -879,9 +876,7 @@ kolkopf10d20{
 	line(380,170,400,170);
 	
 	flowways(150,360,250,360);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -923,9 +918,7 @@ kolkopf5d20{
 	line(380,170,400,170);
 	
 	flowways(150,360,250,360);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -947,9 +940,7 @@ kolzwischen15d20{
 #
 	line(190,0,190,400);
 	line(210,0,210,400);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -971,9 +962,7 @@ kolzwischen13d20{
 #
 	line(190,0,190,400);
 	line(210,0,210,400);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -991,9 +980,7 @@ koltrenn5d20{
 	line(210,0,210,400);
 	
 	flowways(100,200,300,200);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1041,9 +1028,7 @@ trichter5d20{
 #
 	line(190,350,190,400);
 	line(210,350,210,400);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1084,9 +1069,7 @@ schnecke{
 	line(355,350,345,360);
 	line(365,350,355,360);
 	line(375,350,365,360);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1119,9 +1102,7 @@ fallverdkopfd20{
 	line(310,230,310,400);
 	
 	flowways(400,200,100,200);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1137,9 +1118,7 @@ fallverdmitted20{
 	line(290,0,290,400);
 	line(310,0,310,400);
 	line(350,0,350,400);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1163,9 +1142,7 @@ fallverfussd20{
 	line(210,350,350,350);
 
 	flowways(400,200,100,200);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1208,9 +1185,7 @@ smallwt5F8t2d60{
 	line(230,200,300,350);
 
 	flowways(10,200,390,200);
-#	
-#	Der Kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -1247,9 +1222,6 @@ smallwt5d60{
 #	line(300,50,230,200);
 #	line(230,200,300,350);
 
-#	
-#	Der Kommentar
-#
 	REM(0,10,15,1);
 }
 
@@ -1287,10 +1259,6 @@ tank5d12{
 	line(194,350,194,400);
 	line(206,350,206,400);
 
-#	
-#	Der Kommentar
-#
 	REM(0,10,15,1);
 }
-
-
+redraw;

@@ -1,8 +1,8 @@
 #
 # Ventile
 #
+init;
 ventil10d60{     
-	state(1);
 	line(0,230,50,230);
         lineto(50,300);
 	lineto(350,100);
@@ -20,7 +20,8 @@ ventil10d60{
 	line(150,77,250,77);
 	line(140,76,260,76);
 	REM(0,10,15,0);
-	break(1);
+	state(1);
+	clear();
 	line(0,230,50,230);
         lineto(50,300);
 	lineto(200,230);
@@ -40,10 +41,10 @@ ventil10d60{
 	line(150,77,250,77);
 	line(140,76,260,76);
 	REM(0,10,15,1);
+	break(0);
 }
 
 ventil5d60{
-	state(1);
 	line(170,0,170,100);
 	lineto(100,100);
 	lineto(300,300);
@@ -60,7 +61,8 @@ ventil5d60{
 	line(78,160,78,240);
 	line(77,150,77,250);	
 	REM(0,10,15,1);
-	break(1);
+	state(1);
+	clear();
 	line(170,0,170,100);
 	lineto(100,100);
 	lineto(170,200);
@@ -79,6 +81,7 @@ ventil5d60{
 	line(78,160,78,240);
 	line(77,150,77,250);	
 	REM(0,10,15,1);
+	break(0);
 }
 
 #
@@ -261,7 +264,7 @@ rstart1d60{
 	line(170,0,230,0);
 	lineto(230,50);
 	lineto(170,50);
- 	LINETO(170,0);
+ 	lineto(170,0);
 
 	REM(0,10,15,1);
 }
@@ -280,7 +283,7 @@ rstart4d60{
 	lineto(230,325);
 	lineto(170,325);
 	lineto(170,225);
-#
+# 263
 # 3. Rohrstueck
 #
 	line(170,350, 230,350);
@@ -313,9 +316,7 @@ pumpeF4t1d60{
 #
 	line(170,347,170,400);
 	line(230,347,230,400);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }	
 
@@ -337,9 +338,7 @@ pumpe8t2d60{
 #
 	line(347,170,400,170);
 	line(347,230,400,230);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }	
 
@@ -361,8 +360,6 @@ pumpe1t4d60{
 #
 	line(170,347,170,400);
 	line(230,347,230,400);
-#	
-#	der kommentar
 #
 	REM(0,10,15,1);
 }	
@@ -385,8 +382,6 @@ pumpe2t8d60{
 #
 	line(347,170,400,170);
 	line(347,230,400,230);
-#	
-#	der kommentar
 #
 	REM(0,10,15,1);
 }	
@@ -399,8 +394,6 @@ klappe15d60{
 #
 #	Klappenstellung 1: F8T1, F4T2
 #
-	state(1);
-
 #
 # Zulauf links
 #
@@ -453,7 +446,8 @@ klappe15d60{
 #	der kommentar
 #
 	REM(0,10,15,1);
-	break(1);
+	state(1);
+	clear();
 #
 # Klappenstellung 2: F8T4, F1T2
 #
@@ -505,10 +499,9 @@ klappe15d60{
 
 	line(350,50,205,195);
 	line(195,205,50,350);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
+	break(0);
 }
 
 #
@@ -552,9 +545,7 @@ bruecke10F4t1d60{
 	arc(400,102,225,50,130);
 
 	flowways(195,0,195,400);	
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -586,9 +577,7 @@ bruecke10F1t4d60{
 	arc(400,102,225,50,130);
 
 	flowways(195,400,195,0);	
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -619,9 +608,7 @@ bruecke5F8t2d60{
 	line(175,230,400,230);
 
 	flowways(0,200,400,200);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -652,8 +639,6 @@ bruecke5F2t8d60{
 	line(175,230,400,230);
 
 	flowways(400,200,0,200);
-#	
-#	der kommentar
 #
 	REM(0,10,15,1);
 }
@@ -668,8 +653,6 @@ rt13d60{
 	line(170,170,0,170);
 	line(170,230,0,230);
 	line(170,230,170,400);
-#	
-#	der kommentar
 #
 	REM(0,10,15,1);
 
@@ -694,9 +677,7 @@ rt7d60{
 	line(230,170,400,170);
 	line(230,230,400,230);
 	line(230,230,230,400);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -706,8 +687,6 @@ rt14d60{
 	line(170,170,170,0);
 	line(230,0,230,170);
 	line(230,170,400,170);
-#	
-#	der kommentar
 #
 	REM(0,10,15,1);
 }
@@ -721,9 +700,7 @@ dframe5d60F4t1{
 	line(230,350,230,400);
 
 	flowways(200,10,200,390);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }
 
@@ -736,8 +713,7 @@ dframe5d60F1t4{
 	line(230,350,230,400);
 
 	flowways(200,390,200,10);
-#	
-#	der kommentar
-#
+
 	REM(0,10,15,1);
 }
+redraw;
