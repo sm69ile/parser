@@ -149,7 +149,7 @@ rkreuz15d60{
 }
 
 
-rbogen3d60{
+rbogen6d60{
 	line(170,300,170,400);
 	line(230,300,230,400);
 	line(400,170,300,170);
@@ -159,7 +159,7 @@ rbogen3d60{
 	REM(0,10,15,1);
 }
 
-rbogen6d60{
+rbogen3d60{
 	line(170,0,170,100);
 	line(230,0,230,100);
 	line(400,170,300,170);
@@ -169,7 +169,7 @@ rbogen6d60{
 	REM(0,10,15,1);
 }
 
-rbogen12d60{
+rbogen9d60{
 	line(170,0,170,100);
 	line(230,0,230,100);
 	line(0,170,100,170);
@@ -179,7 +179,7 @@ rbogen12d60{
 	REM(0,10,15,1);
 }
 
-rbogen9d60{
+rbogen12d60{
 	line(170,300,170,400);
 	line(230,300,230,400);
 	line(0,230,100,230);
@@ -243,7 +243,7 @@ rstart8d60{
 	REM(0,10,15,1);
 }
 
-rstart1d60{
+rstart4d60{
 #
 # 1. Rohrstueck 
 #
@@ -269,7 +269,7 @@ rstart1d60{
 	REM(0,10,15,1);
 }
 
-rstart4d60{
+rstart1d60{
 #
 # 1. Rohrstueck 
 #
@@ -298,7 +298,7 @@ rstart4d60{
 # Pumpen
 #
 
-pumpeF4t1d60{
+pumpe1t4d60{
 #
 #	zulauf
 #
@@ -342,7 +342,7 @@ pumpe8t2d60{
 	REM(0,10,15,1);
 }	
 
-pumpe1t4d60{
+pumpe4t1d60{
 #
 #	zulauf
 #
@@ -392,7 +392,7 @@ pumpe2t8d60{
 
 klappe15d60{
 #
-#	Klappenstellung 1: F8T1, F4T2
+#	Klappenstellung 1: F1T2, F4T8
 #
 #
 # Zulauf links
@@ -449,7 +449,7 @@ klappe15d60{
 	state(1);
 	clear();
 #
-# Klappenstellung 2: F8T4, F1T2
+# Klappenstellung 2: F2T4, F1T8
 #
 #
 # Zulauf links
@@ -544,7 +544,7 @@ bruecke10F4t1d60{
 
 	arc(400,102,225,50,130);
 
-	flowways(195,0,195,400);	
+	flowways(200,395,200,5);	
 
 	REM(0,10,15,1);
 }
@@ -576,7 +576,7 @@ bruecke10F1t4d60{
 	arc(400,102,225,50,70);
 	arc(400,102,225,50,130);
 
-	flowways(195,400,195,0);	
+	flowways(195,5,195,395);	
 
 	REM(0,10,15,1);
 }
@@ -607,7 +607,7 @@ bruecke5F8t2d60{
 	line(175,170,400,170);
 	line(175,230,400,230);
 
-	flowways(0,200,400,200);
+	flowways(5,200,395,200);
 
 	REM(0,10,15,1);
 }
@@ -638,7 +638,7 @@ bruecke5F2t8d60{
 	line(175,170,400,170);
 	line(175,230,400,230);
 
-	flowways(400,200,0,200);
+	flowways(395,200,5,200);
 #
 	REM(0,10,15,1);
 }
@@ -658,7 +658,7 @@ rt13d60{
 
 }
 
-rt11d60{
+rt14d60{
 	line(0,170,400,170);
 	line(0,230,170,230);
 	line(170,230,170,400);
@@ -681,7 +681,7 @@ rt7d60{
 	REM(0,10,15,1);
 }
 
-rt14d60{
+rt11d60{
 	line(0,230,400,230);
 	line(0,170,170,170);
 	line(170,170,170,0);
@@ -699,7 +699,7 @@ dframe5d60F4t1{
 	line(170,350,170,400);
 	line(230,350,230,400);
 
-	flowways(200,10,200,390);
+	flowways(200,395,200,5);
 
 	REM(0,10,15,1);
 }
@@ -712,7 +712,7 @@ dframe5d60F1t4{
 	line(170,350,170,400);
 	line(230,350,230,400);
 
-	flowways(200,390,200,10);
+	flowways(200,5,200,395);
 
 	REM(0,10,15,1);
 }

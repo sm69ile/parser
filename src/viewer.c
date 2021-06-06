@@ -420,10 +420,12 @@ void v_draw(XtPointer client_data)
   bvalues.foreground = 1;
   bvalues.line_width = 2;
   bvalues.line_style = LineOnOffDash;
+  bvalues.fill_style = FillOpaqueStippled;
   
   gc_border = XtGetGC(psV_c->draw_shell,
 	       GCForeground |
-	       GCLineStyle  |      
+	       GCLineStyle  |
+	       GCFillStyle  |
 	       GCLineWidth, &bvalues);
 
   gc = XtGetGC(psV_c->draw_shell,
