@@ -15,7 +15,8 @@
 #define D_WIN_Y_SIZE 600
 #define C_WIN_X_SIZE 200
 #define C_WIN_Y_SIZE 600
-#define MAX_FLOODFILL D_WIN_X_SIZE * D_WIN_Y_SIZE
+#define MAX_FLOODFILL 1024 * 64
+//#define MAX_FLOODFILL 1000
 #define DCB 32513
 #define LABEL_HEIGHT 20
 #define LABEL_WIDTH 60
@@ -30,6 +31,7 @@
 #define LABEL_PREV_STATE_COMMAND "< State"
 #define LABEL_NEXT_STATE_COMMAND "State >"
 #define LABEL_CURR_COMMAND "Reload"
+#define LABEL_GRID_MODE_COMMAND "Grid"
 #define LABEL_QUIT_COMMAND "Quit"
 
 
@@ -62,9 +64,11 @@ typedef struct Viewer_container{
   Widget prev_state_command;
   Widget next_state_command;
   Widget curr_object_command;
+  Widget grid_mode_command;
   Widget quit_command;
 
   XtIntervalId vt_h;
+  Boolean grid_mode;
   
   sDraw_container *psDraw_c;
   
@@ -89,6 +93,7 @@ void v_set_window_attributes(Display*, Drawable);
 void v_prev_state(Widget, XtPointer, XtPointer);
 void v_next_state(Widget, XtPointer, XtPointer);
 void v_curr_object(Widget, XtPointer, XtPointer);
+void v_grid_mode(Widget, XtPointer, XtPointer);
 void v_quit(Widget, XtPointer, XtPointer);
 void v_save(Widget, XtPointer, XtPointer);
 

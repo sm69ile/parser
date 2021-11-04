@@ -76,7 +76,6 @@ void xshow(int argc, char **argv)
       XtSetValues(psV_c->prev_object_command, wargs, n);
       
       psV_c->next_object_command = XtVaCreateManagedWidget("next_object_command", commandWidgetClass, psV_c->form, NULL);
-
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
@@ -93,7 +92,6 @@ void xshow(int argc, char **argv)
       XtSetArg(wargs[n], XtNfromHoriz, psV_c->next_object_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_PREV_STATE_COMMAND); n++;
       XtSetValues(psV_c->prev_state_command, wargs, n);
-      n=0;
 
       psV_c->next_state_command = XtVaCreateManagedWidget("next_state_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
@@ -113,14 +111,22 @@ void xshow(int argc, char **argv)
       XtSetArg(wargs[n], XtNfromHoriz, psV_c->next_state_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_CURR_COMMAND); n++;
       XtSetValues(psV_c->curr_object_command, wargs, n);
+
+      psV_c->grid_mode_command = XtVaCreateManagedWidget("grid_mode_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->curr_object_command); n++;
+      XtSetArg(wargs[n], XtNlabel, LABEL_GRID_MODE_COMMAND); n++;
+      XtSetValues(psV_c->grid_mode_command, wargs, n);
 
       psV_c->quit_command = XtVaCreateManagedWidget("quit_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
       XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
-      XtSetArg(wargs[n], XtNfromHoriz, psV_c->curr_object_command); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->grid_mode_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_QUIT_COMMAND); n++;
       XtSetArg(wargs[n], XtNsensitive, false); n++;
       XtSetValues(psV_c->quit_command, wargs, n);
@@ -154,10 +160,11 @@ void xshow(int argc, char **argv)
       XtAddCallback(psV_c->next_state_command, XtNcallback, v_next_state, (XtPointer) psV_c);
       XtAddCallback(psV_c->prev_state_command, XtNcallback, v_prev_state, (XtPointer) psV_c);
       XtAddCallback(psV_c->curr_object_command, XtNcallback, v_curr_object, (XtPointer) psV_c);
+      XtAddCallback(psV_c->grid_mode_command, XtNcallback, v_grid_mode, (XtPointer) psV_c);
       XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
       
       XtAppAddTimeOut(psV_c->app_context, 300, v_timer_handler, (XtPointer) psV_c);
-
+      psV_c->grid_mode=true;
       iDstate_idx=iState_idx;
       
       v_update_layout(psV_c);
@@ -320,7 +327,7 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
     {
       XGCValues values;
       GC gc;
-       Display *display;
+      Display *display;
       Drawable window;
       char *fno;
       
@@ -394,10 +401,12 @@ void v_draw(XtPointer client_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  XGCValues values, rvalues, bvalues;
-  GC gc, gc_border;
+  XGCValues values, rvalues, bvalues, gvalues, nvalues;
+  GC gc, gc_border, gc_grid, gc_numb;
   Display *display;
   Drawable window;
+  int grid_factor = 50;
+  char b[20];
  
   display = XtDisplay(psV_c->draw_shell);
   window = XtWindow(psV_c->draw_shell);
@@ -416,11 +425,34 @@ void v_draw(XtPointer client_data)
 
   sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_line_width");
   if (sact) { values.line_width = sact->value; } else { values.line_width = 0; }  
+  
+  gc = XtGetGC(psV_c->draw_shell,
+	       GCForeground |
+	       GCBackground |
+	       GCLineWidth, &values);
 
+  // Grid numbers
+
+  nvalues.line_style = LineSolid;
+  nvalues.foreground = psV_c->psDraw_c->ctable[15].value;
+  gc_numb = XtGetGC(psV_c->draw_shell,
+		    GCLineStyle |
+		    GCForeground, &nvalues);
+
+  // Grid
+  
+  gvalues.line_style = LineOnOffDash;
+  gvalues.foreground = psV_c->psDraw_c->ctable[3].value;
+  gc_grid = XtGetGC(psV_c->draw_shell,
+		    GCLineStyle |
+		    GCForeground, &gvalues);
+
+  // Border - must be solid because of floodfill
+  
   bvalues.foreground = 1;
   bvalues.line_width = 2;
-  bvalues.line_style = LineOnOffDash;
-  bvalues.fill_style = FillOpaqueStippled;
+  bvalues.line_style = LineSolid;
+  bvalues.fill_style = LineSolid;
   
   gc_border = XtGetGC(psV_c->draw_shell,
 	       GCForeground |
@@ -428,23 +460,36 @@ void v_draw(XtPointer client_data)
 	       GCFillStyle  |
 	       GCLineWidth, &bvalues);
 
-  gc = XtGetGC(psV_c->draw_shell,
-	       GCForeground |
-	       GCBackground |
-	       GCLineWidth, &values);
-
-  
+    
+  //Show current graphic context
   XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
   fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
   XClearWindow(display, window);
-  XDrawRectangle(display, window, gc_border, 0, 0,  V_WIN_X_SIZE,  V_WIN_Y_SIZE);
+  XDrawRectangle(display, window, gc_border, 0, 0, V_WIN_X_SIZE,  V_WIN_Y_SIZE);
 
+  if(psV_c->grid_mode)
+    {
+      for(int x=0; x<V_WIN_X_SIZE; x+=grid_factor)
+	{
+	  sprintf(b, "%i", x);
+	  XDrawLine(display, window, gc_grid, x, 0, x, V_WIN_Y_SIZE+10);
+	  XDrawString(display, window, gc_numb, x, V_WIN_Y_SIZE+25, b, strlen(b));
+	}
+      
+      for(int y=0; y<V_WIN_Y_SIZE; y+=grid_factor)
+	{
+	  sprintf(b, "%i", y);
+	  XDrawLine(display, window, gc_grid, 0, y, V_WIN_X_SIZE+10, y);
+	  XDrawString(display, window, gc_numb, V_WIN_X_SIZE+25, y, b, strlen(b));
+	}
+    }
+  
   // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
   for(int j=0; j<oact->psComIni->key; j++)
     {
 
-      //fprintf(stderr,"j: %i, psComIni-key: %i\n",i, psComIni->key);
+      //fprintf(stderr,"j: %i, psComIni-key: viewe%i\n",i, psComIni->key);
 
       sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
 
@@ -603,6 +648,8 @@ void v_draw(XtPointer client_data)
     }
   fprintf(stderr,"]\n");
   XtReleaseGC(psV_c->draw_shell, gc);
+  XtReleaseGC(psV_c->draw_shell, gc_numb);
+  XtReleaseGC(psV_c->draw_shell, gc_grid);
   XtReleaseGC(psV_c->draw_shell, gc_border);
 }
 
@@ -637,6 +684,17 @@ void v_curr_object(Widget w, XtPointer client_data, XtPointer call_data)
   sViewer_container *psV_c = (sViewer_container*) client_data;
 
   iDstate_idx=iState_idx;
+
+  v_update_layout(psV_c);
+  v_draw(psV_c);
+}
+
+void v_grid_mode(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  sViewer_container *psV_c = (sViewer_container*) client_data;
+
+  if(psV_c->grid_mode == true) psV_c->grid_mode=false;
+  else if (psV_c->grid_mode==false) psV_c->grid_mode = true;
 
   v_update_layout(psV_c);
   v_draw(psV_c);

@@ -18,6 +18,8 @@ Viewer.form.next_state_command*background:	darkgray
 Viewer.form.next_state_command*foreground:	black
 Viewer.form.curr_object_command*background:	darkgray
 Viewer.form.curr_object_command*foreground:	black
+Viewer.form.grid_mode_command*background:	darkgray
+Viewer.form.grid_mode_command*foreground:	black
 Viewer.form.quit_command*background:	darkgray
 Viewer.form.quit_command*foreground:	black
 Viewer.form.save_command.background:	darkgray
