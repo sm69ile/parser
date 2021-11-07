@@ -770,7 +770,9 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
   XFreeColormap(XtDisplay(psV_c->draw_shell),psV_c->psDraw_c->colormap);
   XtRemoveTimeOut(psV_c->vt_h);
   XtRemoveEventHandler(psV_c->toplevel ,EnterWindowMask, FALSE, (XtEventHandler) v_event_handler, (XtPointer) psV_c);
-  XtDestroyWidget(psV_c->toplevel);
+  XtDestroyApplicationContext(psV_c->app_context);
+  
+  //XtDestroyWidget(psV_c->toplevel);
 
   iCstate = v_close;
   
