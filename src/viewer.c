@@ -773,7 +773,6 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
   XtDestroyApplicationContext(psV_c->app_context);
   
   //XtDestroyWidget(psV_c->toplevel);
-
   iCstate = v_close;
   
   free(psV_c->psDraw_c);
