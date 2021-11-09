@@ -19,7 +19,11 @@ void xshow(int argc, char **argv)
     {
       iCtask = v_idle;
       psV_c->toplevel = XtVaAppInitialize(&psV_c->app_context, "Viewer", NULL, 0, &argc, argv, NULL, NULL);
-
+      n=0;
+      XtSetArg(wargs[n], XtNx, DEFAULT_WIN_POS_X); n++;
+      XtSetArg(wargs[n], XtNy, DEFAULT_WIN_POS_Y); n++;
+      XtSetValues(psV_c->toplevel, wargs, n);  
+      
       psV_c->form = XtVaCreateManagedWidget("form", formWidgetClass, psV_c->toplevel, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, D_WIN_Y_SIZE+C_WIN_Y_SIZE+50); n++;

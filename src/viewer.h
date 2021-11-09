@@ -17,6 +17,9 @@
 #define C_WIN_Y_SIZE 600
 #define MAX_FLOODFILL 1024 * 64
 //#define MAX_FLOODFILL 1000
+#define DEFAULT_WIN_POS_X 400
+#define DEFAULT_WIN_POS_Y 400
+
 #define DCB 32513
 #define LABEL_HEIGHT 20
 #define LABEL_WIDTH 60
