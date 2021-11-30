@@ -39,6 +39,12 @@ Kreis125{
 Kreis150{
 	circle(200,200,150);
 }
+Kreis175{
+	circle(200,200,175);
+}
+Kreis200{
+	circle(200,200,200);
+}
 Recht50{
         rectangle(175,175,225,225);
 }
