@@ -1,5 +1,5 @@
 AC_INIT([parser], [1.0], [info@automatx.de])
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign])
 AC_PROG_LEX
 AC_PROG_YACC
 AC_PROG_CC
