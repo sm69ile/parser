@@ -5,30 +5,35 @@ LIBpthread = @LIBpthread@
 LIBreadline = @LIBreadline@
 
 bin_PROGRAMS = parser
-parser_SOURCES = y.tab.c lex.yy.c viewer.c viewer.h
+parser_SOURCES = parser.tab.h parser.tab.c parser.c viewer.c viewer.h
 
 parser_CFLAGS = -Wall -Wpedantic -DETCDIR=\"$(etcdir)\"
 parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread) -l$(LIBreadline)
 
+top_srcdir = @top_srcdir@
+
 appdir = $(datadir)/$(PACKAGE)/app-defaults
-app_DATA = ../app-defaults/Viewer
+dist_app_DATA = $(top_srcdir)/app-defaults/Viewer
 
 symboldir = $(datadir)/$(PACKAGE)/symbols
-symbol_DATA = ../sym/*
+dist_symbol_DATA = $(top_srcdir)/sym/*
 
 etcdir = $(datadir)/$(PACKAGE)/etc
-etc_DATA = ../etc/*
+dist_etc_DATA = $(top_srcdir)/etc/*
 
+AM_YFLAGS_PARSER = -b parser -d
+AM_LFLAGS_PARSER = -o parser.c
 
-AM_YFLAGS = -d
+dist_EXTRA_parser_SOURCES = parser.l parser.y parser.h
 
-y.tab.c: parser.y parser.h
-	$(YACC) $(AM_YFLAGS) parser.y
+parser.tab.h: parser.y parser.h
+	$(YACC) $(AM_YFLAGS_PARSER) parser.y
 
-lex.yy.c: parser.l
-	$(LEX) parser.l
+parser.tab.c: parser.y parser.h
+	$(YACC) $(AM_YFLAGS_PARSER) parser.y
+
+parser.c: parser.l
+	$(LEX) $(AM_LFLAGS_PARSER) parser.l
 
 clean-local:
-	rm -f parser *.o  a.out lex.yy.c y.tab.c y.tab.h
-
-
+	rm -f parser *.o a.out parser.tab.c parser.tab.h parser.c

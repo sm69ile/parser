@@ -2,7 +2,7 @@
 
 %{
 
-#include "y.tab.h"
+#include "parser.tab.h"
 #include "syslog.h"
 #include <stdbool.h>
 
