@@ -5,8 +5,8 @@ LIBpthread = @LIBpthread@
 LIBreadline = @LIBreadline@
 
 bin_PROGRAMS = parser
-parser_SOURCES = parser.tab.h parser.tab.c parser.c viewer.c viewer.h
 
+parser_SOURCES = parser.tab.h parser.tab.c parser.c viewer.c viewer.h
 parser_CFLAGS = -Wall -Wpedantic -DETCDIR=\"$(etcdir)\"
 parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread) -l$(LIBreadline)
 
