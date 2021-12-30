@@ -1,4 +1,5 @@
 Viewer*title:	Viewer
+Viewer*iconPixmap:			__APPDEFAULTSDIR__/ax.xbm
 Viewer*foreground:	black
 Viewer*background:	ghostwhite
 Viewer.form.background:	gray
