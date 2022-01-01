@@ -1,5 +1,5 @@
 Viewer*title:	Viewer
-Viewer*iconPixmap:			__APPDEFAULTSDIR__/ax.xbm
+Viewer*iconPixmap:			__APPDEFAULTSDIR__/x.xbm
 Viewer*foreground:	black
 Viewer*background:	ghostwhite
 Viewer.form.background:	gray
@@ -25,6 +25,3 @@ Viewer.form.quit_command*background:	darkgray
 Viewer.form.quit_command*foreground:	black
 Viewer.form.save_command.background:	darkgray
 Viewer.form.save_command.foreground:	black
-
-
-
