@@ -14,7 +14,7 @@ parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread) -l$(LIBreadlin
 top_srcdir = @top_srcdir@
 
 appdir = $(datadir)/$(PACKAGE)/app-defaults
-dist_app_DATA = $(top_srcdir)/app-defaults/Viewer  $(top_srcdir)/app-defaults/ax.xbm $(top_srcdir)/app-defaults/x.xbm
+dist_app_DATA = $(top_srcdir)/app-defaults/Viewer $(top_srcdir)/app-defaults/ax.xbm $(top_srcdir)/app-defaults/x.xbm
 
 symboldir = $(datadir)/$(PACKAGE)/symbols
 dist_symbol_DATA = $(top_srcdir)/sym/*
