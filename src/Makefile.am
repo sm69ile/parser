@@ -14,7 +14,7 @@ parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread) -l$(LIBreadlin
 top_srcdir = @top_srcdir@
 
 appdir = $(datadir)/$(PACKAGE)/app-defaults
-dist_app_DATA = $(top_srcdir)/app-defaults/Viewer $(top_srcdir)/app-defaults/ax.xbm $(top_srcdir)/app-defaults/x.xbm
+dist_app_DATA = $(top_srcdir)/app-defaults/Viewer $(top_srcdir)/app-defaults/ax.xbm $(top_srcdir)/app-defaults/ax.xpm $(top_srcdir)/app-defaults/x.xbm $(top_srcdir)/app-defaults/viewer.desktop
 
 symboldir = $(datadir)/$(PACKAGE)/symbols
 dist_symbol_DATA = $(top_srcdir)/sym/*
@@ -36,8 +36,12 @@ parser.tab.c: parser.y parser.h
 parser.c: parser.l
 	$(LEX) $(AM_LFLAGS_PARSER) parser.l
 
+CLEANFILES = $(top_srdir)/app-defaults/viewer.desktop.tmp
+
 install-data-hook:
 	chmod -R u+w $(top_srcdir)
+	$(SED) "s|__BINDIR__|$(bindir)|" $(top_srcdir)/app-defaults/viewer.desktop >$(top_srcdir)/app-defaults/viewer.desktop.tmp
+	$(SED) "s|__APPDEFAULTSDIR__|$(appdir)|" $(top_srcdir)/app-defaults/viewer.desktop.tmp >$(appdir)/viewer.desktop		
 	$(SED) "s|__APPDEFAULTSDIR__|$(appdir)|" $(top_srcdir)/app-defaults/Viewer >$(appdir)/Viewer
 
 clean-local:
