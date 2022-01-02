@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=__BINDIR__/parser
+Terminal=true
+Icon=__APPDEFAULTSDIR__/ax.xpm
+Comment=viewer for parser
+Name=parser
