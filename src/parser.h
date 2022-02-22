@@ -69,6 +69,8 @@ typedef struct Object
   int key;
   int s_line;
   char *name;
+  unsigned int angle_deg;
+  double angle_rad;
 
   sVset *psVsetIni, *psVset;  
   sCommand *psComIni, *psCom;

@@ -107,12 +107,22 @@ void xshow(int argc, char **argv)
       XtSetValues(psV_c->next_state_command, wargs, n);
       n=0;
 
-      psV_c->curr_object_command = XtVaCreateManagedWidget("curr_object_command", commandWidgetClass, psV_c->form, NULL);
+      psV_c->rotate_command = XtVaCreateManagedWidget("rotate_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
       XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
       XtSetArg(wargs[n], XtNfromHoriz, psV_c->next_state_command); n++;
+      XtSetArg(wargs[n], XtNlabel, ROTATE_COMMAND); n++;
+      XtSetValues(psV_c->rotate_command, wargs, n);
+      n=0;
+
+      psV_c->curr_object_command = XtVaCreateManagedWidget("curr_object_command", commandWidgetClass, psV_c->form, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->rotate_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_CURR_COMMAND); n++;
       XtSetValues(psV_c->curr_object_command, wargs, n);
 
@@ -135,7 +145,6 @@ void xshow(int argc, char **argv)
       XtSetArg(wargs[n], XtNsensitive, false); n++;
       XtSetValues(psV_c->quit_command, wargs, n);
       
- 
       if (!(psV_c->psDraw_c = (sDraw_container*) malloc(sizeof(sDraw_container))))
 	{
 	  syslog(LOG_DEBUG, "malloc failed: sDraw_container*\n");
@@ -151,7 +160,6 @@ void xshow(int argc, char **argv)
 			    ))
 	     ) { return; } //pthread closed 
         }
-      
  
       // XtAddEventHandler(psV_c->toplevel, EnterWindowMask, FALSE, (XtEventHandler) v_event_handler, (XtPointer) psV_c);
 
@@ -164,6 +172,7 @@ void xshow(int argc, char **argv)
       XtAddCallback(psV_c->next_state_command, XtNcallback, v_next_state, (XtPointer) psV_c);
       XtAddCallback(psV_c->prev_state_command, XtNcallback, v_prev_state, (XtPointer) psV_c);
       XtAddCallback(psV_c->curr_object_command, XtNcallback, v_curr_object, (XtPointer) psV_c);
+      XtAddCallback(psV_c->rotate_command, XtNcallback, v_rotate, (XtPointer) psV_c);
       XtAddCallback(psV_c->grid_mode_command, XtNcallback, v_grid_mode, (XtPointer) psV_c);
       XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
       
@@ -403,6 +412,7 @@ void v_set_window_attributes(Display* display, Drawable window)
 
 void v_draw(XtPointer client_data)
 {
+  fprintf(stderr,"Enter v_draw ...\n");
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
   XGCValues values, rvalues, bvalues, gvalues, nvalues;
@@ -419,7 +429,7 @@ void v_draw(XtPointer client_data)
         
   sObject* oact = get_object_by_key(iObj_idx);
   fprintf(stderr,"Displaying symbols, running state: %i, display state: %i\n", iState_idx, iDstate_idx);
-  fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n", iObj_idx, oact->name);
+  fprintf(stderr,"[\n\tObject[%i] parameters:\n\n\tObject name: %s\n\tObject rotation: %d", iObj_idx, oact->name, oact->angle_deg);
   
   sVset *sact = get_setting_by_name(oact->psVsetIni, oact->psVsetIni->next,"v_foreground");
   if (sact) { values.foreground = psV_c->psDraw_c->ctable[sact->value].value; } else { values.foreground = 0; }  
@@ -474,6 +484,7 @@ void v_draw(XtPointer client_data)
 
   if(psV_c->grid_mode)
     {
+      fprintf(stderr,"Drawing grid ...\n");
       for(int x=0; x<V_WIN_X_SIZE; x+=grid_factor)
 	{
 	  sprintf(b, "%i", x);
@@ -647,9 +658,32 @@ void v_draw(XtPointer client_data)
 	    } else if (!strcmp(cact->name, "clear"))  //32524
 	    {
 	      XClearArea(display, window, 0, 0, V_WIN_X_SIZE, V_WIN_Y_SIZE, FALSE);
+	      if(psV_c->grid_mode)
+		{
+		  fprintf(stderr,"Drawing grid ...\n");
+		  for(int x=0; x<V_WIN_X_SIZE; x+=grid_factor)
+		    {
+		      sprintf(b, "%i", x);
+		      XDrawLine(display, window, gc_grid, x, 0, x, V_WIN_Y_SIZE+10);
+		      XDrawString(display, window, gc_numb, x, V_WIN_Y_SIZE+25, b, strlen(b));
+		    }
+		  
+		  for(int y=0; y<V_WIN_Y_SIZE; y+=grid_factor)
+		    {
+		      sprintf(b, "%i", y);
+		      XDrawLine(display, window, gc_grid, 0, y, V_WIN_X_SIZE+10, y);
+		      XDrawString(display, window, gc_numb, V_WIN_X_SIZE+25, y, b, strlen(b));
+		    }
+		}
 	    }
 	}
     }
+
+
+
+
+
+
   fprintf(stderr,"]\n");
   XtReleaseGC(psV_c->draw_shell, gc);
   XtReleaseGC(psV_c->draw_shell, gc_numb);
@@ -704,6 +738,24 @@ void v_grid_mode(Widget w, XtPointer client_data, XtPointer call_data)
   v_draw(psV_c);
 }
 
+void v_rotate(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  sViewer_container *psV_c = (sViewer_container*) client_data;
+
+  sObject* oact = get_object_by_key(iObj_idx);
+
+  oact->angle_deg += 15;
+
+  if(oact->angle_deg == 360)
+    oact->angle_deg=0;
+
+  oact->angle_rad = oact->angle_deg*3.14159265358979323846/180;
+
+  fprintf(stderr, "v_rotate: angle_deg=%d\n",oact->angle_deg);
+
+  v_update_layout(psV_c);
+  v_draw(psV_c);
+}
 
 void v_update_layout(XtPointer client_data) 
 {
@@ -786,6 +838,7 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
 
 void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
+  fprintf(stderr, "Enter: v_prev_state()\n"); 
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
   if(iState_idx > 0)
@@ -794,11 +847,13 @@ void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
     iState_idx=MAX_STATE;
 
   v_update_layout(psV_c);
+  fprintf(stderr, "v_prev_state(): Calling v_draw()\n"); 
   v_draw(psV_c);
 }
 
 void v_next_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
+  fprintf(stderr, "Enter: v_next_state()\n"); 
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
   if(iState_idx < MAX_STATE)
@@ -807,6 +862,7 @@ void v_next_state(Widget w, XtPointer client_data, XtPointer call_data)
     iState_idx=0;
 
   v_update_layout(psV_c);
+  fprintf(stderr, "v_next_state(): Calling v_draw()\n"); 
   v_draw(psV_c);
 }
 

@@ -170,6 +170,8 @@ int main(int argc, char *argv[])
     psObjIni->key=0;
     psObjIni->s_line=-1;  
     psObjIni->name=strdup(INI);
+    psObjIni->angle_deg=0;
+    psObjIni->angle_rad=0;
 
     psObjIni->psVsetIni=NULL;
     psObjIni->psVset=NULL;
@@ -182,9 +184,9 @@ int main(int argc, char *argv[])
 
   void onext()
   {
-      psObjIni->key++;
+    psObjIni->key++;
     syslog(LOG_DEBUG, "Initialising memory, object key: %d\n", psObjIni->key);
-  
+      
     if (!(psObj=(sObject*) malloc(sizeof(sObject))))
       {
 	syslog(LOG_DEBUG, "malloc failed: sObject*\n");
@@ -194,6 +196,8 @@ int main(int argc, char *argv[])
     psObj->key=psObjIni->key;
     psObj->s_line=0;
     psObj->name=strdup(CURR);
+    psObj->angle_deg=0;
+    psObj->angle_rad=0;
 
     psObjIni->psVsetIni=NULL;
     psObjIni->psVset=NULL;
@@ -533,7 +537,6 @@ int main(int argc, char *argv[])
       }
     va_end(args);
   }
-
 
   void v_display()
   {
