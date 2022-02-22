@@ -7,12 +7,10 @@ void xshow(int argc, char **argv)
   Arg wargs[10];
   int n;
     
-  //fprintf(stderr,"\t-> Thread with id: %ld, internal id (iThr): %i started\n", pthread_self(), iThr);
-
   if (!(psV_c = (sViewer_container*) malloc(sizeof(sViewer_container))))
     {
       syslog(LOG_DEBUG,"malloc failed: sViewer_container*\n"); 
-      //      fprintf(stderr, "malloc() failed: sViewer_container*\n");
+
       return; //pthread closed
     }
   else
@@ -126,7 +124,7 @@ void xshow(int argc, char **argv)
       XtSetArg(wargs[n], XtNlabel, LABEL_CURR_COMMAND); n++;
       XtSetValues(psV_c->curr_object_command, wargs, n);
 
-      psV_c->grid_mode_command = XtVaCreateManagedWidget("grid_mode_command", commandWidgetClass, psV_c->form, NULL);
+      psV_c->grid_mode_command = XtVaCreateManagedWidget("grid_mode_command", toggleWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
@@ -148,7 +146,6 @@ void xshow(int argc, char **argv)
       if (!(psV_c->psDraw_c = (sDraw_container*) malloc(sizeof(sDraw_container))))
 	{
 	  syslog(LOG_DEBUG, "malloc failed: sDraw_container*\n");
-	    //	  fprintf(stderr, "malloc() failed: sDraw_container*\n");
 	  return; //pthread closed
 	}
       else
@@ -177,7 +174,7 @@ void xshow(int argc, char **argv)
       XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
       
       XtAppAddTimeOut(psV_c->app_context, 300, v_timer_handler, (XtPointer) psV_c);
-      psV_c->grid_mode=true;
+      psV_c->grid_mode=false;
       iDstate_idx=iState_idx;
       
       v_update_layout(psV_c);
@@ -369,7 +366,6 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
 
 	  if(!(fno = (char*)malloc((fno_length+1)*sizeof(char))))
 	    syslog(LOG_DEBUG, "malloc failed: char*\n");
-	  //	    fprintf(stderr, "malloc() failed: char*\n");
 	  else
 	    {
 	      snprintf( fno, fno_length + 1, "%02d", psV_c->psDraw_c->ctable[i].key);
@@ -405,14 +401,12 @@ void v_set_window_attributes(Display* display, Drawable window)
       XChangeWindowAttributes(display, window, valuemask, &s_attributes);
 
       XGetWindowAttributes(display, window, &g_attributes);
-      //fprintf(stderr,"Backing_store set to: %i\n", g_attributes.backing_store);
     }
 }
 
 
 void v_draw(XtPointer client_data)
 {
-  fprintf(stderr,"Enter v_draw ...\n");
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
   XGCValues values, rvalues, bvalues, gvalues, nvalues;
@@ -482,23 +476,6 @@ void v_draw(XtPointer client_data)
   XClearWindow(display, window);
   XDrawRectangle(display, window, gc_border, 0, 0, V_WIN_X_SIZE,  V_WIN_Y_SIZE);
 
-  if(psV_c->grid_mode)
-    {
-      fprintf(stderr,"Drawing grid ...\n");
-      for(int x=0; x<V_WIN_X_SIZE; x+=grid_factor)
-	{
-	  sprintf(b, "%i", x);
-	  XDrawLine(display, window, gc_grid, x, 0, x, V_WIN_Y_SIZE+10);
-	  XDrawString(display, window, gc_numb, x, V_WIN_Y_SIZE+25, b, strlen(b));
-	}
-      
-      for(int y=0; y<V_WIN_Y_SIZE; y+=grid_factor)
-	{
-	  sprintf(b, "%i", y);
-	  XDrawLine(display, window, gc_grid, 0, y, V_WIN_X_SIZE+10, y);
-	  XDrawString(display, window, gc_numb, V_WIN_X_SIZE+25, y, b, strlen(b));
-	}
-    }
   
   // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
   for(int j=0; j<oact->psComIni->key; j++)
@@ -658,31 +635,26 @@ void v_draw(XtPointer client_data)
 	    } else if (!strcmp(cact->name, "clear"))  //32524
 	    {
 	      XClearArea(display, window, 0, 0, V_WIN_X_SIZE, V_WIN_Y_SIZE, FALSE);
-	      if(psV_c->grid_mode)
-		{
-		  fprintf(stderr,"Drawing grid ...\n");
-		  for(int x=0; x<V_WIN_X_SIZE; x+=grid_factor)
-		    {
-		      sprintf(b, "%i", x);
-		      XDrawLine(display, window, gc_grid, x, 0, x, V_WIN_Y_SIZE+10);
-		      XDrawString(display, window, gc_numb, x, V_WIN_Y_SIZE+25, b, strlen(b));
-		    }
-		  
-		  for(int y=0; y<V_WIN_Y_SIZE; y+=grid_factor)
-		    {
-		      sprintf(b, "%i", y);
-		      XDrawLine(display, window, gc_grid, 0, y, V_WIN_X_SIZE+10, y);
-		      XDrawString(display, window, gc_numb, V_WIN_X_SIZE+25, y, b, strlen(b));
-		    }
-		}
 	    }
 	}
     }
 
-
-
-
-
+  if(psV_c->grid_mode)
+    {
+      for(int x=0; x<V_WIN_X_SIZE; x+=grid_factor)
+	{
+	  sprintf(b, "%i", x);
+	  XDrawLine(display, window, gc_grid, x, 0, x, V_WIN_Y_SIZE+10);
+	  XDrawString(display, window, gc_numb, x, V_WIN_Y_SIZE+25, b, strlen(b));
+	}
+      
+      for(int y=0; y<V_WIN_Y_SIZE; y+=grid_factor)
+	{
+	  sprintf(b, "%i", y);
+	  XDrawLine(display, window, gc_grid, 0, y, V_WIN_X_SIZE+10, y);
+	  XDrawString(display, window, gc_numb, V_WIN_X_SIZE+25, y, b, strlen(b));
+	}
+    }
 
   fprintf(stderr,"]\n");
   XtReleaseGC(psV_c->draw_shell, gc);
@@ -734,6 +706,8 @@ void v_grid_mode(Widget w, XtPointer client_data, XtPointer call_data)
   if(psV_c->grid_mode == true) psV_c->grid_mode=false;
   else if (psV_c->grid_mode==false) psV_c->grid_mode = true;
 
+
+  iDstate_idx=iState_idx;
   v_update_layout(psV_c);
   v_draw(psV_c);
 }
@@ -772,7 +746,6 @@ void v_update_layout(XtPointer client_data)
 
     if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
       syslog(LOG_DEBUG, "malloc failed: char*\n");
-    //      fprintf(stderr, "malloc() failed: char*\n");
     else
 	{	    
 	    bzero(label, label_length);
@@ -804,7 +777,6 @@ void v_update_layout(XtPointer client_data)
 		}
 	    else
 	      syslog(LOG_DEBUG, "malloc failed: char*\n");
-	    //	      fprintf(stderr, "malloc() failed: char*\n"); 
 	}
     XtSetArg(wargs[n], XtNlabel, label); n++;
     XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
@@ -838,7 +810,6 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
 
 void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  fprintf(stderr, "Enter: v_prev_state()\n"); 
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
   if(iState_idx > 0)
@@ -847,13 +818,11 @@ void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
     iState_idx=MAX_STATE;
 
   v_update_layout(psV_c);
-  fprintf(stderr, "v_prev_state(): Calling v_draw()\n"); 
   v_draw(psV_c);
 }
 
 void v_next_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  fprintf(stderr, "Enter: v_next_state()\n"); 
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
   if(iState_idx < MAX_STATE)
@@ -862,7 +831,6 @@ void v_next_state(Widget w, XtPointer client_data, XtPointer call_data)
     iState_idx=0;
 
   v_update_layout(psV_c);
-  fprintf(stderr, "v_next_state(): Calling v_draw()\n"); 
   v_draw(psV_c);
 }
 

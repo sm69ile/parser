@@ -7,6 +7,7 @@
 #include <X11/StringDefs.h>
 #include <X11/Xaw/Form.h>
 #include <X11/Xaw/Command.h>
+#include <X11/Xaw/Toggle.h>
 #include <X11/Xaw/Cardinals.h>
 
 #define V_WIN_X_SIZE 400
