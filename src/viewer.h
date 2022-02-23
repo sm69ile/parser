@@ -2,6 +2,7 @@
 #define _viewer_h
 
 #include <stdlib.h>
+#include <math.h>
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
@@ -34,7 +35,8 @@
 #define LABEL_NEXT_OBJECT_COMMAND "Object >"
 #define LABEL_PREV_STATE_COMMAND "< State"
 #define LABEL_NEXT_STATE_COMMAND "State >"
-#define ROTATE_COMMAND "Rotate"
+#define ROTATE_MINUS_COMMAND "< Rotate"
+#define ROTATE_PLUS_COMMAND "Rotate >"
 #define LABEL_CURR_COMMAND "Reload"
 #define LABEL_GRID_MODE_COMMAND "Grid"
 #define LABEL_QUIT_COMMAND "Quit"
@@ -68,7 +70,8 @@ typedef struct Viewer_container{
   Widget next_object_command;
   Widget prev_state_command;
   Widget next_state_command;
-  Widget rotate_command;
+  Widget rotate_minus_command;
+  Widget rotate_plus_command;
   Widget curr_object_command;
   Widget grid_mode_command;
   Widget quit_command;
@@ -90,6 +93,9 @@ void v_event_color(Widget, XtPointer, XExposeEvent*);
 
 int v_count_resource(char *f);
 char **v_load_resource(char *f, int k);
+double rotateX(double, double, double);
+double rotateX(double, double, double);
+
 void v_draw(XtPointer);
 void v_next_object(Widget, XtPointer, XtPointer);
 void v_prev_object(Widget, XtPointer, XtPointer);
@@ -98,7 +104,8 @@ void v_set_window_attributes(Display*, Drawable);
 
 void v_prev_state(Widget, XtPointer, XtPointer);
 void v_next_state(Widget, XtPointer, XtPointer);
-void v_rotate(Widget, XtPointer, XtPointer);
+void v_rotate_minus(Widget, XtPointer, XtPointer);
+void v_rotate_plus(Widget, XtPointer, XtPointer);
 void v_curr_object(Widget, XtPointer, XtPointer);
 void v_grid_mode(Widget, XtPointer, XtPointer);
 void v_quit(Widget, XtPointer, XtPointer);

@@ -9,7 +9,7 @@ bin_PROGRAMS = parser
 
 parser_SOURCES = parser.tab.h parser.tab.c parser.c viewer.c viewer.h
 parser_CFLAGS = -Wall -Wpedantic -DETCDIR=\"$(etcdir)\"
-parser_LDADD = -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread) -l$(LIBreadline)
+parser_LDADD = -lm -l$(LIBXaw) -l$(LIBXt) -l$(LIBX11) -l$(LIBpthread) -l$(LIBreadline)
 
 top_srcdir = @top_srcdir@
 

@@ -105,22 +105,32 @@ void xshow(int argc, char **argv)
       XtSetValues(psV_c->next_state_command, wargs, n);
       n=0;
 
-      psV_c->rotate_command = XtVaCreateManagedWidget("rotate_command", commandWidgetClass, psV_c->form, NULL);
+      psV_c->rotate_minus_command = XtVaCreateManagedWidget("rotate_minus_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
       XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
       XtSetArg(wargs[n], XtNfromHoriz, psV_c->next_state_command); n++;
-      XtSetArg(wargs[n], XtNlabel, ROTATE_COMMAND); n++;
-      XtSetValues(psV_c->rotate_command, wargs, n);
-      n=0;
+      XtSetArg(wargs[n], XtNlabel, ROTATE_MINUS_COMMAND); n++;
+      XtSetValues(psV_c->rotate_minus_command, wargs, n);
 
+      n=0;
+      psV_c->rotate_plus_command = XtVaCreateManagedWidget("rotate_plus_command", commandWidgetClass, psV_c->form, NULL);
+      n=0;
+      XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
+      XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
+      XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->rotate_minus_command); n++;
+      XtSetArg(wargs[n], XtNlabel, ROTATE_PLUS_COMMAND); n++;
+      XtSetValues(psV_c->rotate_plus_command, wargs, n);
+
+      n=0;
       psV_c->curr_object_command = XtVaCreateManagedWidget("curr_object_command", commandWidgetClass, psV_c->form, NULL);
       n=0;
       XtSetArg(wargs[n], XtNheight, LABEL_HEIGHT); n++;
       XtSetArg(wargs[n], XtNwidth, LABEL_WIDTH); n++;
       XtSetArg(wargs[n], XtNfromVert, psV_c->object_label); n++;
-      XtSetArg(wargs[n], XtNfromHoriz, psV_c->rotate_command); n++;
+      XtSetArg(wargs[n], XtNfromHoriz, psV_c->rotate_plus_command); n++;
       XtSetArg(wargs[n], XtNlabel, LABEL_CURR_COMMAND); n++;
       XtSetValues(psV_c->curr_object_command, wargs, n);
 
@@ -169,7 +179,8 @@ void xshow(int argc, char **argv)
       XtAddCallback(psV_c->next_state_command, XtNcallback, v_next_state, (XtPointer) psV_c);
       XtAddCallback(psV_c->prev_state_command, XtNcallback, v_prev_state, (XtPointer) psV_c);
       XtAddCallback(psV_c->curr_object_command, XtNcallback, v_curr_object, (XtPointer) psV_c);
-      XtAddCallback(psV_c->rotate_command, XtNcallback, v_rotate, (XtPointer) psV_c);
+      XtAddCallback(psV_c->rotate_minus_command, XtNcallback, v_rotate_minus, (XtPointer) psV_c);
+      XtAddCallback(psV_c->rotate_plus_command, XtNcallback, v_rotate_plus, (XtPointer) psV_c);
       XtAddCallback(psV_c->grid_mode_command, XtNcallback, v_grid_mode, (XtPointer) psV_c);
       XtAddCallback(psV_c->quit_command, XtNcallback, v_quit, (XtPointer) psV_c);
       
@@ -384,7 +395,6 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
     }
 }
 
-
 void v_set_window_attributes(Display* display, Drawable window)
 {
 
@@ -402,6 +412,22 @@ void v_set_window_attributes(Display* display, Drawable window)
 
       XGetWindowAttributes(display, window, &g_attributes);
     }
+}
+
+double rotateX(double x, double y, double angle)
+{
+  double x0=V_WIN_X_SIZE/2;
+  double y0=V_WIN_X_SIZE/2;
+  
+  return ((x-x0)*cos(angle))-((y-y0)*sin(angle))+x0;
+}
+
+double rotateY(double x, double y, double angle)
+{
+  double x0=V_WIN_X_SIZE/2;
+  double y0=V_WIN_X_SIZE/2;
+
+  return ((x-x0)*sin(angle))+((y-y0)*cos(angle))+y0;
 }
 
 
@@ -475,7 +501,8 @@ void v_draw(XtPointer client_data)
 
   XClearWindow(display, window);
   XDrawRectangle(display, window, gc_border, 0, 0, V_WIN_X_SIZE,  V_WIN_Y_SIZE);
-
+  double angle_rad = oact->angle_rad;
+  int angle_deg = oact->angle_deg;
   
   // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
   for(int j=0; j<oact->psComIni->key; j++)
@@ -510,24 +537,28 @@ void v_draw(XtPointer client_data)
 
 	      fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
 	    }
-	  
 	  else if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
 	    {
+	      double x1 = cact->para[0];
+	      double y1 = cact->para[1];
+	      double x2 = cact->para[2];
+	      double y2 = cact->para[3];
+
 	      XDrawLine(display, window, gc,
-			cact->para[0],
-			cact->para[1],
-			cact->para[2],
-			cact->para[3]
+			rotateX(x1, y1, angle_rad),
+			rotateY(x1, y1, angle_rad),
+			rotateX(x2, y2, angle_rad),
+			rotateY(x2, y2, angle_rad)
 			);
-	      psV_c->psDraw_c->last_x=cact->para[2];
-	      psV_c->psDraw_c->last_y=cact->para[3];
+	      psV_c->psDraw_c->last_x=(int)x2;
+	      psV_c->psDraw_c->last_y=(int)y2;
 	      
 	    }
 	  else if (!strcmp(cact->name, "MAX") && cact->count_para == 5) 
 	    {
 	      sCommand* mact = get_command_by_key(oact->psComIni, oact->psComIni->next, cact->para[0]);
 
-	      if(mact != 0 && !strncmp(mact->name,"line",strlen("line")))
+	      if(mact != 0 && !strncmp(mact->name,"line", strlen("line")))
 		{
 		  Pixel mcolor = psV_c->psDraw_c->ctable[cact->para[4]].value; 
 		  v_max_impl(cact, mact, 1, mcolor, display, window, gc);
@@ -536,68 +567,88 @@ void v_draw(XtPointer client_data)
 	    }
 	  else if (!strcmp(cact->name, "lineto") && cact->count_para == 2)  //32514
 	    {
+	      double x0 = psV_c->psDraw_c->last_x;
+	      double y0 = psV_c->psDraw_c->last_y;
+	      double x1 = cact->para[0];
+	      double y1 = cact->para[1];
+
 	      XDrawLine(display, window, gc,
-			psV_c->psDraw_c->last_x,
-			psV_c->psDraw_c->last_y,
-			cact->para[0],
-			cact->para[1]
+			rotateX(x0, y0, angle_rad),
+			rotateY(x0, y0, angle_rad),
+			rotateX(x1, y1, angle_rad),
+			rotateY(x1, y1, angle_rad)
 			);
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+	      psV_c->psDraw_c->last_x=(int)x1;
+	      psV_c->psDraw_c->last_y=(int)y1;
 	      
 	    } else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) //32515
 	    {
+	      double x1 = cact->para[0];
+	      double y1 = cact->para[1];
+	      double x2 = cact->para[2];
+	      double y2 = cact->para[3];	      
+
 	      XDrawRectangle(display, window, gc,
-			     cact->para[0],
-			     cact->para[1],
-			     cact->para[2]-cact->para[0],
-			     cact->para[3]-cact->para[1]
+			     rotateX(x1, y1, angle_rad),
+			     rotateY(x1, y1, angle_rad),
+			     x2-x1,
+			     y2-y1
 			     );
 
-	      psV_c->psDraw_c->last_x=cact->para[0]+cact->para[2];
-	      psV_c->psDraw_c->last_y=cact->para[1]+cact->para[3];
+	  psV_c->psDraw_c->last_x=(int)(x1+x2);
+	  psV_c->psDraw_c->last_y=(int)(y1+y2);
 
 	    } else if (!strcmp(cact->name, "circle") && cact->count_para == 3)  //32516
 	    {
+	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
+	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
+
 	      XDrawArc(display, window, gc,
-		       cact->para[0]-cact->para[2],
-		       cact->para[1]-cact->para[2],
+		       x1-cact->para[2],
+		       y1-cact->para[2],
 		       2*cact->para[2],
 		       2*cact->para[2],
 		       0,
 		       64*360
 		       );
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+	      psV_c->psDraw_c->last_x=(int)x1;
+	      psV_c->psDraw_c->last_y=(int)y1;
 
 	    } else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) //32517
 	    {
+	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
+	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
+
 	      XDrawArc(display, window, gc,
-		       cact->para[0],
-		       cact->para[1],
-		       cact->para[2],
-		       cact->para[3],
+		       x1-cact->para[2],
+		       y1-cact->para[3],
+		       2*cact->para[2],
+		       2*cact->para[3],
 		       0,
 		       64*360
 		       );
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+	      psV_c->psDraw_c->last_x=(int)x1;
+	      psV_c->psDraw_c->last_y=(int)y1;
 
 	    } else if (!strcmp(cact->name, "arc") && cact->count_para == 5)  //32521
 	    {
+	      
+	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
+	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
+	     	      
 	      XDrawArc(display, window, gc,
-		       cact->para[0]-cact->para[4],
-		       cact->para[1]-cact->para[4],
+		       x1-cact->para[4],
+		       y1-cact->para[4],
 		       2*cact->para[4],
 		       2*cact->para[4],
-		       64*cact->para[2],
-		       64*cact->para[3]);
+		       64*(cact->para[2]-angle_deg),
+		       64*(cact->para[3]));
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];	  
+	      psV_c->psDraw_c->last_x=(int)x1;
+	      psV_c->psDraw_c->last_y=(int)y1;	  
 	    }
 
 	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) //32520
@@ -672,6 +723,7 @@ void v_prev_object(Widget w, XtPointer client_data, XtPointer call_data)
 	iObj_idx--;
     else
 	iObj_idx = psObjIni->next->key;
+
     v_update_layout(psV_c);
     v_draw(psV_c);
 }
@@ -706,13 +758,32 @@ void v_grid_mode(Widget w, XtPointer client_data, XtPointer call_data)
   if(psV_c->grid_mode == true) psV_c->grid_mode=false;
   else if (psV_c->grid_mode==false) psV_c->grid_mode = true;
 
-
   iDstate_idx=iState_idx;
   v_update_layout(psV_c);
   v_draw(psV_c);
 }
 
-void v_rotate(Widget w, XtPointer client_data, XtPointer call_data)
+void v_rotate_minus(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  sViewer_container *psV_c = (sViewer_container*) client_data;
+
+  sObject* oact = get_object_by_key(iObj_idx);
+
+  oact->angle_deg -= 15;
+  fprintf(stderr,"Angle: %d\n", oact->angle_deg);
+  if(oact->angle_deg <= 0)
+    {
+      oact->angle_deg=0;
+      fprintf(stderr,"Angle: %d\n", oact->angle_deg);
+    }
+  
+  oact->angle_rad = oact->angle_deg*3.14159265358979323846/180;
+
+  v_update_layout(psV_c);
+  v_draw(psV_c);
+}
+
+void v_rotate_plus(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
 
@@ -724,8 +795,6 @@ void v_rotate(Widget w, XtPointer client_data, XtPointer call_data)
     oact->angle_deg=0;
 
   oact->angle_rad = oact->angle_deg*3.14159265358979323846/180;
-
-  fprintf(stderr, "v_rotate: angle_deg=%d\n",oact->angle_deg);
 
   v_update_layout(psV_c);
   v_draw(psV_c);
@@ -741,8 +810,9 @@ void v_update_layout(XtPointer client_data)
 
 
     char* act_name = get_object_by_key(iObj_idx)->name;
+    int angle_deg = get_object_by_key(iObj_idx)->angle_deg;
     
-    label_length = strlen("Name: ") + strlen(act_name) + strlen(", State: ") + 4*strlen("XXXX") + 2*strlen(" [/]")+ strlen(", DState: X") ;
+    label_length=strlen("Name: ")+strlen(act_name)+strlen(", State: ")+4*strlen("XXXX")+2*strlen(" [/]")+strlen(", DState: X")+strlen(", Rotation: XXX DEG");
 
     if(!(label = (char*)malloc((label_length+1)*sizeof(char))))
       syslog(LOG_DEBUG, "malloc failed: char*\n");
@@ -773,6 +843,11 @@ void v_update_layout(XtPointer client_data)
 		    bzero(buf,buf_length);
 		    snprintf(buf, buf_length, "%i", iDstate_idx);
 		    strcat(label, buf);
+		    strcat(label,", Rotation: ");
+		    bzero(buf,buf_length);
+		    snprintf(buf, buf_length, "%i", angle_deg);
+		    strcat(label, buf);
+		    strcat(label, " DEG");
 		    free(buf);
 		}
 	    else
