@@ -106,23 +106,6 @@ int main(int argc, char *argv[])
   syslog (LOG_DEBUG, "Program started by User %d", getuid ());
   printf("%s\tArguments: %i\n", PACKAGE_STRING, argc);      
   
-  /* FILE* fp = fopen(P_OUT, "r" ); */
-  /* if (! fp) */
-  /*   { */
-  /*     syslog(LOG_DEBUG,"Output file %s not found, trying to create\n", P_OUT); */
-  /*     if(!(fp = fopen(P_OUT, "a+"))) */
-  /* 	{ */
-  /* 	  syslog(LOG_DEBUG,"Cannot open output file for writing: %s\n", P_OUT); */
-  /* 	  exit(EXIT_FAILURE); */
-  /* 	} */
-  /*     else */
-  /* 	{ */
-  /* 	  syslog(LOG_DEBUG,"New output file %s created\n", P_OUT); */
-  /* 	  fprintf(fp,FIRST_LINE); */
-  /* 	  fclose(fp); */
-  /* 	} */
-  /*   } */
-  
   iThr = 0;
   
   oinit();
@@ -171,8 +154,6 @@ int main(int argc, char *argv[])
     psObjIni->s_line=-1;  
     psObjIni->name=strdup(INI);
     psObjIni->angle_deg=0;
-    psObjIni->angle_rad=0;
-
     psObjIni->psVsetIni=NULL;
     psObjIni->psVset=NULL;
     psObjIni->psComIni=NULL;
@@ -197,8 +178,6 @@ int main(int argc, char *argv[])
     psObj->s_line=0;
     psObj->name=strdup(CURR);
     psObj->angle_deg=0;
-    psObj->angle_rad=0;
-
     psObjIni->psVsetIni=NULL;
     psObjIni->psVset=NULL;
     psObj->psComIni=NULL;

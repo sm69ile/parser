@@ -70,7 +70,7 @@ typedef struct Object
   int s_line;
   char *name;
   unsigned int angle_deg;
-  double angle_rad;
+  //  double angle_rad;
 
   sVset *psVsetIni, *psVset;  
   sCommand *psComIni, *psCom;

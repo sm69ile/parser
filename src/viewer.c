@@ -497,12 +497,13 @@ void v_draw(XtPointer client_data)
     
   //Show current graphic context
   XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
-  fprintf(stderr,"\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
+  fprintf(stderr,"\n\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
 
   XClearWindow(display, window);
   XDrawRectangle(display, window, gc_border, 0, 0, V_WIN_X_SIZE,  V_WIN_Y_SIZE);
-  double angle_rad = oact->angle_rad;
+
   int angle_deg = oact->angle_deg;
+  double angle_rad = oact->angle_deg*3.14159265358979323846/180;
   
   // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
   for(int j=0; j<oact->psComIni->key; j++)
@@ -766,19 +767,11 @@ void v_grid_mode(Widget w, XtPointer client_data, XtPointer call_data)
 void v_rotate_minus(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
-
   sObject* oact = get_object_by_key(iObj_idx);
 
-  oact->angle_deg -= 15;
-  fprintf(stderr,"Angle: %d\n", oact->angle_deg);
-  if(oact->angle_deg <= 0)
-    {
-      oact->angle_deg=0;
-      fprintf(stderr,"Angle: %d\n", oact->angle_deg);
-    }
+  unsigned int i = oact->angle_deg-15;
+  oact->angle_deg = oact->angle_deg <= 0 ? 0 : i;
   
-  oact->angle_rad = oact->angle_deg*3.14159265358979323846/180;
-
   v_update_layout(psV_c);
   v_draw(psV_c);
 }
@@ -789,12 +782,8 @@ void v_rotate_plus(Widget w, XtPointer client_data, XtPointer call_data)
 
   sObject* oact = get_object_by_key(iObj_idx);
 
-  oact->angle_deg += 15;
-
-  if(oact->angle_deg == 360)
-    oact->angle_deg=0;
-
-  oact->angle_rad = oact->angle_deg*3.14159265358979323846/180;
+  unsigned int i = oact->angle_deg += 15;
+  oact->angle_deg = oact->angle_deg <= 0 ? 0 : i;
 
   v_update_layout(psV_c);
   v_draw(psV_c);

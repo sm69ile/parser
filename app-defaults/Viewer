@@ -18,6 +18,10 @@ Viewer.form.prev_state_command*background:	darkgray
 Viewer.form.prev_state_command*foreground:	black
 Viewer.form.next_state_command*background:	darkgray
 Viewer.form.next_state_command*foreground:	black
+Viewer.form.rotate_minus_command*background:	darkgray
+Viewer.form.rotate_minus_command*foreground:	black
+Viewer.form.rotate_plus_command*background:	darkgray
+Viewer.form.rotate_plus_command*foreground:	black
 Viewer.form.curr_object_command*background:	darkgray
 Viewer.form.curr_object_command*foreground:	black
 Viewer.form.grid_mode_command*background:	darkgray
