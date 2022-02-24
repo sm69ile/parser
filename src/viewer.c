@@ -675,14 +675,17 @@ void v_draw(XtPointer client_data)
 
 	    } else if (!strcmp(cact->name, "floodfill") && cact->count_para == 3) 
 	    {
+	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
+	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
+
 	      v_floodfill(display, window, gc,
-			  cact->para[0],
-			  cact->para[1],
+			  x1,
+			  y1,
 			  psV_c->psDraw_c->ctable[cact->para[2]].value 
 			  );
 
-	      psV_c->psDraw_c->last_x=cact->para[0];
-	      psV_c->psDraw_c->last_y=cact->para[1];
+	      psV_c->psDraw_c->last_x=(int)x1;
+	      psV_c->psDraw_c->last_y=(int)y1;
 
 	    } else if (!strcmp(cact->name, "clear"))  //32524
 	    {
@@ -769,7 +772,7 @@ void v_rotate_minus(Widget w, XtPointer client_data, XtPointer call_data)
   sViewer_container *psV_c = (sViewer_container*) client_data;
   sObject* oact = get_object_by_key(iObj_idx);
 
-  unsigned int i = oact->angle_deg-15;
+  unsigned int i = oact->angle_deg-90;
   oact->angle_deg = oact->angle_deg <= 0 ? 0 : i;
   
   v_update_layout(psV_c);
@@ -782,8 +785,8 @@ void v_rotate_plus(Widget w, XtPointer client_data, XtPointer call_data)
 
   sObject* oact = get_object_by_key(iObj_idx);
 
-  unsigned int i = oact->angle_deg += 15;
-  oact->angle_deg = oact->angle_deg <= 0 ? 0 : i;
+  unsigned int i = oact->angle_deg += 90;
+  oact->angle_deg = oact->angle_deg >= 360 ? 360 : i;
 
   v_update_layout(psV_c);
   v_draw(psV_c);
