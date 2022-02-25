@@ -654,10 +654,17 @@ void v_draw(XtPointer client_data)
 
 	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) //32520
 	    {
-	      XDrawArc(display, window, gc, cact->para[0]-5, cact->para[1]-5, 10, 10, 0, 64*360);
-	      XDrawArc(display, window, gc, cact->para[2]-5, cact->para[3]-5, 10, 10, 0, 64*360);
-	      XFillArc(display, window, gc, cact->para[0]-4, cact->para[1]-4, 8, 8, 0, 64*360);
-	      XFillArc(display, window, gc, cact->para[2]-4, cact->para[3]-4, 8, 8, 0, 64*360);
+
+	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
+	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
+
+	      double x2 = rotateX(cact->para[2], cact->para[3], angle_rad);
+	      double y2 = rotateY(cact->para[2], cact->para[3], angle_rad);
+	      
+	      XDrawArc(display, window, gc, x1-5, y1-5, 10, 10, 0, 64*360);
+	      XDrawArc(display, window, gc, x2-5, y2-5, 10, 10, 0, 64*360);
+	      XFillArc(display, window, gc, x1-4, y1-4, 8, 8, 0, 64*360);
+	      XFillArc(display, window, gc, x2-4, y2-4, 8, 8, 0, 64*360);
 	    }
 	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  //32518
 	    {
@@ -782,7 +789,6 @@ void v_rotate_minus(Widget w, XtPointer client_data, XtPointer call_data)
 void v_rotate_plus(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
-
   sObject* oact = get_object_by_key(iObj_idx);
 
   unsigned int i = oact->angle_deg += 90;
