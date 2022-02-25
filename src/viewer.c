@@ -435,8 +435,8 @@ void v_draw(XtPointer client_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  XGCValues values, rvalues, bvalues, gvalues, nvalues;
-  GC gc, gc_border, gc_grid, gc_numb;
+  XGCValues values;//, rvalues; //bvalues, gvalues, nvalues;
+  GC gc, gc_border, gc_grid, gc_numb, gc_flowways;
   Display *display;
   Drawable window;
   int grid_factor = 50;
@@ -467,37 +467,44 @@ void v_draw(XtPointer client_data)
 
   // Grid numbers
 
-  nvalues.line_style = LineSolid;
-  nvalues.foreground = psV_c->psDraw_c->ctable[15].value;
+  values.line_style = LineSolid;
+  values.foreground = psV_c->psDraw_c->ctable[15].value;
   gc_numb = XtGetGC(psV_c->draw_shell,
 		    GCLineStyle |
-		    GCForeground, &nvalues);
+		    GCForeground, &values);
 
   // Grid
   
-  gvalues.line_style = LineOnOffDash;
-  gvalues.foreground = psV_c->psDraw_c->ctable[3].value;
+  values.line_style = LineOnOffDash;
+  values.foreground = psV_c->psDraw_c->ctable[3].value;
   gc_grid = XtGetGC(psV_c->draw_shell,
 		    GCLineStyle |
-		    GCForeground, &gvalues);
+		    GCForeground, &values);
 
   // Border - must be solid because of floodfill
   
-  bvalues.foreground = 1;
-  bvalues.line_width = 2;
-  bvalues.line_style = LineSolid;
-  bvalues.fill_style = LineSolid;
+  values.foreground = 1;
+  values.line_width = 2;
+  values.line_style = LineSolid;
+  values.fill_style = LineSolid;
   
   gc_border = XtGetGC(psV_c->draw_shell,
 	       GCForeground |
 	       GCLineStyle  |
 	       GCFillStyle  |
-	       GCLineWidth, &bvalues);
+	       GCLineWidth, &values);
 
+  
+  values.foreground = psV_c->psDraw_c->ctable[25].value;
+  values.line_width = 1;
+  gc_flowways = XtGetGC(psV_c->draw_shell,
+			GCForeground |
+			GCLineWidth,
+			&values);
     
   //Show current graphic context
-  XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &rvalues);
-  fprintf(stderr,"\n\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", rvalues.foreground, rvalues.background, rvalues.line_width);
+  XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &values);
+  fprintf(stderr,"\n\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", values.foreground, values.background, values.line_width);
 
   XClearWindow(display, window);
   XDrawRectangle(display, window, gc_border, 0, 0, V_WIN_X_SIZE,  V_WIN_Y_SIZE);
@@ -661,10 +668,13 @@ void v_draw(XtPointer client_data)
 	      double x2 = rotateX(cact->para[2], cact->para[3], angle_rad);
 	      double y2 = rotateY(cact->para[2], cact->para[3], angle_rad);
 	      
-	      XDrawArc(display, window, gc, x1-5, y1-5, 10, 10, 0, 64*360);
-	      XDrawArc(display, window, gc, x2-5, y2-5, 10, 10, 0, 64*360);
-	      XFillArc(display, window, gc, x1-4, y1-4, 8, 8, 0, 64*360);
-	      XFillArc(display, window, gc, x2-4, y2-4, 8, 8, 0, 64*360);
+	      XDrawArc(display, window, gc_flowways, x1-10, y1-10, 20, 20, 0, 64*360);
+	      XDrawString(display, window, gc_numb, x1-3, y1+5, "1", strlen("1"));
+	      XDrawArc(display, window, gc_flowways, x2-10, y2-10, 20, 20, 0, 64*360);
+	      XDrawString(display, window, gc_numb, x2-3, y2+5, "2", strlen("2"));
+
+	      /* XFillArc(display, window, gc, x1-4, y1-4, 8, 8, 0, 64*360); */
+	      /* XFillArc(display, window, gc, x2-4, y2-4, 8, 8, 0, 64*360); */
 	    }
 	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  //32518
 	    {
