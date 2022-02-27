@@ -90,7 +90,7 @@ plist:
 set:  SET SPARA NUMBER SEMICOLON { if (! set_vset(psObj, $2, $3)) { psObj->psVset->para=$2; psObj->psVset->value=$3; vnext(psObj); } }
 |     set SET SPARA NUMBER SEMICOLON { if (! set_vset(psObj, $3, $4)) { psObj->psVset->para=$3; psObj->psVset->value=$4; vnext(psObj); } }
 ;
-ctrl: CONTROL SEMICOLON { ctrl($1,NULL); }
+ctrl: CONTROL SEMICOLON{ ctrl($1,NULL); }
 |
 CONTROL CPARA SEMICOLON { ctrl($1,$2);}
 

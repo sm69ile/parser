@@ -1,8 +1,5 @@
-#
-#	Uebergaeng fuer die Durchmesser 20,40,60
-#
 init;
-ueberg10d60d40{
+uebergd60d40{
 #
 #	60er Stueck von links
 #	
@@ -25,7 +22,7 @@ ueberg10d60d40{
 	REM(0,10,15,1);
 }
 
-ueberg10d60d20{
+uebergd60d20{
 #
 #	60er Stueck von links
 #	
@@ -48,7 +45,7 @@ ueberg10d60d20{
 	REM(0,10,15,1);
 }
 
-ueberg10d40d20{
+uebergd40d20{
 #
 #	40er Stueck von links
 #	
@@ -71,7 +68,7 @@ ueberg10d40d20{
 	REM(0,10,15,1);
 }
 
-ueberg10d40d60{
+uebergd40d60{
 #
 #	40er Stueck von links
 #	
@@ -94,7 +91,7 @@ ueberg10d40d60{
 	REM(0,10,15,1);
 }
 
-ueberg10d20d60{
+uebergd20d60{
 #
 #	20er Stueck von links
 #	
@@ -117,7 +114,7 @@ ueberg10d20d60{
 	REM(0,10,15,1);
 }
 
-ueberg10d20d40{
+uebergd20d40{
 #
 #	20er Stueck von links
 #	
@@ -138,151 +135,4 @@ ueberg10d20d40{
 #
 	REM(0,10,15,1);
 }
-
-ueberg5d60d40{
-#
-#	60er Stueck von oben
-#
-	line(170,0,170,100);
-	line(230,0,230,100);
-#
-#	Verjuengung
-#	
-	line(170,100,180,300);
-	line(230,100,220,300);
-#
-#	Das 40er Ende
-#
-	line(180,300,180,400);
-	line(220,300,220,400);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-ueberg5d60d20{
-#
-#	60er Stueck von oben
-#
-	line(170,0,170,100);
-	line(230,0,230,100);
-#	line(169,0,169,105);
-#	line(231,0,231,105);
-#
-#	Verjuengung
-#	
-	line(170,95,190,305);
-	line(230,95,210,305);
-#	line(169,100,189,300);
-#	line(231,100,211,300);
-
-#
-#	Das 20er Ende
-#
-	line(190,300,190,400);
-	line(210,300,210,400);
-#	line(189,295,189,400);
-#	line(211,295,211,400);
-#	
-#	Der Kommentar
-#
-
-	REM(0,10,15,1);
-
-#	floodfill(200,30,25);
-}
-
-ueberg5d40d20{
-#
-#	40er Stueck von oben
-#
-	line(180,0,180,100);
-	line(220,0,220,100);
-#
-#	Verjuengung
-#	
-	line(180,100,190,300);
-	line(220,100,210,300);
-#
-#	Das 20er Ende
-#
-	line(190,300,190,400);
-	line(210,300,210,400);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-ueberg5d40d60{
-#
-#	40er Stueck von oben
-#
-	line(180,0,180,100);
-	line(220,0,220,100);
-#
-#	Verjuengung
-#	
-	line(180,100,170,300);
-	line(220,100,230,300);
-#
-#	Das 60er Ende
-#
-	line(170,300,170,400);
-	line(230,300,230,400);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-ueberg5d20d60{
-#
-#	20er Stueck von oben
-#
-	line(190,0,190,100);
-	line(210,0,210,100);
-#	line(189,0,189,105);
-#	line(211,0,211,105);
-#
-#	Verjuengung
-#	
-	line(190,95,170,305);
-	line(210,95,230,305);
-#	line(189,100,171,300);
-#	line(211,100,231,300);	
-#
-#	Das 60er Ende
-#
-	line(170,300,170,400);
-	line(230,300,230,400);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-ueberg5d20d40{
-#
-#	20er Stueck von oben
-#
-	line(190,0,190,100);
-	line(210,0,210,100);
-#
-#	Verjuengung
-#	
-	line(190,100,180,300);
-	line(210,100,220,300);
-#
-#	Das 60er Ende
-#
-	line(180,300,180,400);
-	line(220,300,220,400);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
 redraw;
-pobj;
