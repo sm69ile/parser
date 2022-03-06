@@ -1,8 +1,5 @@
-#
-#	pfeile.sym
-#
-
-pfeilrechts{
+init;
+arrow{
 	
 #	
 #	Waagerechte Linie
@@ -29,128 +26,7 @@ pfeilrechts{
 	REM(0,10,15,1);
 }
 
-pfeillinks{
-	
-#	
-#	Waagerechte Linie
-#
-	line(40,190,200,190);
-	line(40,210,200,210);
-	line(200,190,200,210);
-#
-#	Linie von rechts oben bis links unten
-#	
-	line(100,140,0,190);
-	line(100,160,40,190);
-	line(100,140,100,160);
-	line(0,190,0,210);
-#
-#	Linie von rechts unten bis links oben
-#	
-	line(100,240,40,210);
-	line(100,260,0,210);
-	line(100,260,100,240);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-pfeilhoch{
-	
-#	
-#	Vertikale Linie
-#
-	line(190,200,190,40);
-	line(210,200,210,40);
-	line(190,200,210,200);
-#
-#	Linie von links unten bis rechts oben
-#	
-	line(140,100,190,0);
-	line(160,100,190,40);
-	line(140,100,160,100);
-	line(190,0,210,0);
-#
-#	Linie von links oben bis rechts unten
-#	
-	line(210,0,260,100);
-	line(210,40,240,100);
-	line(240,100,260,100);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-pfeilrunter{
-	
-#	
-#	Vertikale Linie
-#
-	line(190,200,190,360);
-	line(210,200,210,360);
-	line(190,200,210,200);
-#
-#	Linie von links  oben bis rechts unten
-#	
-	line(140,300,190,400);
-	line(160,300,190,360);
-	line(140,300,160,300);
-	line(190,400,210,400);
-#
-#	Linie von rechts oben bis links unten
-#	
-	line(260,300,210,400);
-	line(240,300,210,360);
-	line(240,300,260,300);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-spfeilrunter{
-	
-#	
-#	Vertikale Linie
-#
-	line(200,200,200,400);
-#
-#	Linie von links  oben bis rechts unten
-#	
-	line(150,300,200,400);
-#
-#	Linie von links  unten bis rechts oben
-#	
-	line(200,400,250,300);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-spfeilhoch{
-	
-#	
-#	Vertikale Linie
-#
-	line(200,200,200,0);
-#
-#	Linie von links unten bis rechts oben
-#	
-	line(150,100,200,0);
-#
-#	Linie von links oben bis rechts unten
-#	
-	line(200,0,250,100);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-spfeilrechts{
+sarrow{
 	
 #	
 #	Waagerechte Linie
@@ -170,27 +46,7 @@ spfeilrechts{
 	REM(0,10,15,1);
 }
 
-spfeillinks{
-	
-#	
-#	Waagerechte Linie
-#
-	line(0,200,200,200);
-#
-#	Linie von rechts oben bis links unten
-#	
-	line(100,150,0,200);
-#
-#	Linie von rechts unten bis links oben
-#	
-	line(100,250,0,200);
-#	
-#	Der Kommentar
-#
-	REM(0,10,15,1);
-}
-
-bpfeilrechts{
+barrow{
 	line(50,180,50,220);
 
 	line(50,180,250,180);
@@ -204,56 +60,4 @@ bpfeilrechts{
 
 	line(380,195,380,205);
 }
-
-
-bpfeillinks{
-	line(350,180,350,220);
-
-	line(350,180,150,180);
-	line(350,220,150,220);
-	
-	line(150,180,150,100);
-	line(150,220,150,300);
-	
-	line(20,200,150,100);
-	line(20,200,150,300);
-
-	line(20,195,20,205);
-}
-
-
-bpfilerunter{
-	line(180,50,220,50);
-
-	line(180,50,180,250);
-	line(220,50,220,250);
-
-	line(180,250,100,250);
-	line(220,250,300,250);
-	
-	line(100,250,200,380);
-	line(300,250,200,380);
-
-	line(195,380,203,380);
-}
-
-bpfeilhoch{
-
-	line(180,350,220,350);
-	line(180,350,180,150);
-	line(220,350,220,150);
-
-	line(180,150,100,150);
-	line(220,150,300,150);
-	line(200,20,100,150);
-	line(200,20,300,150);
-
-	line(195,20,205,20);
-	
-	}
-
-
-
-
-
-
+redraw;

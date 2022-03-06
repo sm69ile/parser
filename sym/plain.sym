@@ -11,44 +11,44 @@ frameS{
 	line(398,0,398,400);
 }
 
-LinieH{
+Line{
 	line(0,199,400,199);	
 	line(0,200,400,200); 
 	line(0,201,400,201); 
 }
 
-LinieV{
-       	line(199,0,199,400);
-       	line(200,0,200,400);
-       	line(201,0,201,400);	
-}
+# LinieV{
+#        	line(199,0,199,400);
+#        	line(200,0,200,400);
+#        	line(201,0,201,400);	
+# }
 
-Kreis25{
+Circle25{
 	circle(200,200,25);	
 }
 
-Kreis50{
+Circle50{
         circle(200,200,50);
 }
-Kreis100{
+Circle100{
 	circle(200,200,100);
 }
-Kreis125{
+Circle125{
 	circle(200,200,125);
 }
-Kreis150{
+Circle150{
 	circle(200,200,150);
 }
-Kreis175{
+Circle175{
 	circle(200,200,175);
 }
-Kreis200{
+Circle200{
 	circle(200,200,200);
 }
-Recht50{
+Rect50{
         rectangle(175,175,225,225);
 }
-Recht100{
+Rect100{
 	rectangle(150,150,250,250);
 }
 
