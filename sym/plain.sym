@@ -1,9 +1,9 @@
 init;
-frame{
+Frame{
 	rectangle(0,0,400,400);
 }
 
-frameS{
+FrameB{
 	rectangle(0,0,400,400);
 	line(0,399,400,399);
 	line(0,398,400,398);
@@ -16,12 +16,6 @@ Line{
 	line(0,200,400,200); 
 	line(0,201,400,201); 
 }
-
-# LinieV{
-#        	line(199,0,199,400);
-#        	line(200,0,200,400);
-#        	line(201,0,201,400);	
-# }
 
 Circle25{
 	circle(200,200,25);	

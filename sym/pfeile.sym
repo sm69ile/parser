@@ -1,5 +1,5 @@
 init;
-arrow{
+Pfeil{
 	
 #	
 #	Waagerechte Linie
@@ -26,7 +26,7 @@ arrow{
 	REM(0,10,15,1);
 }
 
-sarrow{
+PfeilK{
 	
 #	
 #	Waagerechte Linie
@@ -46,7 +46,7 @@ sarrow{
 	REM(0,10,15,1);
 }
 
-barrow{
+PfeilG{
 	line(50,180,50,220);
 
 	line(50,180,250,180);
