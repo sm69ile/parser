@@ -50,4 +50,3 @@ Ellipse{
 	ellipse(100,100,300,300);
 }
 redraw;
-
