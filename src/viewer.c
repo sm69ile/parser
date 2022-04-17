@@ -845,7 +845,7 @@ void v_update_layout(XtPointer client_data)
 		    snprintf(buf, buf_length," [%i/", iState_idx);
 		    strcat(label, buf);
 		    bzero(buf,buf_length);
-		    snprintf(buf, buf_length,"%i]", MAX_STATE);
+		    snprintf(buf, buf_length,"%i]", MAX_STATE-1);
 		    strcat(label,buf);
 		    strcat(label,", dState: ");
 		    bzero(buf,buf_length);
@@ -898,7 +898,7 @@ void v_prev_state(Widget w, XtPointer client_data, XtPointer call_data)
   if(iState_idx > 0)
     iState_idx--;
   else
-    iState_idx=MAX_STATE;
+    iState_idx=MAX_STATE-1;
 
   v_update_layout(psV_c);
   v_draw(psV_c);
@@ -908,7 +908,7 @@ void v_next_state(Widget w, XtPointer client_data, XtPointer call_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  if(iState_idx < MAX_STATE)
+  if(iState_idx < MAX_STATE-1)
     iState_idx++;
   else
     iState_idx=0;
