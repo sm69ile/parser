@@ -117,9 +117,8 @@ tank{
 	lineto(310,300);
 	lineto(210,350);
 	lineto(210,400);
-
 # Horizontale fuer die 1. Fuellposition
-	line(90,250,310,250);
+	line(90,300,310,300);
 # Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
@@ -134,7 +133,7 @@ tank{
 
 	state(1);
 	clear();
-	line(190,0,190,20);	
+	line(190,0,190,20);
 	lineto(90,20);
 	lineto(90,300);
 	lineto(190,350);
@@ -145,7 +144,7 @@ tank{
 	lineto(210,350);
 	lineto(210,400);
 # Horizontale fuer die 2. Fuellposition
-	line(90,200,310,200);
+	line(90,250,310,250);
 # Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
@@ -160,8 +159,7 @@ tank{
 
 	state(2);
 	clear();
-
-	line(190,0,190,20);
+	line(190,0,190,20);	
 	lineto(90,20);
 	lineto(90,300);
 	lineto(190,350);
@@ -172,7 +170,7 @@ tank{
 	lineto(210,350);
 	lineto(210,400);
 # Horizontale fuer die 3. Fuellposition
-	line(90,150,310,150);
+	line(90,200,310,200);
 # Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
@@ -180,12 +178,10 @@ tank{
 	line(310,299,210,350);
 	line(310,298,210,350);
 	line(310,297,210,350);
-
 	line(190,20,210,20);
 	flowways(200,10,200,360);	
 	floodfill(200,349,25);
 	REM(0,10,15,1);
-
 
 	state(3);
 	clear();
@@ -200,7 +196,7 @@ tank{
 	lineto(210,350);
 	lineto(210,400);
 # Horizontale fuer die 4. Fuellposition
-	line(90,100,310,100);
+	line(90,150,310,150);
 # Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
@@ -213,13 +209,8 @@ tank{
 	floodfill(200,349,25);
 	REM(0,10,15,1);
 
-
-
-
-
-
 	state(4);
-	clear();	
+	clear();
 	line(190,0,190,20);
 	lineto(90,20);
 	lineto(90,300);
@@ -230,9 +221,8 @@ tank{
 	lineto(310,300);
 	lineto(210,350);
 	lineto(210,400);
-
 # Horizontale fuer die 5. Fuellposition
-	line(90,50,310,50);
+	line(90,100,310,100);
 # Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
@@ -246,7 +236,7 @@ tank{
 	REM(0,10,15,1);
 
 	state(5);
-	clear();
+	clear();	
 	line(190,0,190,20);
 	lineto(90,20);
 	lineto(90,300);
@@ -258,7 +248,7 @@ tank{
 	lineto(210,350);
 	lineto(210,400);
 # Horizontale fuer die 6. Fuellposition
-	line(90,100,310,100);
+	line(90,50,310,50);
 # Schattierung
 	line(90,299,190,350);
 	line(90,298,190,350);
@@ -284,6 +274,32 @@ tank{
 	lineto(210,350);
 	lineto(210,400);
 # Horizontale fuer die 7. Fuellposition
+	line(90,100,310,100);
+# Schattierung
+	line(90,299,190,350);
+	line(90,298,190,350);
+	line(90,297,190,350);
+	line(310,299,210,350);
+	line(310,298,210,350);
+	line(310,297,210,350);
+	line(190,20,210,20);
+	flowways(200,10,200,360);	
+	floodfill(200,349,25);
+	REM(0,10,15,1);
+
+	state(7);
+	clear();
+	line(190,0,190,20);
+	lineto(90,20);
+	lineto(90,300);
+	lineto(190,350);
+	lineto(190,400);
+	line(210,0,210,20);
+	lineto(310,20);
+	lineto(310,300);
+	lineto(210,350);
+	lineto(210,400);
+# Horizontale fuer die 8. Fuellposition
 	line(90,150,310,150);
 # Schattierung
 	line(90,299,190,350);
@@ -292,13 +308,12 @@ tank{
 	line(310,299,210,350);
 	line(310,298,210,350);
 	line(310,297,210,350);
-
 	line(190,20,210,20);
 	flowways(200,10,200,360);	
 	floodfill(200,349,25);
 	REM(0,10,15,1);
 	
-	state(7);
+	state(8);
 	clear();	
 	line(190,0,190,20);	
 	lineto(90,20);
@@ -310,7 +325,7 @@ tank{
 	lineto(310,300);
 	lineto(210,350);
 	lineto(210,400);
-# Horizontale fuer die 8. Fuellposition
+# Horizontale fuer die 9. Fuellposition
 	line(90,200,310,200);
 # Schattierung
 	line(90,299,190,350);
@@ -324,7 +339,7 @@ tank{
 	floodfill(200,349,25);
 	REM(0,10,15,1);
 
-	state(8);
+	state(9);
 	clear();
 	line(190,0,190,20);
 	lineto(90,20);
@@ -336,8 +351,7 @@ tank{
 	lineto(310,300);
 	lineto(210,350);
 	lineto(210,400);
-
-# Horizontale fuer die 9. Fuellposition
+# Horizontale fuer die 10. Fuellposition
 	line(90,250,310,250);
 # Schattierung
 	line(90,299,190,350);
