@@ -373,6 +373,10 @@ void v_event_color(Widget w, XtPointer client_data, XExposeEvent* ev)
 		    y
 		);
 
+	  values.foreground = 0;
+	  XChangeGC(display, gc, GCForeground, &values);
+	  XDrawString(display, window, gc, 40, y+3, psV_c->psDraw_c->ctable[i].name, strlen(psV_c->psDraw_c->ctable[i].name));
+	  
 	  int fno_length = snprintf( NULL, 0, "%02d", psV_c->psDraw_c->ctable[i].key);
 
 	  if(!(fno = (char*)malloc((fno_length+1)*sizeof(char))))
