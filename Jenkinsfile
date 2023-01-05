@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-		sh 'autoreconf --install && ./configure --prefix=/usr/local/software/jenkins && make && make install'
+		sh 'autoreconf --install && CFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure --prefix=/usr/local/software/jenkins && make && make install'
             }
         }
     }
