@@ -1,8 +1,9 @@
 %{
-
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "parser.h"
+
 #define CRED "\001\33[1m\33[31m\002"
 #define CWHITE "\001\33[0m\002"
   

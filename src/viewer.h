@@ -1,4 +1,4 @@
-#if !defined viewer_h
+#if !defined _viewer_h
 #define _viewer_h
 
 #include <stdlib.h>
