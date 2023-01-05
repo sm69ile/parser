@@ -18,7 +18,7 @@
 #define C_WIN_X_SIZE 200
 #define C_WIN_Y_SIZE 600
 #define MAX_FLOODFILL 1024 * 64
-//#define MAX_FLOODFILL 1000
+
 #define DEFAULT_WIN_POS_X 400
 #define DEFAULT_WIN_POS_Y 400
 

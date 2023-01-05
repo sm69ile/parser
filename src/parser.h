@@ -70,7 +70,6 @@ typedef struct Object
   int s_line;
   char *name;
   unsigned int angle_deg;
-  //  double angle_rad;
 
   sVset *psVsetIni, *psVset;  
   sCommand *psComIni, *psCom;
@@ -78,19 +77,6 @@ typedef struct Object
   struct Object *next;
 }sObject;
 
-
-
-/* int iThr; */
-/* pthread_t v_thr[MAX_THREADS]; */
-/* sObject *psObjIni, *psObj; */
-
-/* int iState_idx; */
-/* int iObj_idx; */
-/* int iCtask; */
-/* int iCstate; */
-
-//int yy_scan_string(char*);
-//int yylex_destroy();
 void yyerror(const char *s);
 
 void vinit(sObject *);

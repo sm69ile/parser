@@ -20,7 +20,7 @@ void xshow(int argc, char **argv)
     {
       syslog(LOG_DEBUG,"malloc failed: sViewer_container*\n"); 
 
-      return; //pthread closed
+      return; /* pthread closed */
     }
   else
     {
@@ -165,7 +165,7 @@ void xshow(int argc, char **argv)
       if (!(psV_c->psDraw_c = (sDraw_container*) malloc(sizeof(sDraw_container))))
 	{
 	  syslog(LOG_DEBUG, "malloc failed: sDraw_container*\n");
-	  return; //pthread closed
+	  return; /* pthread closed */
 	}
       else
 	{
@@ -174,10 +174,10 @@ void xshow(int argc, char **argv)
 			    XtDisplay(psV_c->draw_shell),
 			    XtWindow(psV_c->draw_shell)
 			    ))
-	     ) { return; } //pthread closed 
+	     ) { return; } /* pthread closed  */
         }
  
-      // XtAddEventHandler(psV_c->toplevel, EnterWindowMask, FALSE, (XtEventHandler) v_event_handler, (XtPointer) psV_c);
+      /* XtAddEventHandler(psV_c->toplevel, EnterWindowMask, FALSE, (XtEventHandler) v_event_handler, (XtPointer) psV_c); */
 
       XtAddEventHandler(psV_c->draw_shell, ExposureMask, FALSE, (XtEventHandler) v_event_draw, (XtPointer) psV_c);
 
@@ -448,7 +448,7 @@ void v_draw(XtPointer client_data)
 {
   sViewer_container *psV_c = (sViewer_container*) client_data;
   
-  XGCValues values;//, rvalues; //bvalues, gvalues, nvalues;
+  XGCValues values;
   GC gc, gc_border, gc_grid, gc_numb, gc_flowways;
   Display *display;
   Drawable window;
@@ -478,7 +478,7 @@ void v_draw(XtPointer client_data)
 	       GCBackground |
 	       GCLineWidth, &values);
 
-  // Grid numbers
+  /* Grid numbers */
 
   values.line_style = LineSolid;
   values.foreground = psV_c->psDraw_c->ctable[15].value;
@@ -486,7 +486,7 @@ void v_draw(XtPointer client_data)
 		    GCLineStyle |
 		    GCForeground, &values);
 
-  // Grid
+  /* Grid */
   
   values.line_style = LineOnOffDash;
   values.foreground = psV_c->psDraw_c->ctable[3].value;
@@ -494,7 +494,7 @@ void v_draw(XtPointer client_data)
 		    GCLineStyle |
 		    GCForeground, &values);
 
-  // Border - must be solid because of floodfill
+  /* Border - must be solid because of floodfill */
   
   values.foreground = 1;
   values.line_width = 2;
@@ -515,7 +515,7 @@ void v_draw(XtPointer client_data)
 			GCLineWidth,
 			&values);
     
-  //Show current graphic context
+  /* Show current graphic context */
   XGetGCValues(display, gc, GCForeground|GCBackground|GCLineWidth, &values);
   fprintf(stderr,"\n\n\tGraphic context:\n\tGCForeground: %li\n\tGCBackground: %li\n\tGCLineWidth: %d\n\n", values.foreground, values.background, values.line_width);
 
@@ -525,40 +525,39 @@ void v_draw(XtPointer client_data)
   int angle_deg = oact->angle_deg;
   double angle_rad = oact->angle_deg*3.14159265358979323846/180;
   
-  // psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command
+  /* psObj->psComIni->key++; defined in cnext() --> psComIni->key is incremented for each new command */
   for(int j=0; j<oact->psComIni->key; j++)
     {
 
-      //fprintf(stderr,"j: %i, psComIni-key: viewe%i\n",i, psComIni->key);
+      /* fprintf(stderr,"j: %i, psComIni-key: viewe%i\n",i, psComIni->key); */
 
       sCommand* cact = get_command_by_key(oact->psComIni, oact->psComIni->next, j);
 
       if(cact != NULL && iState_idx >= iDstate_idx)
-	//	  if(cact != NULL)
 	{
-	  // draw all commands iState_idx = 0
-	  // next_state button pressed iState_idx = 1
-	  // walk through the list of commands until command state(1) is found;
-	  // draw all commands until break (0)
+	  /* draw all commands iState_idx = 0 */
+	  /* next_state button pressed iState_idx = 1 */
+	  /* walk through the list of commands until command state(1) is found; */
+	  /* draw all commands until break (0) */
 	  fprintf(stderr,"\tCommand [%d] %s: ", cact->key, cact->name);
 	  for(int k=0; k<cact->count_para;k++)
 	    fprintf(stderr,"%d ", cact->para[k]);
 	  fprintf(stderr,"\n");
 
-	  if (!strcmp(cact->name, "state") && cact->count_para == 1)  //32522
+	  if (!strcmp(cact->name, "state") && cact->count_para == 1)  /* 32522 */
 	    {
 	      
 	      iDstate_idx = cact->para[0];
 
 	      fprintf(stderr,"\tState switched by Symbol definition \"state()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx);
 	    }
-	  else if (!strcmp(cact->name, "break") && cact->count_para == 1)   //32523
+	  else if (!strcmp(cact->name, "break") && cact->count_para == 1)   /* 32523 */
 	    {
 	      iDstate_idx = cact->para[0];
 
 	      fprintf(stderr,"\tState switched by Symbol definition \"break()\"  iState_idx: %i, iDstate: %i\n", iState_idx, iDstate_idx); 
 	    }
-	  else if (!strcmp(cact->name, "line") && cact->count_para == 4)  //32513
+	  else if (!strcmp(cact->name, "line") && cact->count_para == 4)  /* 32513 */
 	    {
 	      double x1 = cact->para[0];
 	      double y1 = cact->para[1];
@@ -586,7 +585,7 @@ void v_draw(XtPointer client_data)
 		}
 
 	    }
-	  else if (!strcmp(cact->name, "lineto") && cact->count_para == 2)  //32514
+	  else if (!strcmp(cact->name, "lineto") && cact->count_para == 2) /* 32514 */
 	    {
 	      double x0 = psV_c->psDraw_c->last_x;
 	      double y0 = psV_c->psDraw_c->last_y;
@@ -603,7 +602,7 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=(int)x1;
 	      psV_c->psDraw_c->last_y=(int)y1;
 	      
-	    } else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) //32515
+	    } else if (!strcmp(cact->name, "rectangle") && cact->count_para == 4) /* 32515 */
 	    {
 	      double x1 = cact->para[0];
 	      double y1 = cact->para[1];
@@ -620,7 +619,7 @@ void v_draw(XtPointer client_data)
 	  psV_c->psDraw_c->last_x=(int)(x1+x2);
 	  psV_c->psDraw_c->last_y=(int)(y1+y2);
 
-	    } else if (!strcmp(cact->name, "circle") && cact->count_para == 3)  //32516
+	    } else if (!strcmp(cact->name, "circle") && cact->count_para == 3)  /* 32516 */
 	    {
 	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
 	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
@@ -637,7 +636,7 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=(int)x1;
 	      psV_c->psDraw_c->last_y=(int)y1;
 
-	    } else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) //32517
+	    } else if (!strcmp(cact->name, "ellipse") && cact->count_para == 4) /* 32517 */
 	    {
 	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
 	      double y1 = rotateY(cact->para[0], cact->para[1], angle_rad);
@@ -654,7 +653,7 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=(int)x1;
 	      psV_c->psDraw_c->last_y=(int)y1;
 
-	    } else if (!strcmp(cact->name, "arc") && cact->count_para == 5)  //32521
+	    } else if (!strcmp(cact->name, "arc") && cact->count_para == 5)  /* 32521 */
 	    {
 	      
 	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
@@ -672,7 +671,7 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_y=(int)y1;	  
 	    }
 
-	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) //32520
+	  else if (!strcmp(cact->name, "flowways") && cact->count_para == 4) /* 32520 */
 	    {
 
 	      double x1 = rotateX(cact->para[0], cact->para[1], angle_rad);
@@ -689,12 +688,12 @@ void v_draw(XtPointer client_data)
 	      /* XFillArc(display, window, gc, x1-4, y1-4, 8, 8, 0, 64*360); */
 	      /* XFillArc(display, window, gc, x2-4, y2-4, 8, 8, 0, 64*360); */
 	    }
-	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  //32518
+	  else if (!strcmp(cact->name, "moveto") && cact->count_para == 2)  /* 32518 */
 	    {
 	      psV_c->psDraw_c->last_x=cact->para[0];
 	      psV_c->psDraw_c->last_y=cact->para[1];
 
-	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 4) //32519
+	    } else if (!strcmp(cact->name, "REM") && cact->count_para == 4) /* 32519 */
 	    {
 
 	      XDrawString(display, window, gc,
@@ -717,7 +716,7 @@ void v_draw(XtPointer client_data)
 	      psV_c->psDraw_c->last_x=(int)x1;
 	      psV_c->psDraw_c->last_y=(int)y1;
 
-	    } else if (!strcmp(cact->name, "clear"))  //32524
+	    } else if (!strcmp(cact->name, "clear"))  /* 32524 */
 	    {
 	      XClearArea(display, window, 0, 0, V_WIN_X_SIZE, V_WIN_Y_SIZE, FALSE);
 	    }
@@ -896,7 +895,6 @@ void v_quit(Widget w, XtPointer client_data, XtPointer call_data)
   XtRemoveEventHandler(psV_c->toplevel ,EnterWindowMask, FALSE, (XtEventHandler) v_event_handler, (XtPointer) psV_c);
   XtDestroyApplicationContext(psV_c->app_context);
   
-  //XtDestroyWidget(psV_c->toplevel);
   iCstate = v_close;
   
   free(psV_c->psDraw_c);
@@ -1062,7 +1060,6 @@ void v_floodfill(Display* display, Drawable window, GC gc, int x, int y, Pixel f
     }
   else
     syslog(LOG_DEBUG, "Problem occured with XGetImage()\n");
-  //  fprintf(stderr,"Problem occured with XGetImage()\n");
 }
 
 
