@@ -78,14 +78,14 @@ typedef struct Object
   struct Object *next;
 }sObject;
 
-int iThr;
-pthread_t v_thr[MAX_THREADS];
-sObject *psObjIni, *psObj;
+static int iThr;
+static pthread_t v_thr[MAX_THREADS];
+static sObject *psObjIni, *psObj;
 
-int iState_idx;
-int iObj_idx;
-int iCtask;
-int iCstate;
+static int iState_idx;
+static int iObj_idx;
+static int iCtask;
+static int iCstate;
 
 //int yy_scan_string(char*);
 //int yylex_destroy();
