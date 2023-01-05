@@ -78,14 +78,7 @@ typedef struct Object
   struct Object *next;
 }sObject;
 
-static int iThr;
-static pthread_t v_thr[MAX_THREADS];
-static sObject *psObjIni, *psObj;
 
-static int iState_idx;
-static int iObj_idx;
-static int iCtask;
-static int iCstate;
 
 /* int iThr; */
 /* pthread_t v_thr[MAX_THREADS]; */

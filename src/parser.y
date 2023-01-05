@@ -14,7 +14,16 @@
   
   const char* CURR = "Empty";
   const char* INI = "INI";
-  
+
+int iThr;
+pthread_t v_thr[MAX_THREADS];
+sObject *psObjIni, *psObj;
+
+int iState_idx;
+int iObj_idx;
+int iCtask;
+int iCstate;
+
   %}
 
 %union{

@@ -1,6 +1,15 @@
 #include "parser.h"
 #include "viewer.h"
 
+extern int iThr;
+extern pthread_t v_thr[MAX_THREADS];
+extern sObject *psObjIni, *psObj;
+
+extern int iState_idx;
+extern int iObj_idx;
+extern int iCtask;
+extern int iCstate;
+
 void xshow(int argc, char **argv)
 {
   sViewer_container *psV_c;
