@@ -1,0 +1,177 @@
+init;
+Warmwasserspeicher{
+#
+#	der Koerper
+#
+#	Kruemmung oben links
+#	
+	arc(225,375,96,24,350);
+	arc(225,375,96,24,351);
+#
+#	Kruemmung oben rechts
+#	
+	arc(175,375,60,24,350);
+	arc(175,375,60,24,351);
+#
+#	Kruemmung unten links
+#	
+	arc(225,25,240,24,350);
+	arc(225,25,240,24,351);
+#
+#	Kruemmung unten rechts
+#	
+	arc(175,25,276,24,350);
+	arc(175,25,276,24,351);
+#
+#	Verbindung untere Kruemmungen
+#
+	line(187,373,212,373);
+	line(187,374,212,374);
+	line(187,375,212,375);
+	line(187,376,212,376);
+#
+#	Wand links
+#
+	line(50,70,50,143);
+	line(50,157,50,243);
+	line(50,257,50,330);
+#
+#	Wand rechts
+#
+	line(350,70,350,143);
+	line(350,157,350,243);
+	line(350,257,350,330);
+#
+#	Warmwasser Ablauf, oben
+#
+	line(190,0,190,30);
+	line(189,0,189,30);
+	line(210,0,210,30);
+	line(211,0,211,30);
+
+#	line(190,30,193,30);
+#	line(207,30,210,30);
+	line(190,0,193,0);
+	line(207,0,210,0);
+	
+
+#
+#	Zirkulation, links
+#
+	line(0,142,50,142);
+	line(0,143,50,143);
+	line(0,157,50,157);
+	line(0,158,50,158);	
+#
+#	Zulauf von WP warm, rechts
+#
+	line(350,142,400,142);
+	line(350,143,400,143);
+	line(350,157,400,157);
+	line(350,158,400,158);
+#
+#	Trenner Warm/Kalt
+
+	line(50,200,350,200);
+#
+#	Kaltwasser Zulauf, links
+#
+	line(0,242,50,242);
+	line(0,243,50,243);
+	line(0,257,50,257);
+	line(0,258,50,258);
+#
+#	Zulauf von WP kalt, rechts
+#
+	line(350,242,400,242);
+	line(350,243,400,243);
+	line(350,257,400,257);
+	line(350,258,400,258);
+
+	REM(0,10,15,1);
+}
+
+Pufferspeicher{
+#
+#	der Koerper
+#
+#	Kruemmung oben links
+#	
+	arc(225,375,96,24,350);
+	arc(225,375,96,24,351);
+#
+#	Kruemmung oben rechts
+#	
+	arc(175,375,60,24,350);
+	arc(175,375,60,24,351);
+#
+#	Verbindung obere Kruemmungen
+#
+	line(189,25,210,25);
+	line(189,26,210,26);	
+#
+#	Kruemmung unten links
+#	
+	arc(225,25,240,24,350);
+	arc(225,25,240,24,351);
+#
+#	Kruemmung unten rechts
+#	
+	arc(175,25,276,24,350);
+	arc(175,25,276,24,351);
+#
+#	Verbindung untere Kruemmungen
+#
+	line(187,373,212,373);
+	line(187,374,212,374);
+	line(187,375,212,375);
+	line(187,376,212,376);
+#
+#	Wand links
+#
+	line(50,70,50,143);
+	line(50,157,50,243);
+	line(50,257,50,330);
+#
+#	Wand rechts
+#
+	line(350,70,350,143);
+	line(350,157,350,243);
+	line(350,257,350,330);
+#
+#	Zirkulation, links
+#
+	line(0,142,50,142);
+	line(0,143,50,143);
+	line(0,157,50,157);
+	line(0,158,50,158);	
+#
+#	Zulauf von WP warm, rechts
+#
+	line(350,142,400,142);
+	line(350,143,400,143);
+	line(350,157,400,157);
+	line(350,158,400,158);
+#
+#	Trenner Warm/Kalt
+
+	line(50,200,350,200);
+#
+#	Kaltwasser Zulauf, links
+#
+	line(0,242,50,242);
+	line(0,243,50,243);
+	line(0,257,50,257);
+	line(0,258,50,258);
+#
+#	Zulauf von WP kalt, rechts
+#
+	line(350,242,400,242);
+	line(350,243,400,243);
+	line(350,257,400,257);
+	line(350,258,400,258);
+
+	REM(0,10,15,1);
+}
+c-
+redraw;
