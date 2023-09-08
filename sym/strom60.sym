@@ -1,4 +1,3 @@
-init;
 ventild60{     
 	line(0,230,50,230);
         lineto(50,300);
@@ -373,5 +372,3 @@ dframed60{
 
 	REM(0,10,15,1);
 }
-
-redraw;

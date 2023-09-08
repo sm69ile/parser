@@ -107,8 +107,10 @@ Pufferspeicher{
 #
 #	Verbindung obere Kruemmungen
 #
-	line(189,25,210,25);
-	line(189,26,210,26);	
+	line(187,24,212,24);	
+	line(187,25,212,25);
+	line(187,26,212,26);
+	line(187,27,212,27);		
 #
 #	Kruemmung unten links
 #	
@@ -173,5 +175,4 @@ Pufferspeicher{
 
 	REM(0,10,15,1);
 }
-c-
 redraw;
