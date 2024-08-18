@@ -25,10 +25,10 @@
 
 
 typedef struct yy_buffer_state * YY_BUFFER_STATE;
-extern int yyparse();
+extern int yyparse(void);
 extern YY_BUFFER_STATE yy_scan_string(const char * str);
 extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
-extern int yylex_destroy();
+extern int yylex_destroy(void);
 
 enum eVtask {
     v_idle = 0,
@@ -84,15 +84,15 @@ void vnext(sObject *);
 void vlist(sObject *);
 sVset* get_vset(sObject*, char*);
 bool set_vset(sObject*, char*, unsigned long);
-void vfree();
+void vfree(sObject*);
 sVset *get_setting_by_name(sVset*, sVset*, const char*);
 
-void oinit();
-void onext();
-void olist_act();
-void olist();
-void ofree();
-int olist_count_command();
+void oinit(void);
+void onext(void);
+void olist_act(void);
+void olist(void);
+void ofree(void);
+int olist_count_command(void);
 sObject *get_object_by_key(int);
 
 void cinit(sObject *); 
@@ -103,15 +103,15 @@ sCommand *get_command_by_key(sCommand*, sCommand*, int);
 
 void plist(int, ... );
 
-void v_create();
-void *x_show();
+void v_create(void);
+void *x_show(void*);
 
 void xshow(int, char **);
 void load_file(int, char **);
 void ctrl(char*, char*);
-void help();
-void save();
-void quit();
+void help(void);
+void save(void);
+void quit(void);
 
 
 #endif

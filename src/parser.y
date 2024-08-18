@@ -8,7 +8,7 @@
 #define CWHITE "\001\33[0m\002"
   
   extern int yylex (void);
-  extern int yyparse();
+  extern int yyparse(void);
   extern FILE* yyin;
   extern int s_line;
   
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-  void oinit()
+  void oinit(void)
   {
     syslog(LOG_DEBUG, "Initialising memory for object, starting node\n");
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
   }
 
 
-  void onext()
+  void onext(void)
   {
     psObjIni->key++;
     syslog(LOG_DEBUG, "Initialising memory, object key: %d\n", psObjIni->key);
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
   }
 
 
-  void olist_act()
+  void olist_act(void)
   {
     sObject* act = get_object_by_key(iObj_idx);
     
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
   }
 
 
-  void olist()
+  void olist(void)
   {
     sObject* last = psObjIni->next;
     sObject* first = psObjIni;
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
   }
 
 
-  void ofree()
+  void ofree(void)
   {
     sObject* last = psObjIni->next;
     sObject* first = psObjIni;
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
     free(act);
   }
 
-  int olist_count_command()
+  int olist_count_command(void)
   {
     sObject* last = psObjIni->next;
     sObject* first = psObjIni;
@@ -527,7 +527,7 @@ int main(int argc, char *argv[])
     va_end(args);
   }
 
-  void v_display()
+  void v_display(void)
   {
     if (iThr < MAX_THREADS)
       {
@@ -542,9 +542,9 @@ int main(int argc, char *argv[])
       { fprintf(stdout, "Max threads running: %i of %i\n", iThr,MAX_THREADS);  }
   }
 
-  void *x_show() { xshow(0, NULL); return NULL; }
+  void *x_show(void* arg) { xshow(0, NULL); return NULL; }
 
-void help()
+void help(void)
 {
   FILE *fp;
   char *s;
@@ -704,7 +704,7 @@ void help()
 
 
 
-void save()
+void save(void)
   {
     static char * commands[]=
       {
@@ -793,7 +793,7 @@ void save()
   }
 
 
-  void quit()
+  void quit(void)
   {
     if (iCstate == v_open)
       iCtask = v_exit;

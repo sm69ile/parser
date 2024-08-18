@@ -1,4 +1,5 @@
 Viewer*title:	Viewer
+Viewer*font:				-*-fixed-bold-*-*-*-13-*-*-*-*-*-*-*
 Viewer*iconPixmap:			__APPDEFAULTSDIR__/x.xbm
 Viewer*iconMask:			__APPDEFAULTSDIR__/x.xbm
 Viewer*foreground:	black
@@ -21,7 +22,7 @@ Viewer.form.next_state_command*foreground:	black
 Viewer.form.rotate_minus_command*background:	darkgray
 Viewer.form.rotate_minus_command*foreground:	black
 Viewer.form.rotate_plus_command*background:	darkgray
-Viewer.form.rotate_plus_command*foreground:	black
+Viewer.form.rotate_plus_command*foreground:	blackSim
 Viewer.form.curr_object_command*background:	darkgray
 Viewer.form.curr_object_command*foreground:	black
 Viewer.form.grid_mode_command*background:	darkgray
