@@ -1,0 +1,46 @@
+name: Parser Pipeline
+on: [push]
+
+env:
+  PACKAGE_STRING: ${{ vars.PACKAGE_NAME }}-${{ vars.PACKAGE_VERSION }}.${{ vars.PACKAGE_SUFFIX }}
+  UPLOAD_PATH: ${{ github.server_url }}/api/packages/${{ github.repository_owner }}/generic/${{ vars.PACKAGE_NAME }}/${{ vars.PACKAGE_VERSION }}/${{ env.PACKAGE_STRING }}
+  
+jobs:
+  Memo Pipeline Runner:
+    runs-on: ubuntu-latest
+    container:
+      volumes:
+        - /etc/ssl/certs:/etc/ssl/certs:ro
+        - /mnt/.ix-apps/app_mounts/gitea-act-runner/data:/mnt/data
+    steps:
+      - name: Test if the package already exists
+        run: |
+          curl -k -s -o $PACKAGE_STRING $UPLOAD_PATH
+          if test -f $PACKAGE_STRING; then
+            RC=`file $PACKAGE_STRING | awk -F: '{ print $2 }' | awk '{ print $1 }' | tr -d " "`
+            if test "$RC" != "ASCII"; then
+              echo "Package exists, terminating workflow";
+              rm -f $PACKAGE_STRING
+            exit 1
+            fi
+          fi
+#      - name: Test secret
+#        run: |
+#          echo ${{ vars.HG_AUTOMATX_DE }} ${{ secrets.DOCKER_HG_AUTOMATX_DE }} 
+#       - name: Disable SSL verify (Temporary Fix)
+#         run: git config --global http.sslVerify false
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          apt-get update && sudo apt install -y libxaw7-dev libxcursor-dev
+      - name: Run pipeline
+        run: |
+          cd ${{ gitea.workspace }} && autoreconf --install && CFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure --prefix=/usr/local/software/jenkins && make && make install && make dist
+      - name: Show package
+        run: |
+          ls -la *.tar.gz 
+      - name: Upload package
+        run: |
+          curl --user ${{ vars.HG_LOCAL }}:${{ secrets.LOCAL_HG }} --upload-file $PACKAGE_STRING $UPLOAD_PATH
+
