@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          apt-get update && sudo apt install -y libxaw7-dev libxcursor-dev
+          apt-get update && sudo apt install -y bison flex libxaw7-dev libxcursor-dev 
       - name: Run pipeline
         run: |
           cd ${{ gitea.workspace }} && autoreconf --install && CFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure --prefix=/usr/local/software/jenkins && make && make install && make dist
