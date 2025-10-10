@@ -18,6 +18,7 @@ jobs:
           curl -k -s -o $PACKAGE_STRING $UPLOAD_PATH
           if test -f $PACKAGE_STRING; then
             RC=`file $PACKAGE_STRING | awk -F: '{ print $2 }' | awk '{ print $1 }' | tr -d " "`
+            echo $RC
             if test "$RC" != "ASCII"; then
               echo "Package exists, terminating workflow";
               rm -f $PACKAGE_STRING
@@ -43,5 +44,5 @@ jobs:
           ls -la *.tar.gz 
       - name: Upload package
         run: |
-          curl --user ${{ vars.HG_LOCAL }}:${{ secrets.LOCAL_HG }} --upload-file $PACKAGE_STRING $UPLOAD_PATH
+          curl -s --user ${{ vars.HG_LOCAL }}:${{ secrets.LOCAL_HG }} --upload-file $PACKAGE_STRING $UPLOAD_PATH
 
