@@ -5,3 +5,4 @@ Terminal=true
 Icon=__APPDEFAULTSDIR__/ax.xpm
 Comment=ViPro graphical parser (build)
 Name=parser
+Categories=Other;X-automatX;
